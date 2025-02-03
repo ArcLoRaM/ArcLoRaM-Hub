@@ -4,3 +4,6 @@
 [submodule "Projects/Interface"]
 	path = Projects/Interface
 	url = https://github.com/Rorschak84/arcloram-visualisation.git
+[submodule "Projects/ClockSynchronization"]
+	path = Projects/ClockSynchronization
+	url = https://github.com/Rorschak84/ArcLoRaM-ClockSynchronization.git
