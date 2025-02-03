@@ -1,9 +1,0 @@
-[submodule "Projects/clockSynchronisation"]
-	path = Projects/clockSynchronisation
-	url = https://github.com/Rorschak84/ArcLoRaM-Hub.git
-[submodule "Projects/Simulator"]
-	path = Projects/Simulator
-	url = https://github.com/Rorschak84/arcloram-simulation.git
-[submodule "Projects/Visualizer"]
-	path = Projects/Visualizer
-	url = https://github.com/Rorschak84/arcloram-visualisation.git
