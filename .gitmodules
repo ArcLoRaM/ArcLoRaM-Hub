@@ -1,3 +1,6 @@
 [submodule "Projects/Simulation"]
 	path = Projects/Simulation
 	url = https://github.com/Rorschak84/arcloram-simulation.git
+[submodule "Projects/Interface"]
+	path = Projects/Interface
+	url = https://github.com/Rorschak84/arcloram-visualisation.git
