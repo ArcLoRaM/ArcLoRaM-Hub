@@ -18,4 +18,4 @@ A video highlighting protocol key functionnalities of the protocol thanks to the
 Contact Information:
 -simlanglais@gmail.com
 
-You're very welcome to fork and use this code freely. Pull requests are also desirable. I am no longer working in this project, but my university might pursue its development.
+You're very welcome to fork and use this code freely. Pull requests are also desirable. I'm still involved in the project.
