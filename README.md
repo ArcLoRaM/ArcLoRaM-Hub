@@ -11,7 +11,7 @@ In its current state, this repository holds three sub-projects:
 -a clock synchronization algorithm.
 
 A complete explanation of the protocol features and mechanisms, sub project description and results can be found in the available report of approximately 50 pages.
-A video highlighting protocol key functionnalities of the protocol thanks to the visualizer is available at :
+A video highlighting protocol key functionnalities of the protocol thanks to the visualizer is available at : https://youtu.be/G0fd1k9Jc2k?si=-FvLKjObjD7HH-DO
 
 
 
