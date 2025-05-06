@@ -1,6 +1,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 
+
 #include <SFML/Network.hpp>
 #include <iostream>
 #include <memory>

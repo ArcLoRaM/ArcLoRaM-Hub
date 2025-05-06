@@ -18,6 +18,7 @@ Consequently, SFML base and network module are required. If you wish to run the 
 A nice tutorial to link, and add to the compiler SFML:
 https://www.youtube.com/watch?v=rZE700aaT5I&t=429s
 Don't forget to change your binaries in the exec folder if necessary !
+The simulator only needs SFML-system and SFML-network to run.
 
 ## Run the protocol
 Clone the repository, install SFML and you're ready to run the protocol.

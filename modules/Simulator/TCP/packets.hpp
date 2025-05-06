@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 
+
 // Base class for packet type identification
 class BasePacket {
 public:
