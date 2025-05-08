@@ -1,8 +1,8 @@
-#include "Client.hpp"
+
 #include <thread>
 #include <chrono>
 #include "../Common.hpp"
-
+#include "Client.hpp"
 Client::Client(const std::string& serverIp, unsigned short serverPort)
     : isConnected(false) {
     if(!common::visualiserConnected){
@@ -10,7 +10,8 @@ Client::Client(const std::string& serverIp, unsigned short serverPort)
         return;
     }
     // Attempt to connect to the server
-    if (socket.connect(serverIp, serverPort) != sf::Socket::Done) {
+    auto localAddress = sf::IpAddress::getLocalAddress();
+    if (!localAddress.has_value() || socket.connect(localAddress.value(), serverPort) != sf::Socket::Status::Done) {
         std::cerr << "******Error connecting to server******\n";
         return;
     }
@@ -35,10 +36,10 @@ bool Client::transmit(sf::Packet& packet) {
 
     while (true) {
         sf::Socket::Status status = socket.send(packet);
-        if (status == sf::Socket::Done) {
+        if (status == sf::Socket::Status::Done) {
             //std::cout << "******Packet sent successfully.******\n";
             return true;
-        } else if (status == sf::Socket::Partial) {
+        } else if (status == sf::Socket::Status::Partial) {
            // std::cout << "******Partial send, retrying...******\n";
         } else {
             std::cerr << "******Error sending packet.******\n";

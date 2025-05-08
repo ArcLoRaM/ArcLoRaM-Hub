@@ -11,17 +11,18 @@ It features a real time event simulator, a simple but robut physical layer virtu
 The simplest way to run the protocol is by using docker. 
 (on its way...)
 
-However, if you wish to implement your own logic, improve the protocol, optimize the simulator engine, it is better to use it with an IDE as it enables live debugging, performance check..
+However, if you wish to implement your own logic, improve the protocol, optimize the simulator engine, it is better to use it with an IDE as it enables live debugging.
 I personnaly used Visual Studio Code with the latest C++ extention.
 The engine is able to connect to the visualiser with local host using the port 5000 through tcp packets.
-Consequently, SFML base and network module are required. If you wish to run the visualizer too, you will need the other  modules too. 
-A nice tutorial to link, and add to the compiler SFML:
+Consequently, SFML system and network module are required, even though you don´t use the GUI (which uses window and graphics additionally).(The simulator only needs SFML-system and SFML-network to build (Version 3.0.0))
+
+A nice tutorial to link, and add to the compiler SFML on Vscode:
 https://www.youtube.com/watch?v=rZE700aaT5I&t=429s
-Don't forget to change your binaries in the exec folder if necessary !
-The simulator only needs SFML-system and SFML-network to run.
+Little advice for Visual Studio Code users: the C++ extension developped by microsoft offers you the possibility to link libraries and build you project using the tasks.json file instead of using command lines as it is described in the youtube video. I recommend following the steps described in the video and once you get familiar with the process, try to run an SFML demo code with build configuration from the tasks.json and later build the entire project with tasks.json.
+I've let my vscode folder to help you understand the process but you need to personnalize it to link the library correctly. Futhermore, You should be mindful about which SFML binaries (ddl) you are using as it depends on the OS, C++ compiler and SFML version.
 
 ## Run the protocol
-Clone the repository, install SFML and you're ready to run the protocol.
+Clone the repository, install SFML, build correctly the project and you're ready to run the protocol.
 However, you must select the mode, the topology and decide if the simulator will be connected with the visualizer or not.
 
 For that, you simply needs to reach the common.hpp file and change the number of the COMMUNICATION_PERIOD and TOPOLOGY variables.

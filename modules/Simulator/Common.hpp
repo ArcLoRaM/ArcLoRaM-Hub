@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
+#include <cstdint> // For uint8_t
 
 
  namespace common{

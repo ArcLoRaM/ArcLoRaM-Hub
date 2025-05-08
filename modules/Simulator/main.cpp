@@ -1,4 +1,4 @@
-#include "Node.hpp"
+
 #include <thread>
 #include "SimulationManager.hpp"
 #include "Logger.hpp"
@@ -11,9 +11,8 @@
 #include "Clock.hpp"
 #include "Seed.hpp"
 #include "Common.hpp"
-#include "TCP/packets.hpp"
 
-
+#include "Node.hpp"
 
 
 int main() {
@@ -44,7 +43,7 @@ int main() {
     
     SimulationManager manager(common::distanceThreshold,logger);
 
-//--------------------------------------------------------------Node Provisionning-------------------------------------------------
+// //--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
     
  
