@@ -2,6 +2,7 @@
 
 
 #include "VisualiserManager.hpp"
+#include <algorithm>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -9,34 +10,39 @@
 
 VisualiserManager::VisualiserManager()
 {
-    if (!font.loadFromFile("assets/arial.ttf")) {
+
+    if (!font.openFromFile("assets/arial.ttf")) {
         throw std::runtime_error("Failed to load font");
     }
-    text.setFont(font);
-    text.setCharacterSize(20);
-    text.setFillColor(sf::Color::White);
+    text=sf::Text(font);
+    text->setCharacterSize(20);
+    text->setFillColor(sf::Color::White);
 
 
-    communicationMode.setFont(font);
-    communicationMode.setCharacterSize(40);
-    communicationMode.setPosition(10.f, 10.f);
-    communicationMode.setFillColor(sf::Color::White);
+    communicationMode=sf::Text(font);
+    communicationMode->setCharacterSize(40);
+    sf::Vector2f position1(10.f, 30.f);
+    communicationMode->setPosition(position1);
+    communicationMode->setFillColor(sf::Color::White);
 
-    tickNb.setFont(font);
-    tickNb.setCharacterSize(20);
-    tickNb.setPosition(10.f, 120.f);
-    tickNb.setFillColor(sf::Color::White);
+    tickNb=sf::Text(font);
+    tickNb->setCharacterSize(20);
+    sf::Vector2f position2(10.f, 120.f);
+    tickNb->setPosition(position2);
+    tickNb->setFillColor(sf::Color::White);
 
-    nbRetransmission.setFont(font);
-    nbRetransmission.setCharacterSize(20);
-    nbRetransmission.setPosition(10.f, 60.f);
-    nbRetransmission.setFillColor(sf::Color::White); 
+    nbRetransmission=sf::Text(font);
+    nbRetransmission->setCharacterSize(20);
+    sf::Vector2f position3(10.f, 60.f);
+    nbRetransmission->setPosition(position3);
+    nbRetransmission->setFillColor(sf::Color::White); 
     nbRetransmissionString="Retransmissions:  ";
     
-    energyExpenditure.setFont(font);
-    energyExpenditure.setCharacterSize(20);
-    energyExpenditure.setPosition(10.f, 90.f);
-    energyExpenditure.setFillColor(sf::Color::White); 
+    energyExpenditure=sf::Text(font);
+    energyExpenditure->setCharacterSize(20);
+    sf::Vector2f position4(10.f, 90.f); 
+    energyExpenditure->setPosition(position4);
+    energyExpenditure->setFillColor(sf::Color::White); 
     energyExpenditureString="Energy Expenditure: ";
           
 
@@ -159,17 +165,17 @@ void VisualiserManager::update()
 void VisualiserManager::draw(sf::RenderWindow& window) {
     std::ostringstream displayText;
 
-    communicationMode.setString("Communication Mode: "+COMMUNICATION_MODE);
-    window.draw(communicationMode);
+    communicationMode->setString("Communication Mode: "+COMMUNICATION_MODE);
+    window.draw(*communicationMode);
 
-    tickNb.setString("Tick Number: " + std::to_string(TICK_NB));
-    window.draw(tickNb);
+    tickNb->setString("Tick Number: " + std::to_string(TICK_NB));
+    window.draw(*tickNb);
 
-    energyExpenditure.setString(energyExpenditureString+std::to_string(ENERGYEXP));
-    window.draw(energyExpenditure);
+    energyExpenditure->setString(energyExpenditureString+std::to_string(ENERGYEXP));
+    window.draw(*energyExpenditure);
 
-    nbRetransmission.setString(nbRetransmissionString+std::to_string(NBRETRANSMISSION));
-    window.draw(nbRetransmission);
+    nbRetransmission->setString(nbRetransmissionString+std::to_string(NBRETRANSMISSION));
+    window.draw(*nbRetransmission);
 
     //Button States
     // displayText << "Button States:\n";

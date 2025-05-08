@@ -6,33 +6,34 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
 
     //calculate the iconPosition
     iconPosition=getPointOnLine(senderPos,receiverPos);
-    icon.setPosition(iconPosition);
 
     //load the texture
     loadTextures("assets/Reception/interference.png", "assets/Reception/notListening.png", "assets/Reception/allGood.png");
     if(state=="interference"){
-        icon.setTexture(interferenceTexture);
+        icon.emplace(interferenceTexture);
     }
     else if(state=="notListening"){
-        icon.setTexture(notListeningTexture);
+        icon.emplace(notListeningTexture);
     }
     else if(state=="received"){
-        icon.setTexture(receivedTexture);
+        icon.emplace(receivedTexture);
     }
     else{
         throw std::runtime_error("Invalid reception state");
     }
-        icon.setScale(radiusIcon / icon.getLocalBounds().width, radiusIcon / icon.getLocalBounds().height);
+
+        icon->setScale(sf::Vector2f(radiusIcon/icon->getLocalBounds().size.x,radiusIcon/icon->getLocalBounds().size.y));
+        icon->setPosition(iconPosition);
 
         // Center the icon on the calculated position
-        sf::FloatRect bounds = icon.getLocalBounds();
-        icon.setOrigin(bounds.width / 2, bounds.height / 2);
+        sf::FloatRect bounds = icon->getLocalBounds();
+        icon->setOrigin(sf::Vector2f( bounds.size.x / 2, bounds.size.y / 2));
 }
 
 void ReceptionIcon::draw(sf::RenderWindow &window) const
 {
 if(!isFinished()){
-    window.draw(icon);
+    window.draw(*icon);
 
 }
 }

@@ -2,19 +2,20 @@
 
 PacketDrop::PacketDrop( const sf::Vector2f startPosition, float duration)
     :  m_startPosition(startPosition), m_duration(duration) {
-    m_sprite.setPosition(startPosition);
 
     // Load a texture for the packet icon
     sf::Texture texture;
     if (!texture.loadFromFile("assets/PacketDrop/letter.png")) {
         throw std::runtime_error("Failed to load packet texture");
     }    // Set the sprite to be fully opaque at the start
-    m_sprite.setTexture(texture);
-    m_sprite.setScale(0.3f, 0.3f); // Scale to 50% of its original size
+    m_sprite = std::make_optional<sf::Sprite>(texture);
+    m_sprite->setScale(sf::Vector2f(0.3f, 0.3f)); // Scale to 50% of its original size
 
-    sf::Color color = m_sprite.getColor();
+    sf::Color color = m_sprite->getColor();
     color.a = 255;
-    m_sprite.setColor(color);
+    m_sprite->setColor(color);
+    m_sprite->setPosition(startPosition);
+
 }
 
 void PacketDrop::update() {
@@ -28,18 +29,18 @@ void PacketDrop::update() {
         float x = m_startPosition.x + t * 50.0f; // Slight leftward movement
         float y = calculateYPosition(t);
 
-        m_sprite.setPosition(x, y);
+        m_sprite->setPosition(sf::Vector2f(x, y));
 
         // Update transparency
-        sf::Color color = m_sprite.getColor();
-        color.a = static_cast<sf::Uint8>(calculateAlpha(t) * 255);
-        m_sprite.setColor(color);
+        sf::Color color = m_sprite->getColor();
+        color.a = static_cast<uint8_t>(calculateAlpha(t) * 255);
+        m_sprite->setColor(color);
     }
 }
 
 void PacketDrop::draw(sf::RenderWindow& window) {
     if (!isFinished()) {
-        window.draw(m_sprite);
+        window.draw(*m_sprite);
     }
 }
 

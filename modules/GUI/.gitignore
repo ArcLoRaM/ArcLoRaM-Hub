@@ -1,2 +1,2 @@
-.vscode/
-.exec/
+.exec/*.dll
+.exec/*.exe

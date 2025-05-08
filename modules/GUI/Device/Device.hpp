@@ -25,9 +25,10 @@ public:
     // Info window
     sf::RectangleShape infoWindow;
     bool displayInfoWindow=false;
-    sf::Text infoTextId;
+
+    std::optional< sf::Text> infoTextId;
      std::string textId;
      std::string textBattery;
      sf::Font font; 
-    sf::Text infoTextBattery;
+    std::optional< sf::Text> infoTextBattery;
 };

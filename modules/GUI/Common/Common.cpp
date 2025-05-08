@@ -10,8 +10,8 @@ int TICK_NB = 0;
 float DISTANCE_THRESHOLD = 0.0f;
 std::mutex deviceMutex;
 
-constexpr const int windowWidth = 1600;
-constexpr const int windowHeight = 1000;
+constexpr const  int windowWidth = 1600;
+constexpr const  int windowHeight = 1000;
 
 int NBRETRANSMISSION=0;
 int ENERGYEXP=0;

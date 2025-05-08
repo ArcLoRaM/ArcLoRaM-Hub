@@ -22,13 +22,13 @@
 class VisualiserManager {
 private:
     sf::Font font; // Font for rendering text
-    sf::Text text; // SFML text object
-    sf::Text communicationMode;
-    sf::Text tickNb;
+    std::optional< sf::Text> text; // SFML text object
+    std::optional< sf::Text> communicationMode;
+    std::optional< sf::Text> tickNb;
 
-    sf::Text nbRetransmission;
+    std::optional< sf::Text> nbRetransmission;
     sf::String nbRetransmissionString;
-    sf::Text energyExpenditure;
+    std::optional< sf::Text> energyExpenditure;
     sf::String energyExpenditureString;
 
     std::vector<std::unique_ptr<BroadcastAnimation>> broadcastAnimations; // List of active broadcast animations

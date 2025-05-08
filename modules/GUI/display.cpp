@@ -13,9 +13,12 @@
 
 
 inline  void displayThread(VisualiserManager& manager) {
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "ArcLoRaM Protocol",sf::Style::Default);
+
+    sf::Vector2u windowSize = sf::Vector2u(windowWidth, windowHeight);
+    sf::RenderWindow window(sf::VideoMode(windowSize), "ArcLoRaM Protocol",sf::Style::Default);
     sf::Font font;
-    if (!font.loadFromFile("assets/arial.ttf")) {
+
+    if (!font.openFromFile("assets/arial.ttf")) {
         std::cerr << "Error loading font\n";
         isRunning = false;
         return;
@@ -23,27 +26,37 @@ inline  void displayThread(VisualiserManager& manager) {
 
 
     while (window.isOpen() && isRunning) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        
+        //Deprecated
+        // sf::Event event;
+
+// "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
+//  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
+
+
+
+        while (const std::optional event= window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
                 isRunning = false;
                 window.close();
                 
             }
 
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Q) {
+           else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+            if (keyPressed->scancode == sf::Keyboard::Scancode::Escape){
                 isRunning = false;
                 window.close();
+                 }
             }
 
             // Handle button clicks
             for (auto& button : manager.buttons) {
-                button->handleEvent(event, window);
+                button->handleEvent(*event, window);
             }
 
             // Handle Device Clicks
             for(auto& device: manager.devices){
-                device->handleEvent(event,window);
+                device->handleEvent(*event,window);
             }
         }
 
@@ -69,9 +82,9 @@ inline  void displayThread(VisualiserManager& manager) {
             logMessages.erase(logMessages.begin());
         }
         for (auto it = logMessages.rbegin(); it != logMessages.rend(); ++it) {
-            sf::Text text(*it, font, 10);
+            sf::Text text(font,*it,10);
             text.setFillColor(sf::Color::White);
-            text.setPosition(10.0f, y);
+            text.setPosition(sf::Vector2f(10.0f, y));
             window.draw(text);
             y -= 15.0f;
         }

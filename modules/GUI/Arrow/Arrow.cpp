@@ -6,6 +6,7 @@
 Arrow::Arrow(const sf::Vector2f& start, const sf::Vector2f& end,  int senderId, int receiverId, sf::Color color)
     : start(start), end(end), progress(0.0f), duration(arrowDuration), SenderId(senderId), ReceiverId(receiverId), receptionDuration(receptionDuration), receptionComplete(false), color(color) {
     // Initialize line (shaft of the arrow)
+
     line.setSize(sf::Vector2f(0, 7)); // Initially, the line length is 0, thickness = 7
     line.setFillColor(sf::Color::Red);
 
@@ -15,6 +16,8 @@ Arrow::Arrow(const sf::Vector2f& start, const sf::Vector2f& end,  int senderId, 
 
     loadTextures("assets/Reception/interference.png", "assets/Reception/notListening.png", "assets/Reception/allGood.png");
     receptionState = "received"; // Default reception state
+
+    icon = std::make_optional<sf::Sprite>(receivedTexture);
     
 }
 
@@ -53,12 +56,12 @@ void Arrow::update() {
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y) * 0.95; // 0.95 prevents overstepping
     line.setSize(sf::Vector2f(length, 7)); // Adjust the line's length and thickness
     line.setPosition(start);
-    line.setRotation(calculateAngle(start, currentPosition));
+    line.setRotation(sf::degrees(calculateAngle(start, currentPosition)));
 
     // Update arrowhead position and rotation
     float angle = calculateAngle(line.getPosition(), currentPosition);
     arrowhead.setPosition(currentPosition);
-    arrowhead.setRotation(angle);
+    arrowhead.setRotation(sf::degrees(angle));
 
     // Define the triangle points for the arrowhead
     float arrowSize = 35.0f; // Size of the arrowhead
@@ -68,21 +71,23 @@ void Arrow::update() {
 
     // If the animation is finished, start the reception clock
     if (isFinished() && !receptionComplete) {
-        icon.setPosition(currentPosition);
+        icon->setPosition(currentPosition);
 
         // Set the icon texture based on receptionState
         if (receptionState == "interference") {
-            icon.setTexture(interferenceTexture);
+            icon->setTexture(interferenceTexture);
         } else if (receptionState == "notListening") {
-            icon.setTexture(notListeningTexture);
+            icon->setTexture(notListeningTexture);
         } else if (receptionState == "received") {
-            icon.setTexture(receivedTexture);
+            icon->setTexture(receivedTexture);
         }
-icon.setScale(arrowSize / icon.getLocalBounds().width, arrowSize / icon.getLocalBounds().height);
+       sf::Vector2f factors=sf::Vector2f(arrowSize / icon->getLocalBounds().size.x, arrowSize / icon->getLocalBounds().size.y);
+        icon->setScale(factors);
 
         // Center the icon on the arrow's tip
-        sf::FloatRect bounds = icon.getLocalBounds();
-        icon.setOrigin(bounds.width / 2, bounds.height / 2);
+        sf::FloatRect bounds = icon->getLocalBounds();
+        sf::Vector2f newneworigin(bounds.size.x/ 2, bounds.size.y / 2);
+        icon->setOrigin(newneworigin);
 
         // Start the reception timer
         if (receptionClock.getElapsedTime().asSeconds() >= receptionDuration) {
@@ -97,7 +102,7 @@ void Arrow::draw(sf::RenderWindow& window) {
     window.draw(arrowhead);
 
     if (isFinished() && !receptionComplete) {
-        window.draw(icon);
+        window.draw(*icon);
     }
 }
 

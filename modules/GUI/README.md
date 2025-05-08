@@ -19,7 +19,7 @@ I personnaly used Visual Studio Code with the latest C++ extension.
 The SFML library is required for the visualizer and the simulator. Make sure to use the correct version that match your compiler! 
 Consult the following video to install it with visual studio code: https://www.youtube.com/watch?v=rZE700aaT5I&t=429s
 Also Possible on Visual studio: https://www.youtube.com/watch?v=lFzpkvrscs4&ab_channel=EOD-Ethan. 
-Next step is to run the code. This of course depends on your local setup that might vary. The provided vscode folder provides instructions to run the code from the main.cpp file using visual studio on windows.
+Next step is to run the code. This of course depends on your local setup that might vary. The provided vscode folder provides instructions to run the code from the main.cpp file using visual studio on windows but you should customize it for your compiler and your library location. SFML 3.0.0 is used for the project.
 
 The visualizer is actually a server that runs on local host on port 5000, so make sure you don't have that port taken by another system.
 

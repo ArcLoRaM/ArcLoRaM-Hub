@@ -16,7 +16,7 @@ inline void networkThread(VisualiserManager& manager) {
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
 
     // Start listening on port 5000
-    if (listener.listen(5000) != sf::Socket::Done) {
+    if (listener.listen(5000) != sf::Socket::Status::Done) {
         std::cerr << "Error starting server on port 5000\n";
         isRunning = false;
         return;
@@ -28,7 +28,7 @@ inline void networkThread(VisualiserManager& manager) {
     while (isRunning) {
         // Accept new connections
         auto client = std::make_unique<sf::TcpSocket>();
-        if (listener.accept(*client) == sf::Socket::Done) {
+        if (listener.accept(*client) == sf::Socket::Status::Done) {
             std::cout << "New client connected\n";
             client->setBlocking(false);  // Non-blocking client
             clients.push_back(std::move(client));
@@ -37,7 +37,7 @@ inline void networkThread(VisualiserManager& manager) {
         // Receive data from clients
         for (auto& client : clients) {
             sf::Packet packet;
-            if (client->receive(packet) == sf::Socket::Done) {
+            if (client->receive(packet) == sf::Socket::Status::Done) {
                 
                 int packetType;
                 packet >> packetType; // Read the type first

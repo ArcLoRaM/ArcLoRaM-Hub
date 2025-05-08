@@ -16,7 +16,7 @@ private:
 
    
 
-    sf::Sprite icon;  // Sprite for the reception state icon
+    std::optional<sf::Sprite> icon;  // Sprite for the reception state icon
     sf::Texture interferenceTexture;
     sf::Texture notListeningTexture;
     sf::Texture receivedTexture;

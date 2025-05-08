@@ -23,10 +23,10 @@ Device::Device(int nodeId,
                 throw std::runtime_error("Failed to load icon texture for class 3·");
             }            
             shape.setTexture(&iconTexture);
-            shape.setPosition(
-                coordinates.first- radiusIcon ,
-                coordinates.second- radiusIcon
-            );
+            shape.setPosition(sf::Vector2f(
+                coordinates.first - radiusIcon,
+                coordinates.second - radiusIcon
+            ));
 
         }
         else if(classNode==2){
@@ -34,16 +34,16 @@ Device::Device(int nodeId,
                 throw std::runtime_error("Failed to load icon texture for class 2·");
             }            
             shape.setTexture(&iconTexture);
-            shape.setPosition(
+            shape.setPosition(sf::Vector2f(
                 coordinates.first- radiusIcon ,
                 coordinates.second- radiusIcon
-            );
+            ));
         }
         else{
             std::cerr<<"Error: classNode not recognized"<<std::endl;
         }
         
-        if (!font.loadFromFile("assets/arial.ttf")) {
+        if (!font.openFromFile("assets/arial.ttf")) {
             return; // Handle error
         }
         //Info WIndow
@@ -52,15 +52,17 @@ Device::Device(int nodeId,
         infoWindow.setOutlineThickness(2);
         infoWindow.setOutlineColor(sf::Color::White);
         textId="Node ID:"+std::to_string(nodeId);
-        infoTextId.setCharacterSize(14);
-        infoTextId.setFont(font);
-        infoTextId.setString(textId);
-        infoTextId.setFillColor(sf::Color::White);
+
+        infoTextId = sf::Text(font);
+        infoTextId->setCharacterSize(14);
+        infoTextId->setString(textId);
+        infoTextId->setFillColor(sf::Color::White);
         textBattery="Battery: "+std::to_string(batteryLevel);
-        infoTextBattery.setCharacterSize(14);
-        infoTextBattery.setFont(font);
-        infoTextBattery.setString(textBattery);
-        infoTextBattery.setFillColor(sf::Color::White);
+
+        infoTextBattery = sf::Text(font);
+        infoTextBattery->setCharacterSize(14);
+        infoTextBattery->setString(textBattery);
+        infoTextBattery->setFillColor(sf::Color::White);
         
 
 
@@ -71,8 +73,8 @@ void Device::draw(sf::RenderWindow &window)
     window.draw(shape);
     if(displayInfoWindow){
         window.draw(infoWindow);
-        window.draw(infoTextId);
-        window.draw(infoTextBattery);
+        window.draw(*infoTextId);
+        window.draw(*infoTextBattery);
     }
     //window.draw(icon);
 }
@@ -102,17 +104,20 @@ void Device::changePNG(std::string state)
 
 void Device::handleEvent(const sf::Event &event, const sf::RenderWindow &window)
 {
-    if (event.type == sf::Event::MouseButtonPressed &&
-        event.mouseButton.button == sf::Mouse::Left) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mousePos);
-
-        if (shape.getGlobalBounds().contains(mouseWorldPos)){
-            displayInfoWindow=!displayInfoWindow;
-            if(displayInfoWindow){
-                infoWindow.setPosition(mouseWorldPos + sf::Vector2f(10, 10));
-                infoTextId.setPosition(infoWindow.getPosition() + sf::Vector2f(10, 10));
-                infoTextBattery.setPosition(infoWindow.getPosition() + sf::Vector2f(10, 30));
+    if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
+    {
+        if (mouseButtonPressed->button == sf::Mouse::Button::Left)
+        {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mousePos);
+    
+            if (shape.getGlobalBounds().contains(mouseWorldPos)){
+                displayInfoWindow=!displayInfoWindow;
+                if(displayInfoWindow){
+                    infoWindow.setPosition(mouseWorldPos + sf::Vector2f(10, 10));
+                    infoTextId->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 10));
+                    infoTextBattery->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 30));
+                }
             }
         }
     }

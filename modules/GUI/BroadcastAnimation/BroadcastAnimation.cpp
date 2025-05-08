@@ -8,32 +8,15 @@ BroadcastAnimation::BroadcastAnimation(const sf::Vector2f& startPosition, float 
     circle.setOutlineThickness(1.f);
     circle.setOutlineColor(sf::Color::White);
     circle.setRadius(0.f); // Start with zero radius
-    circle.setOrigin(0.f, 0.f); // No size, no origin adjustment needed yet
+    sf::Vector2f origin(0.f, 0.f); // No size yet
+    circle.setOrigin(origin); // No size, no origin adjustment needed yet
     circle.setPosition(startPosition);
-
-    loadTextures("assets/Reception/notListening.png", "assets/Reception/notListening.png", "assets/Reception/allGood.png");
-
-}
-
-
-//TODO remove?
-bool BroadcastAnimation::loadTextures(const std::string& interferencePath, const std::string& notListeningPath, const std::string& receivedPath) {
-    if (!interferenceTexture.loadFromFile(interferencePath) ||
-        !notListeningTexture.loadFromFile(notListeningPath) ||
-        !receivedTexture.loadFromFile(receivedPath)) {
-        throw std::runtime_error("Failed to load icon texture for receptionMsg");
-        return false; // Return false if any texture fails to load
-    }
-    return true;
 }
 
 void BroadcastAnimation::update() {
     // Calculate progress based on elapsed time
     float elapsedTime = clock.getElapsedTime().asSeconds();
     float progress = elapsedTime / duration;
-
-
-
     progress*=3; //speed up the animation
     if (progress > 1.0f) {
         progress = 1.0f; // Clamp progress to 1.0
@@ -45,7 +28,8 @@ void BroadcastAnimation::update() {
     circle.setRadius(currentRadius);
 
     // Adjust the origin to keep the circle centered
-    circle.setOrigin(currentRadius, currentRadius);
+    sf::Vector2f newOrigin(currentRadius, currentRadius);
+    circle.setOrigin(newOrigin); // Set the origin to the center of the circle
 }
 
 void BroadcastAnimation::draw(sf::RenderWindow& window) const {

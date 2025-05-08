@@ -9,7 +9,7 @@ class Button {
 private:
     sf::RectangleShape shape;
     std::string& state; // Reference to the global state this button controls
-    sf::Sprite icon;    // Icon inside the button
+    std::optional< sf::Sprite >icon;    // Icon inside the button
     sf::Texture iconTexture; // Texture for the icon
     std::string onState;
     std::string offState;
