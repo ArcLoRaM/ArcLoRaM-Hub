@@ -1,6 +1,5 @@
 #include "C2_Node.hpp"
 
-
 std::string C2_Node::initMessage() const
 {
 
@@ -18,16 +17,45 @@ std::string C2_Node::initMessage() const
     //     routingDecisionPacket routeDecisionPacket(nodeId, nextNodeIdInPath.value(), true);
     //     routePacket << routeDecisionPacket;
     // }
-        #if TOPOLOGY == MESH_SELF_HEALING
-        if(nextNodeIdInPath.has_value()){
-            sf::Packet routePacket;
-           routingDecisionPacket routeDecisionPacket(nodeId, nextNodeIdInPath.value(), true);
-           routePacket << routeDecisionPacket;        
-           logger.sendTcpPacket(routePacket);
-        }
-        #endif
+#if TOPOLOGY == MESH_SELF_HEALING
+    if (nextNodeIdInPath.has_value())
+    {
+        sf::Packet routePacket;
+        routingDecisionPacket routeDecisionPacket(nodeId, nextNodeIdInPath.value(), true);
+        routePacket << routeDecisionPacket;
+        logger.sendTcpPacket(routePacket);
+    }
+#endif
     return finalMsg;
 }
+
+// Display------------------------------------------------------------------------------------------------------
+void C2_Node::receptionStateDisplay(uint16_t senderId, std::string state)
+{
+    // TODO: put a common enum for the possible states
+
+    sf::Packet receptionStatePacketReceiver;
+    receiveMessagePacket receptionState(senderId, nodeId, state);
+    receptionStatePacketReceiver << receptionState;
+    logger.sendTcpPacket(receptionStatePacketReceiver);
+}
+
+void C2_Node::dropAnimationDisplay()
+{
+    dropAnimationPacket dropPacket(nodeId);
+    sf::Packet dropPacketReceiver;
+    dropPacketReceiver << dropPacket;
+    logger.sendTcpPacket(dropPacketReceiver);
+}
+
+void C2_Node::nodeStateDisplay(std::string state)
+{
+    sf::Packet statePacketReceiver;
+    stateNodePacket statePacket(nodeId, state);
+    statePacketReceiver << statePacket;
+    logger.sendTcpPacket(statePacketReceiver);
+}
+// END - Display------------------------------------------------------------------------------------------------------
 
 #if COMMUNICATION_PERIOD == RRC_BEACON
 
@@ -116,7 +144,8 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
                                                      (10.0 - 1.0) / 100.0 * (100.0 - batteryLevel));
         pathCost = increment;
 
-        if(nextNodeIdInPath.has_value()){
+        if (nextNodeIdInPath.has_value())
+        {
             // we supress the old routing in the visualiser.....
             sf::Packet routingPacketReceiver;
             routingDecisionPacket routingPacket(nodeId, nextNodeIdInPath.value(), false);
@@ -295,7 +324,7 @@ bool C2_Node::canCommunicateFromSleeping()
 
             addMessageToTransmit(beaconPacket, std::chrono::milliseconds(common::timeOnAirBeacon));
             beaconSlots.erase(beaconSlots.begin());
-            //TODO: we should simulate the node is transmitting here, right now it's instantaneous
+            // TODO: we should simulate the node is transmitting here, right now it's instantaneous
         }
         if (!beaconSlots.empty())
         {
@@ -563,6 +592,15 @@ bool C2_Node::canSleepFromSleeping() { return false; }
 
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
+// Display------------------------------------------------------------------------------------------------------
+
+void C2_Node::adressedPacketTransmissionDisplay(uint16_t receiverId ){
+    sf::Packet transmitPacketReceiver;
+    transmitMessagePacket transmitPacket(nodeId,receiverId , false);
+    transmitPacketReceiver << transmitPacket;
+    logger.sendTcpPacket(transmitPacketReceiver);
+}
+
 void C2_Node::displayRouting()
 {
     sf::Packet routingPacketReceiver;
@@ -574,6 +612,86 @@ void C2_Node::displayRouting()
     // logger.logMessage(rootingLog);
 }
 
+// END - Display------------------------------------------------------------------------------------------------------
+
+void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload = {})
+{
+
+    // receiving window are greater than transmitting window, so we make the transmitting node waiting the guard time
+    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+
+    // create the data packet
+    std::vector<uint8_t> dataPacket;
+
+    // preallocate the space for optimization
+    dataPacket.reserve(common::typeData.size() +
+                       common::senderGlobalIdBytesSize +
+                       common::receiverGlobalIdBytesSize +
+                       common::localIDPacketBytesSize +
+                       common::payloadSizeBytesSize +
+                       common::hashFunctionBytesSize);
+
+    // prepare the fields
+    std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                       // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> receiverGlobalId = decimalToBytes(nextNodeIdInPath.value(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);           // we increase the counter if we receive the ACK
+
+    // Should be replaced by the parameter payload.
+    std::vector<uint8_t> payloadPacket = {0xFF, 0xFF, 0xFF, 0xFF}; // Payload Size is 4 byte long in the simulation, 40 Bytes max in real life
+    std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};  // Hash Function is 4 byte long in the simulation AND in real life
+
+    // Append all fields
+
+    appendVector(dataPacket, common::typeData);
+    appendVector(dataPacket, senderGlobalId);
+    appendVector(dataPacket, receiverGlobalId);
+    appendVector(dataPacket, localIDPacket);
+    appendVector(dataPacket, payloadPacket);
+    appendVector(dataPacket, hashFunction);
+
+    // virtualization of the Transmit() from Physical Layer
+    addMessageToTransmit(dataPacket, std::chrono::milliseconds(common::timeOnAirDataPacket));
+
+    // same logic, even though it is not necessary in the simualator
+    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+}
+
+void C2_Node::buildAndTransmitAckPacket()
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+
+    std::vector<uint8_t> ackPacket;
+
+    // preallocate the space for optimization
+    ackPacket.reserve(common::typeACK.size() +
+                      common::senderGlobalIdBytesSize +
+                      common::receiverGlobalIdBytesSize +
+                      common::localIDPacketBytesSize +
+                      common::hashFunctionBytesSize);
+
+    // prepare the fields:
+    std::vector<uint8_t> senderGlobalIdPacket = decimalToBytes(nodeId, common::senderGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+
+    // TODO this line is not good, there can be multiple sources of data.. actually maybe it's correct??
+    std::vector<uint8_t> receiverGlobalIdPacket = decimalToBytes(lastSenderId, common::receiverGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+
+    std::vector<uint8_t> localIDPacket = decimalToBytes(lastLocalIDPacket, common::localIDPacketBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                           // Hash Function is 4 byte long in the simulation AND in real life
+
+    // Append all fields
+    appendVector(ackPacket, common::typeACK);
+    appendVector(ackPacket, senderGlobalIdPacket);
+    appendVector(ackPacket, receiverGlobalIdPacket);
+    appendVector(ackPacket, localIDPacket);
+    appendVector(ackPacket, hashFunction);
+    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+    addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+}
+
+
+// Receive------------------------------------------------------------------------------------------------------
 bool C2_Node::canNodeReceiveMessage()
 {
     // State Condition: node must be listening to receive a message
@@ -581,6 +699,7 @@ bool C2_Node::canNodeReceiveMessage()
     {
         return false;
     }
+    // They also need to NOT be actively transmitting
     else if (currentState == NodeState::Communicating)
     {
         return !isTransmittingWhileCommunicating;
@@ -594,72 +713,57 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
     // Node must listen/communicate and not transmit  to receive a message
     if (!canNodeReceiveMessage())
     {
-        Log notlisteninglog("Node " + std::to_string(nodeId) + " not listening, dropped msg" /*+detailedBytesToString( message)*/, true);
-        //logger.logMessage(notlisteninglog);
-
-        sf::Packet receptionStatePacketReceiver;
+        // Log notlisteninglog("Node " + std::to_string(nodeId) + " not listening, dropped msg" /*+detailedBytesToString( message)*/, true);
+        // logger.logMessage(notlisteninglog);
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        receiveMessagePacket receptionState(senderId, nodeId, "notListening");
-        receptionStatePacketReceiver << receptionState;
-        logger.sendTcpPacket(receptionStatePacketReceiver);
-
+        receptionStateDisplay(senderId, "notListening");
         return false;
     }
+
     // there should be no interference
     else if (!Node::receiveMessage(message, timeOnAir))
     {
         // an interference happened, we don't treat the message
-        sf::Packet receptionStatePacketReceiver;
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        receiveMessagePacket receptionState(senderId, nodeId, "interference");
-        receptionStatePacketReceiver << receptionState;
-        logger.sendTcpPacket(receptionStatePacketReceiver);
+        receptionStateDisplay(senderId, "interference");
         return false;
     }
-
-
-        //The packet must be adressed to us to be processed
-        uint16_t receiverId = extractBytesFromField(message, "receiverGlobalId", common::dataFieldMap);
-        if (receiverId != nodeId)
-        {
-            // not for us, we don't care
-            Log wrongReceiverLog("Node " + std::to_string(nodeId) + " received a packet not for him, dropping", true);
-            //logger.logMessage(wrongReceiverLog);
-
-            // drop Message
-            dropAnimationPacket dropPacket(nodeId);
-            sf::Packet dropPacketReceiver;
-            dropPacketReceiver << dropPacket;
-            logger.sendTcpPacket(dropPacketReceiver);
-            return false;
-        }
-
-
-
+    // The packet must be adressed to us to be processed
+    // TODO: put the name of the fields in the common file, or in a struct
+    uint16_t receiverId = extractBytesFromField(message, "receiverGlobalId", common::dataFieldMap);
+    
+    // if packet is not for this node,message is dropped
+    if (receiverId != nodeId)
+    {
+        // Log wrongReceiverLog("Node " + std::to_string(nodeId) + " received a packet not for him, dropping", true);
+        // logger.logMessage(wrongReceiverLog);
+        dropAnimationDisplay();
+        return false;
+    }
+    
+    // is it a data packet and  are we in a data window
     if (message[0] == common::typeData[0] && !isACKSlot)
     {
-        // it's a data packet and we are in a data window
-
-        // we received a packet for us, we should send an ack no matter what happened before (ack can be lost)
+        // we received a packet for us, we should send an ack no matter what happened before (ack can be lost so we should not check if we already sent one)
         shouldReplyACK = true;
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
         lastSenderId = senderId;
         lastLocalIDPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
+
         // we store the local packet ID in map
         uint16_t localIDPacket = lastLocalIDPacket;
         auto &packetList = packetsMap[senderId]; // Get the vector for the sender
+
+        // Only add if the packet is not already present
         if (std::find(packetList.begin(), packetList.end(), localIDPacket) == packetList.end())
         {
-            // Only add if the packet is not already present
             packetList.push_back(localIDPacket);
-
-            // it's a simulation, in real implementation, we should save the payload and add it to a buffer
+            // TODO: it's a simulation, in real implementation, we should save the payload and add it to a buffer
             nbPayloadLeft++;
         }
-        sf::Packet receptionStatePacketReceiver;
-        receiveMessagePacket receptionState(senderId, nodeId, "received");
-        receptionStatePacketReceiver << receptionState;
-        logger.sendTcpPacket(receptionStatePacketReceiver);
+
+        // Indicate the visualiser the packet is received and handled
+        receptionStateDisplay(senderId, "received");
     }
     else if (message[0] == common::typeACK[0] && isACKSlot)
     {
@@ -668,22 +772,20 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         if (localIdPacket == localIDPacketCounter)
         {
             // we received the ACK for the last packet we sent
-            nbPayloadLeft--;        // in real life, we remove the payload from the buffer
+            nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
             localIDPacketCounter++; // increasing the counter signify to nextNodeInPath that it's a new packet that we send
-            isExpectingACK=false;
+            isExpectingACK = false;
         }
-
-        sf::Packet receptionStatePacketReceiver;
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        receiveMessagePacket receptionState(senderId, nodeId, "received");
-        receptionStatePacketReceiver << receptionState;
-        logger.sendTcpPacket(receptionStatePacketReceiver);
+        receptionStateDisplay(senderId, "received");
     }
-
 
     return true;
 }
+//End -  Receive------------------------------------------------------------------------------------------------------
 
+
+//State Transitions ---------------------------------------------------------------------------------
 bool C2_Node::canCommunicateFromSleeping()
 {
 
@@ -701,12 +803,9 @@ bool C2_Node::canCommunicateFromSleeping()
     currentState = NodeState::Communicating;
     isTransmittingWhileCommunicating = false;
 
-    sf::Packet statePacketReceiver;
-    stateNodePacket statePacket(nodeId, "Communicate");
-    statePacketReceiver << statePacket;
-    logger.sendTcpPacket(statePacketReceiver);
+    nodeStateDisplay("Communicate");
 
-    isACKSlot = !isACKSlot; // Data or ACK slot
+    isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
     if (!isACKSlot)
     {
         // we are in a data slot, let's check if we can transmit depending of the type of slot (even/odd) and hop count (see protocol definition)
@@ -734,47 +833,16 @@ bool C2_Node::canCommunicateFromSleeping()
 
                     // we have something to transmit and we reached the self allowed slot for effective transmission
                     isTransmittingWhileCommunicating = true;
-                    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
 
-                    // create the data packet
-                    std::vector<uint8_t> dataPacket;
+                    buildAndTransmitDataPacket();
 
-                    // preallocate the space for optimization
-                    dataPacket.reserve(common::typeData.size() +
-                                       common::senderGlobalIdBytesSize +
-                                       common::receiverGlobalIdBytesSize +
-                                       common::localIDPacketBytesSize +
-                                       common::payloadSizeBytesSize +
-                                       common::hashFunctionBytesSize);
+                    // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
+                    isExpectingACK = true;
 
-                    // prepare the fields
-                    std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                       // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-                    std::vector<uint8_t> receiverGlobalId = decimalToBytes(nextNodeIdInPath.value(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
-                    std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);           // we increase the counter if we receive the ACK
-                    std::vector<uint8_t> payloadPacket = {0xFF, 0xFF, 0xFF, 0xFF};                                                       // Payload Size is 4 byte long in the simulation, 40 Bytes max in real life
-                    std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                                        // Hash Function is 4 byte long in the simulation AND in real life
+                    // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
+                    // logger.logMessage(newMessage);
 
-                    // Append all fields
-
-                    appendVector(dataPacket, common::typeData);
-                    appendVector(dataPacket, senderGlobalId);
-                    appendVector(dataPacket, receiverGlobalId);
-                    appendVector(dataPacket, localIDPacket);
-                    appendVector(dataPacket, payloadPacket);
-                    appendVector(dataPacket, hashFunction);
-
-                    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-
-                    addMessageToTransmit(dataPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
-                    //once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                    isExpectingACK=true;
-                    Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
-                    //logger.logMessage(newMessage);
-
-                    sf::Packet transmitPacketReceiver;
-                    transmitMessagePacket transmitPacket(nodeId, nextNodeIdInPath.value(), false);
-                    transmitPacketReceiver << transmitPacket;
-                    logger.sendTcpPacket(transmitPacketReceiver);
+                    adressedPacketTransmissionDisplay(nextNodeIdInPath.value());
                 }
             }
         }
@@ -789,47 +857,16 @@ bool C2_Node::canCommunicateFromSleeping()
 
                 // we have something to transmit and we reached the self allowed slot for effective transmission
                 isTransmittingWhileCommunicating = true;
-                std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
 
-                // create the data packet
-                std::vector<uint8_t> dataPacket;
+                // call new function
+                buildAndTransmitDataPacket();
 
-                // preallocate the space for optimization
-                dataPacket.reserve(common::typeData.size() +
-                                   common::senderGlobalIdBytesSize +
-                                   common::receiverGlobalIdBytesSize +
-                                   common::localIDPacketBytesSize +
-                                   common::payloadSizeBytesSize +
-                                   common::hashFunctionBytesSize);
+                // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
+                isExpectingACK = true;
+                // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
+                // logger.logMessage(newMessage);
 
-                // prepare the fields
-                std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                       // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-                std::vector<uint8_t> receiverGlobalId = decimalToBytes(nextNodeIdInPath.value(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
-                std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);           // we increase the counter if we receive the ACK
-                std::vector<uint8_t> payloadPacket = {0xFF, 0xFF, 0xFF, 0xFF};                                                       // Payload Size is 4 byte long in the simulation, 40 Bytes max in real life
-                std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                                        // Hash Function is 4 byte long in the simulation AND in real life
-
-                // Append all fields
-
-                appendVector(dataPacket, common::typeData);
-                appendVector(dataPacket, senderGlobalId);
-                appendVector(dataPacket, receiverGlobalId);
-                appendVector(dataPacket, localIDPacket);
-                appendVector(dataPacket, payloadPacket);
-                appendVector(dataPacket, hashFunction);
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-
-                addMessageToTransmit(dataPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
-                //once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                isExpectingACK=true;
-                Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
-                //logger.logMessage(newMessage);
-
-                sf::Packet transmitPacketReceiver;
-                transmitMessagePacket transmitPacket(nodeId, nextNodeIdInPath.value(), false);
-                transmitPacketReceiver << transmitPacket;
-                logger.sendTcpPacket(transmitPacketReceiver);
+                adressedPacketTransmissionDisplay(nextNodeIdInPath.value());
             }
             // start by decreasing for odd nodes
             if (!transmissionSlots.empty())
@@ -843,71 +880,37 @@ bool C2_Node::canCommunicateFromSleeping()
     }
     else
     {
-        // we are in ACK
+        // we are in ACK, do we have an ack to send?
         if (shouldReplyACK)
         {
             shouldReplyACK = false;
             isTransmittingWhileCommunicating = true;
 
-            std::vector<uint8_t> ackPacket;
+            buildAndTransmitAckPacket();
 
-            // preallocate the space for optimization
-            ackPacket.reserve(common::typeACK.size() +
-                              common::senderGlobalIdBytesSize +
-                              common::receiverGlobalIdBytesSize +
-                              common::localIDPacketBytesSize +
-                              common::hashFunctionBytesSize);
-
-            // prepare the fields:
-            std::vector<uint8_t> senderGlobalIdPacket = decimalToBytes(nodeId, common::senderGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-
-            // TODO this line is not good, there can be multiple sources of data.. actually maybe it's correct??
-            std::vector<uint8_t> receiverGlobalIdPacket = decimalToBytes(lastSenderId, common::receiverGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-
-            std::vector<uint8_t> localIDPacket = decimalToBytes(lastLocalIDPacket, common::localIDPacketBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-            std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                           // Hash Function is 4 byte long in the simulation AND in real life
-
-            // Append all fields
-            appendVector(ackPacket, common::typeACK);
-            appendVector(ackPacket, senderGlobalIdPacket);
-            appendVector(ackPacket, receiverGlobalIdPacket);
-            appendVector(ackPacket, localIDPacket);
-            appendVector(ackPacket, hashFunction);
-            std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-            addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
-
-            sf::Packet transmitPacketReceiver;
-            transmitMessagePacket transmitPacket(nodeId, lastSenderId, true);
-            transmitPacketReceiver << transmitPacket;
-            logger.sendTcpPacket(transmitPacketReceiver);
+            adressedPacketTransmissionDisplay(lastSenderId);
         }
     }
 
     return true;
 }
 
-
 bool C2_Node::canSleepFromCommunicating()
 {
-    secondSleepWindow=!secondSleepWindow;
-    if(nodeId==2){
-    logger.logMessage(Log(secondSleepWindow?"Second":"First"+isExpectingACK?"-IsExpecting":"-Not Expecting", true));
+    secondSleepWindow = !secondSleepWindow;
 
-    }
-        if(isExpectingACK&&secondSleepWindow){
-        //we sent A Data packet and didn't receive an ACK in the next transmission window, so there will be retransmission-> we indicate this to the vizualiser
+    if (isExpectingACK && secondSleepWindow)
+    {
+        // we sent a Data packet and didn't receive an ACK in the next transmission window, so there will be retransmission-> specific metric in the vizualiser.
         retransmissionPacket retransmissionPacket(nodeId);
         sf::Packet retransmissionPacketReceiver;
         retransmissionPacketReceiver << retransmissionPacket;
         logger.sendTcpPacket(retransmissionPacketReceiver);
-        isExpectingACK=false;
+        isExpectingACK = false;
     }
 
     currentState = NodeState::Sleeping;
-    sf::Packet statePacketReceiver;
-    stateNodePacket statePacket(nodeId, "Sleep");
-    statePacketReceiver << statePacket;
-    logger.sendTcpPacket(statePacketReceiver);
+    nodeStateDisplay("Sleep");
     return true;
 }
 
@@ -926,6 +929,8 @@ bool C2_Node::canListenFromCommunicating() { return false; }
 bool C2_Node::canSleepFromTransmitting() { return false; }
 bool C2_Node::canSleepFromListening() { return false; }
 bool C2_Node::canSleepFromSleeping() { return false; }
+
+//End - State Transitions ---------------------------------------------------------------------------------
 
 #else
 #error "Unknown COMMUNICATION_PERIOD mode"
