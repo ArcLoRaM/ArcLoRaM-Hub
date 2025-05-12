@@ -151,21 +151,38 @@ protected:
     // Adds a Packet ID to the sender's list
     PacketMap packetsMap; // Data structure to store packets
 
-    // ACK strategy
-    // bool shouldReplyACK = false;
-    // uint16_t lastSenderId;
-    // uint16_t lastLocalIDPacket;
 
     // to display the number of retransmission in the visualiser
-    bool isExpectingACK = false;
-    bool secondSleepWindow = true;
-
 
     //Struct -------------------------------------------------------------------------------------------
-    struct RetransmissionCounterHelper{
-        bool isExpectingAck {false};
-        bool secondSleepWindow{false};
-    };
+    struct RetransmissionCounterHelper {
+        //  retransmission  is a metric in the visualiser)
+        private:
+            bool isExpectingAck{false};
+            bool secondSleepWindow{true};
+        
+        public:
+            // Setter for isExpectingAck with parameter
+            void setIsExpectingAck(bool expecting) noexcept {
+                isExpectingAck = expecting;
+            }
+        
+            // Setter for secondSleepWindow that toggles its value
+            void toggleSecondSleepWindow() noexcept {
+                secondSleepWindow = !secondSleepWindow;
+            }
+        
+            // Getter for isExpectingAck
+            [[nodiscard]] bool getIsExpectingAck() const noexcept {
+                return isExpectingAck;
+            }
+        
+            // Getter for secondSleepWindow
+            [[nodiscard]] bool getSecondSleepWindow() const noexcept {
+                return secondSleepWindow;
+            }
+        };
+        
 
     struct AckInformation{
         private:
@@ -200,6 +217,7 @@ protected:
     };
 
     AckInformation ackInformation;
+    RetransmissionCounterHelper retransmissionCounterHelper;
 
 
     //End - Struct -------------------------------------------------------------------------------------------

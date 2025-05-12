@@ -685,7 +685,7 @@ void C2_Node::buildAndTransmitAckPacket()
     appendVector(ackPacket, hashFunction);
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
     addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
-    
+
     adressedPacketTransmissionDisplay(ackInformationIds.first);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
@@ -775,7 +775,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
             // we received the ACK for the last packet we sent
             nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
             localIDPacketCounter++; // increasing the counter signify to nextNodeInPath that it's a new packet that we send
-            isExpectingACK = false;
+            retransmissionCounterHelper.setIsExpectingAck(false);
         }
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
         receptionStateDisplay(senderId, "received");
@@ -838,7 +838,7 @@ bool C2_Node::canCommunicateFromSleeping()
                     buildAndTransmitDataPacket();
 
                     // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                    isExpectingACK = true;
+                    retransmissionCounterHelper.setIsExpectingAck(true);
 
                     // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
                     // logger.logMessage(newMessage);
@@ -863,7 +863,7 @@ bool C2_Node::canCommunicateFromSleeping()
                 buildAndTransmitDataPacket();
 
                 // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                isExpectingACK = true;
+                retransmissionCounterHelper.setIsExpectingAck(true);
                 // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
                 // logger.logMessage(newMessage);
 
@@ -897,16 +897,16 @@ bool C2_Node::canCommunicateFromSleeping()
 
 bool C2_Node::canSleepFromCommunicating()
 {
-    secondSleepWindow = !secondSleepWindow;
+    retransmissionCounterHelper.toggleSecondSleepWindow();
 
-    if (isExpectingACK && secondSleepWindow)
+    if ( retransmissionCounterHelper.getIsExpectingAck() && retransmissionCounterHelper.getSecondSleepWindow())
     {
         // we sent a Data packet and didn't receive an ACK in the next transmission window, so there will be retransmission-> specific metric in the vizualiser.
         retransmissionPacket retransmissionPacket(nodeId);
         sf::Packet retransmissionPacketReceiver;
         retransmissionPacketReceiver << retransmissionPacket;
         logger.sendTcpPacket(retransmissionPacketReceiver);
-        isExpectingACK = false;
+        retransmissionCounterHelper.setIsExpectingAck(false);
     }
 
     currentState = NodeState::Sleeping;
