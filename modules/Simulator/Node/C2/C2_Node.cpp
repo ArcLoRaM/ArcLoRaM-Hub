@@ -672,10 +672,9 @@ void C2_Node::buildAndTransmitAckPacket()
     // prepare the fields:
     std::vector<uint8_t> senderGlobalIdPacket = decimalToBytes(nodeId, common::senderGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
 
-    // TODO this line is not good, there can be multiple sources of data.. actually maybe it's correct??
-    std::vector<uint8_t> receiverGlobalIdPacket = decimalToBytes(lastSenderId, common::receiverGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-
-    std::vector<uint8_t> localIDPacket = decimalToBytes(lastLocalIDPacket, common::localIDPacketBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    auto ackInformationIds= ackInformation.getAndResetAckInformation();
+    std::vector<uint8_t> receiverGlobalIdPacket = decimalToBytes(ackInformationIds.first, common::receiverGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> localIDPacket = decimalToBytes(ackInformationIds.second, common::localIDPacketBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
     std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                           // Hash Function is 4 byte long in the simulation AND in real life
 
     // Append all fields
@@ -686,8 +685,11 @@ void C2_Node::buildAndTransmitAckPacket()
     appendVector(ackPacket, hashFunction);
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
     addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
+    
+    adressedPacketTransmissionDisplay(ackInformationIds.first);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+
 }
 
 
@@ -745,25 +747,24 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
     if (message[0] == common::typeData[0] && !isACKSlot)
     {
         // we received a packet for us, we should send an ack no matter what happened before (ack can be lost so we should not check if we already sent one)
-        shouldReplyACK = true;
-        uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        lastSenderId = senderId;
-        lastLocalIDPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
+        auto lastLocalIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
+        auto lastSenderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
+        ackInformation.setNewAckInformation(lastSenderId,lastLocalIdPacket);
+        
 
+        //TODO: encapsulate this mess
         // we store the local packet ID in map
-        uint16_t localIDPacket = lastLocalIDPacket;
-        auto &packetList = packetsMap[senderId]; // Get the vector for the sender
-
+        auto &packetList = packetsMap[lastSenderId]; // Get the vector for the sender
         // Only add if the packet is not already present
-        if (std::find(packetList.begin(), packetList.end(), localIDPacket) == packetList.end())
+        if (std::find(packetList.begin(), packetList.end(), lastLocalIdPacket) == packetList.end())
         {
-            packetList.push_back(localIDPacket);
+            packetList.push_back(lastLocalIdPacket);
             // TODO: it's a simulation, in real implementation, we should save the payload and add it to a buffer
             nbPayloadLeft++;
         }
 
         // Indicate the visualiser the packet is received and handled
-        receptionStateDisplay(senderId, "received");
+        receptionStateDisplay(lastSenderId, "received");
     }
     else if (message[0] == common::typeACK[0] && isACKSlot)
     {
@@ -881,14 +882,13 @@ bool C2_Node::canCommunicateFromSleeping()
     else
     {
         // we are in ACK, do we have an ack to send?
-        if (shouldReplyACK)
+        if (ackInformation.shouldReplyAck())
         {
-            shouldReplyACK = false;
             isTransmittingWhileCommunicating = true;
 
+            //we also display the Ack Being transmitted in the function above
             buildAndTransmitAckPacket();
 
-            adressedPacketTransmissionDisplay(lastSenderId);
         }
     }
 

@@ -152,13 +152,57 @@ protected:
     PacketMap packetsMap; // Data structure to store packets
 
     // ACK strategy
-    bool shouldReplyACK = false;
-    uint16_t lastSenderId;
-    uint16_t lastLocalIDPacket;
+    // bool shouldReplyACK = false;
+    // uint16_t lastSenderId;
+    // uint16_t lastLocalIDPacket;
 
     // to display the number of retransmission in the visualiser
     bool isExpectingACK = false;
     bool secondSleepWindow = true;
+
+
+    //Struct -------------------------------------------------------------------------------------------
+    struct RetransmissionCounterHelper{
+        bool isExpectingAck {false};
+        bool secondSleepWindow{false};
+    };
+
+    struct AckInformation{
+        private:
+        std::optional<uint16_t> lastSenderId;
+        std::optional<uint16_t> lastLocalIDPacket;
+        bool replyAck{false};
+
+        public:
+        void setNewAckInformation(uint16_t lastSenderId, uint16_t lastLocalIDPacket) noexcept {
+            this->lastSenderId=lastSenderId;
+            this->lastLocalIDPacket=lastLocalIDPacket;
+            replyAck=true;
+        }
+
+        bool shouldReplyAck() const noexcept {
+            return replyAck;
+        }
+
+        std::pair<uint16_t, uint16_t> getAndResetAckInformation() {
+            if (!lastSenderId.has_value() || !lastLocalIDPacket.has_value()) {
+                throw std::runtime_error("AckInformation not set");
+            }
+    
+            // Use std::exchange to get the values and reset to nullopt
+            auto senderId = std::exchange(lastSenderId, std::nullopt);
+            auto localID = std::exchange(lastLocalIDPacket, std::nullopt);
+    
+            replyAck = false;
+    
+            return {senderId.value(), localID.value()};
+        }
+    };
+
+    AckInformation ackInformation;
+
+
+    //End - Struct -------------------------------------------------------------------------------------------
 
 #else
 #error "Unknown COMMUNICATION_PERIOD mode"
