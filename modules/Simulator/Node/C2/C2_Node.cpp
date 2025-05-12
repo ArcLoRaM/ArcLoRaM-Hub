@@ -709,6 +709,35 @@ bool C2_Node::canNodeReceiveMessage()
     return true;
 }
 
+void C2_Node::handleDataPacketReception(const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId){
+
+        // we store the local packet ID in map. This is how we know if the packet is new or not
+        auto &packetList = packetsMap[senderId]; // Get the vector for the sender
+        // Only add if the packet is not already present
+        if (std::find(packetList.begin(), packetList.end(), packetId) == packetList.end())
+        {
+            packetList.push_back(packetId);
+            // TODO: it's a simulation, in real implementation, we should save the message and add it to a buffer
+            nbPayloadLeft++;
+        }
+}
+
+
+void C2_Node::handleAckPacketReception( uint16_t senderId, uint32_t packetId){
+    //is it the Ack packet we were waiting for?
+    if (packetId == localIDPacketCounter)
+    {
+        // we received the ACK for the last packet we sent
+        nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
+        localIDPacketCounter++; // increasing the counter to indicate we send a "new" packet
+        retransmissionCounterHelper.setIsExpectingAck(false);
+        receptionStateDisplay(senderId, "received");
+    }
+    else{
+        dropAnimationDisplay();
+    }
+}
+
 bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
 {
 
@@ -750,19 +779,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         auto lastLocalIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
         auto lastSenderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
         ackInformation.setNewAckInformation(lastSenderId,lastLocalIdPacket);
-        
-
-        //TODO: encapsulate this mess
-        // we store the local packet ID in map
-        auto &packetList = packetsMap[lastSenderId]; // Get the vector for the sender
-        // Only add if the packet is not already present
-        if (std::find(packetList.begin(), packetList.end(), lastLocalIdPacket) == packetList.end())
-        {
-            packetList.push_back(lastLocalIdPacket);
-            // TODO: it's a simulation, in real implementation, we should save the payload and add it to a buffer
-            nbPayloadLeft++;
-        }
-
+        handleDataPacketReception(message, lastSenderId, lastLocalIdPacket);
         // Indicate the visualiser the packet is received and handled
         receptionStateDisplay(lastSenderId, "received");
     }
@@ -770,17 +787,12 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
     {
         // it's an ACK packet and we are in an ACK window
         uint16_t localIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
-        if (localIdPacket == localIDPacketCounter)
-        {
-            // we received the ACK for the last packet we sent
-            nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
-            localIDPacketCounter++; // increasing the counter signify to nextNodeInPath that it's a new packet that we send
-            retransmissionCounterHelper.setIsExpectingAck(false);
-        }
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        receptionStateDisplay(senderId, "received");
+        //Visualiser Display behavior inside the above function.
+        handleAckPacketReception(senderId, localIdPacket);
     }
 
+    //message has been handled correctly, even the case if data packet received in not a data window??? to check
     return true;
 }
 //End -  Receive------------------------------------------------------------------------------------------------------

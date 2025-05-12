@@ -125,6 +125,8 @@ protected:
 
     // Reception---------------------------------------------------------------------------------------
     bool canNodeReceiveMessage();
+    void handleDataPacketReception(const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId);
+    void handleAckPacketReception( uint16_t senderId, uint32_t packetId);
     bool isTransmittingWhileCommunicating = false;
 
     // Transmission------------------------------------------------------------------------------------
