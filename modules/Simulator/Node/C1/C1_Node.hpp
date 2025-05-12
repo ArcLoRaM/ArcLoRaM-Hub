@@ -1,6 +1,6 @@
 #pragma once
 #include "../Node.hpp"
-
+#include "../../Setup/Common.hpp"
 
 class C1_Node : public Node {
 

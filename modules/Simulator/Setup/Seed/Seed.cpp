@@ -322,6 +322,8 @@ void Seed::initialize_RRC_Uplink_Mesh()
     C2_Parameters.push_back(node5);
     C2_Node_Mesh_Parameter node6 = {coordinatesC2[5], 3, 3};
     C2_Parameters.push_back(node6);
+
+
     for (int i = 1; i < nbC2Nodes + 1; i++)
     {
 
@@ -337,6 +339,8 @@ void Seed::initialize_RRC_Uplink_Mesh()
         listNode.push_back(node);
     }
 }
+
+
 void Seed::initialize_RRC_Uplink_Line()
 {
     /*

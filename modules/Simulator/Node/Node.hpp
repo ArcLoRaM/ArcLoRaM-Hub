@@ -8,7 +8,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <memory>
-#include "Logger.hpp"
+#include "../Connectivity/Logger/Logger.hpp"
 #include <utility> // For std::pair
 #include <functional> // For std::function
 #include <optional>
@@ -17,8 +17,9 @@
 #include <sstream>
 #include <map>
 #include <atomic>
-#include "PacketTool.hpp"
-
+#include "../Miscellaneous/PacketTool/PacketTool.hpp"
+#include <optional>
+#include <future>
 
 
 // Enum representing possible states for nodes

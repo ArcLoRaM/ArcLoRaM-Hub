@@ -6,8 +6,8 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-#include "Node.hpp" // Assuming Node is declared in Node.h
-
+#include "../Node/Node.hpp" // Assuming Node is declared in Node.h
+#include <iostream>
 
 class SimulationManager {
 public:

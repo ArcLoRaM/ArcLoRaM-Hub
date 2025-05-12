@@ -1,6 +1,5 @@
 #include "Node.hpp"
-#include <optional>
-#include <future>
+
 
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger& logger, std::pair<int,int> coordinates, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex,double batteryLevel)

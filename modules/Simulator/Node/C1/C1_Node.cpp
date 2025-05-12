@@ -1,5 +1,4 @@
 #include "C1_Node.hpp"
-#include "../Common.hpp"
 
 
 std::string C1_Node::initMessage() const{

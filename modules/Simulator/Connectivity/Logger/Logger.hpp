@@ -7,8 +7,10 @@
 #include <queue>
 #include <condition_variable>
 #include <fstream>
-#include "TCP/Client.hpp"
+#include "../TCP/Client.hpp"
 #include <SFML/Network.hpp>
+#include "../../Setup/Common.hpp"
+
 
 struct Log {
     std::string message;

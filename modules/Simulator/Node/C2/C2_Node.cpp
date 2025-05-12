@@ -1,6 +1,5 @@
 #include "C2_Node.hpp"
-#include "../Common.hpp"
-#include "../TCP/packets.hpp"
+
 
 std::string C2_Node::initMessage() const
 {
@@ -886,6 +885,8 @@ bool C2_Node::canCommunicateFromSleeping()
 
     return true;
 }
+
+
 bool C2_Node::canSleepFromCommunicating()
 {
     secondSleepWindow=!secondSleepWindow;
@@ -901,9 +902,6 @@ bool C2_Node::canSleepFromCommunicating()
         logger.sendTcpPacket(retransmissionPacketReceiver);
         isExpectingACK=false;
     }
-
-    
-
 
     currentState = NodeState::Sleeping;
     sf::Packet statePacketReceiver;

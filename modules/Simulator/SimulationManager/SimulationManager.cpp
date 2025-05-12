@@ -1,5 +1,5 @@
 #include "SimulationManager.hpp"
-#include <iostream>
+
 
 SimulationManager::SimulationManager( double distanceThreshold,Logger& logger) 
     : logger(logger),distanceThreshold(distanceThreshold) {

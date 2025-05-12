@@ -1,5 +1,5 @@
 #include "Logger.hpp"
-#include "Common.hpp"
+
 
 
     void Logger::start() {
@@ -28,41 +28,26 @@
     void Logger::sendTcpPacket(sf::Packet packet){
        
         if(!common::visualiserConnected) return;
-        
         std::lock_guard<std::mutex> lock(queueMutex);
-
         if(packet){
             tcpQueue.push(packet);
             cv.notify_one();
-        }
-            
+        }  
     }
 
-
-
-
     void Logger::processMessages() {
-
-        // std::ofstream logFile("log.txt", std::ios::app); // Open log file in append mode
-        // if (!logFile) {
-        //     std::cerr << "Failed to open log file!" << std::endl;
-        //     return;
-        // }
-
 
         // std::vector<std::string> textBuffer; // Buffer for batch processing
         std::vector<std::string> terminalBuffer; // Buffer for batch processing
         const size_t maxTerminalBufferSize = 5; // Set a buffer size limit
         const size_t maxTextBufferSize = 3; // Set a buffer size limit
 
-
-
         while (true) {
             std::unique_lock<std::mutex> lock(queueMutex); //unique allows more flexibility (lock unlock) than lock_guard
             cv.wait(lock, //makes the thread wait until the condition variable cv is notified.
             [this] { return (!tcpQueue.empty()||!terminalQueue.empty()) || stopFlag; }); //ensures that the thread only proceeds if: one queue not empty OR stopflag is set
             
-            //tcp packets--------------------------
+            //tcp packets----------------------------------------------------------------------------------
             while (!tcpQueue.empty()) {
 
                 if(client->transmit(tcpQueue.front())){
@@ -77,13 +62,10 @@
                     else{
                         break;
                     }
-
-
                  }
             }
 
-            //terminal messages--------------------
-
+            //terminal messages-----------------------------------------------------------------------------
             while (!terminalQueue.empty()) {
                 terminalBuffer.push_back(terminalQueue.front().message);
                 terminalQueue.pop();
@@ -104,7 +86,6 @@
                     std::cout << msg << "\n"; //"\n" and endl is not the same !
                 }
                 std::cout<<std::flush;               
-                // flushBuffer(logFile, textBuffer); // Flush remaining messages
                 break; // Exit the loop
             }
         }

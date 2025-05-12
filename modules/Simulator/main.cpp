@@ -1,18 +1,18 @@
 
 #include <thread>
-#include "SimulationManager.hpp"
-#include "Logger.hpp"
+#include "SimulationManager/SimulationManager.hpp"
+#include "Connectivity/Logger/Logger.hpp"
 #include <atomic>
 #include <list>
 #include <conio.h> // For _kbhit() and _getch()
-#include "C3/C3_Node.hpp"
-#include "C2/C2_Node.hpp"
-#include "C1/C1_Node.hpp"
-#include "Clock.hpp"
-#include "Seed.hpp"
-#include "Common.hpp"
+#include "Node/C3/C3_Node.hpp"
+#include "Node/C2/C2_Node.hpp"
+#include "Node/C1/C1_Node.hpp"
+#include "Node/Clock/Clock.hpp"
+#include "Setup/Seed/Seed.hpp"
+#include "Setup/Common.hpp"
 
-#include "Node.hpp"
+#include "Node/Node.hpp"
 
 
 int main() {
@@ -43,7 +43,7 @@ int main() {
     
     SimulationManager manager(common::distanceThreshold,logger);
 
-// //--------------------------------------------------------------Node Provisionning-------------------------------------------------
+//--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
     
  

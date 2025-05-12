@@ -1,7 +1,8 @@
 #pragma once
-#include "../Node.hpp"
-#include "../Common.hpp"
 
+#include "../../Setup/Common.hpp"
+#include "../Node.hpp"
+#include "../../Connectivity/TCP/packets.hpp"	
 class C3_Node : public Node {
 
 public :

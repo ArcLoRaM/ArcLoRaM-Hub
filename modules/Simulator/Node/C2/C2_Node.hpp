@@ -1,7 +1,7 @@
 #pragma once
 #include "../Node.hpp"
-#include "../TCP/packets.hpp"
-
+#include "../../Setup/Common.hpp"
+#include "../../Connectivity/TCP/packets.hpp"	
 //TODO:
 //instead of having multiple variables, prepare struct or objects that will contain the information needed to pass logic between receive() and transmit()
 

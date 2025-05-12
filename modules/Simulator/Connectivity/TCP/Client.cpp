@@ -1,8 +1,8 @@
 
-#include <thread>
-#include <chrono>
-#include "../Common.hpp"
+
 #include "Client.hpp"
+
+
 Client::Client(const std::string& serverIp, unsigned short serverPort)
     : isConnected(false) {
     if(!common::visualiserConnected){

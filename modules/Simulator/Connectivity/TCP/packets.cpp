@@ -1,5 +1,3 @@
-
-
 #include "packets.hpp"
 
 // -------------------- systemPacket --------------------
