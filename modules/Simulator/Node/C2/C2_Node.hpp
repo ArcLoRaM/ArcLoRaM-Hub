@@ -38,7 +38,7 @@ public:
     };
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
     C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, std::condition_variable &dispatchCv, std::mutex &dispatchCvMutex, uint16_t nextNodeIdInPath, uint8_t hopCount)
-        : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex), nextNodeIdInPath(nextNodeIdInPath), hopCount(hopCount)
+        : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex), infoFromBeaconPhase{nextNodeIdInPath, hopCount} 
     {
 
         initializeTransitionMap();
@@ -118,109 +118,184 @@ protected:
 
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
-    // visualiser
+    // visualiser---------------------------------------------------------------------------------------
     void displayRouting(); // we cannot put this in the constructor as we need to wait for the visualiser to receive all the nodes
     bool routingDisplayed = false;
     void adressedPacketTransmissionDisplay(uint16_t receiverId);
 
-    // Reception
+    // Reception---------------------------------------------------------------------------------------
     bool canNodeReceiveMessage();
     bool isTransmittingWhileCommunicating = false;
 
+    // Transmission------------------------------------------------------------------------------------
     void buildAndTransmitDataPacket(std::vector<uint8_t> payload);
     void buildAndTransmitAckPacket();
 
-    // Variables that should have been provided during beacon phase
-    std::optional<uint16_t> nextNodeIdInPath;
-    uint8_t hopCount;
-
-    // Data Strategy
+    // Slot Strategy ---------------------------------------------------------------------------------------
     bool isOddSlot = false;
     bool isACKSlot = true;
+    std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
+
     unsigned int localIDPacketCounter = 0;
 
-    std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
-    uint8_t nbPayloadLeft;              // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
-    uint8_t initialnbPaylaod = 2;       // initial number of payload
-    
+    uint8_t nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
+    uint8_t initialnbPaylaod = 2; // initial number of payload
+
     // TODO: use more aliases in the code
     using SenderID = uint16_t;
     using PacketID = uint16_t;
     using PacketList = std::vector<PacketID>;                   // Alias for a list of Packet IDs
-    using PacketMap = std::unordered_map<SenderID, PacketList>; // we need the packet Map to not forward already forwarded data packet
+    using PacketMap = std::unordered_map<SenderID, PacketList>; // we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
     // Adds a Packet ID to the sender's list
     PacketMap packetsMap; // Data structure to store packets
 
-
     // to display the number of retransmission in the visualiser
 
-    //Struct -------------------------------------------------------------------------------------------
-    struct RetransmissionCounterHelper {
-        //  retransmission  is a metric in the visualiser)
-        private:
-            bool isExpectingAck{false};
-            bool secondSleepWindow{true};
-        
-        public:
-            // Setter for isExpectingAck with parameter
-            void setIsExpectingAck(bool expecting) noexcept {
-                isExpectingAck = expecting;
-            }
-        
-            // Setter for secondSleepWindow that toggles its value
-            void toggleSecondSleepWindow() noexcept {
-                secondSleepWindow = !secondSleepWindow;
-            }
-        
-            // Getter for isExpectingAck
-            [[nodiscard]] bool getIsExpectingAck() const noexcept {
-                return isExpectingAck;
-            }
-        
-            // Getter for secondSleepWindow
-            [[nodiscard]] bool getSecondSleepWindow() const noexcept {
-                return secondSleepWindow;
-            }
-        };
-        
+    // Struct -------------------------------------------------------------------------------------------
 
-    struct AckInformation{
-        private:
+    struct InformationFromBeaconPhase
+    {
+        //Contains informations provided during beacon phase that are necessary for Mesh operations.
+        //Manual and static initialization of the values for now.
+    private:
+        std::optional<uint16_t> nextNodeIdInPath;
+        std::optional<uint8_t> hopCount;
+
+    public:
+
+
+        // Constructor allowing initialization from parameters
+        InformationFromBeaconPhase(std::optional<uint16_t> nodeId, std::optional<uint8_t> hops) 
+        : nextNodeIdInPath{nodeId}, hopCount{hops} {}
+
+
+
+
+        // Setter for nextNodeIdInPath
+        void setNextNodeIdInPath(uint16_t nodeId) noexcept
+        {
+            nextNodeIdInPath = nodeId;
+        }
+
+        // Setter for hopCount
+        void setHopCount(uint8_t count) noexcept
+        {
+            hopCount = count;
+        }
+
+        // Getter for nextNodeIdInPath with validation
+        [[nodiscard]] uint16_t getNextNodeIdInPath() const
+        {
+            if (!nextNodeIdInPath.has_value())
+            {
+                throw std::runtime_error("Next node ID in path is not set");
+            }
+            return *nextNodeIdInPath;
+        }
+
+        // Getter for hopCount with validation
+        [[nodiscard]] uint8_t getHopCount() const
+        {
+            if (!hopCount.has_value())
+            {
+                throw std::runtime_error("Hop count is not set");
+            }
+            return *hopCount;
+        }
+
+        // Checkers
+        [[nodiscard]] bool hasNextNodeIdInPath() const noexcept
+        {
+            return nextNodeIdInPath.has_value();
+        }
+
+        [[nodiscard]] bool hasHopCount() const noexcept
+        {
+            return hopCount.has_value();
+        }
+
+        // Reset both to uninitialized state
+        void reset() noexcept
+        {
+            nextNodeIdInPath.reset();
+            hopCount.reset();
+        }
+    };
+
+    struct RetransmissionCounterHelper
+    {
+        //  retransmission  is a metric in the visualiser)
+    private:
+        bool isExpectingAck{false};
+        bool secondSleepWindow{true};
+
+    public:
+        // Setter for isExpectingAck with parameter
+        void setIsExpectingAck(bool expecting) noexcept
+        {
+            isExpectingAck = expecting;
+        }
+
+        // Setter for secondSleepWindow that toggles its value
+        void toggleSecondSleepWindow() noexcept
+        {
+            secondSleepWindow = !secondSleepWindow;
+        }
+
+        // Getter for isExpectingAck
+        [[nodiscard]] bool getIsExpectingAck() const noexcept
+        {
+            return isExpectingAck;
+        }
+
+        // Getter for secondSleepWindow
+        [[nodiscard]] bool getSecondSleepWindow() const noexcept
+        {
+            return secondSleepWindow;
+        }
+    };
+
+    struct AckInformation
+    {
+    private:
         std::optional<uint16_t> lastSenderId;
         std::optional<uint16_t> lastLocalIDPacket;
         bool replyAck{false};
 
-        public:
-        void setNewAckInformation(uint16_t lastSenderId, uint16_t lastLocalIDPacket) noexcept {
-            this->lastSenderId=lastSenderId;
-            this->lastLocalIDPacket=lastLocalIDPacket;
-            replyAck=true;
+    public:
+        void setNewAckInformation(uint16_t lastSenderId, uint16_t lastLocalIDPacket) noexcept
+        {
+            this->lastSenderId = lastSenderId;
+            this->lastLocalIDPacket = lastLocalIDPacket;
+            replyAck = true;
         }
 
-        bool shouldReplyAck() const noexcept {
+        bool shouldReplyAck() const noexcept
+        {
             return replyAck;
         }
 
-        std::pair<uint16_t, uint16_t> getAndResetAckInformation() {
-            if (!lastSenderId.has_value() || !lastLocalIDPacket.has_value()) {
+        std::pair<uint16_t, uint16_t> getAndResetAckInformation()
+        {
+            if (!lastSenderId.has_value() || !lastLocalIDPacket.has_value())
+            {
                 throw std::runtime_error("AckInformation not set");
             }
-    
+
             // Use std::exchange to get the values and reset to nullopt
             auto senderId = std::exchange(lastSenderId, std::nullopt);
             auto localID = std::exchange(lastLocalIDPacket, std::nullopt);
-    
+
             replyAck = false;
-    
+
             return {senderId.value(), localID.value()};
         }
     };
 
     AckInformation ackInformation;
     RetransmissionCounterHelper retransmissionCounterHelper;
-
-
-    //End - Struct -------------------------------------------------------------------------------------------
+    InformationFromBeaconPhase infoFromBeaconPhase;
+    // End - Struct -------------------------------------------------------------------------------------------
 
 #else
 #error "Unknown COMMUNICATION_PERIOD mode"

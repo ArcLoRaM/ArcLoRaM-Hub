@@ -604,7 +604,7 @@ void C2_Node::adressedPacketTransmissionDisplay(uint16_t receiverId ){
 void C2_Node::displayRouting()
 {
     sf::Packet routingPacketReceiver;
-    routingDecisionPacket routingPacket(nodeId, nextNodeIdInPath.value(), true);
+    routingDecisionPacket routingPacket(nodeId, infoFromBeaconPhase.getNextNodeIdInPath(), true);
     routingPacketReceiver << routingPacket;
     logger.sendTcpPacket(routingPacketReceiver);
 
@@ -633,7 +633,7 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload = {})
 
     // prepare the fields
     std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                       // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-    std::vector<uint8_t> receiverGlobalId = decimalToBytes(nextNodeIdInPath.value(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> receiverGlobalId = decimalToBytes(infoFromBeaconPhase.getNextNodeIdInPath(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
     std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);           // we increase the counter if we receive the ACK
 
     // Should be replaced by the parameter payload.
@@ -813,7 +813,7 @@ bool C2_Node::canCommunicateFromSleeping()
 
         isOddSlot = !isOddSlot;
 
-        if (hopCount % 2 == 1)
+        if (infoFromBeaconPhase.getHopCount() % 2 == 1)
         {
             // ODD
             // start by decreasing for odd nodes
@@ -843,11 +843,11 @@ bool C2_Node::canCommunicateFromSleeping()
                     // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
                     // logger.logMessage(newMessage);
 
-                    adressedPacketTransmissionDisplay(nextNodeIdInPath.value());
+                    adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
                 }
             }
         }
-        else if ((!isOddSlot && hopCount % 2 == 0))
+        else if ((!isOddSlot && infoFromBeaconPhase.getHopCount() % 2 == 0))
         {
             // EVEN
             //  we can transmit
@@ -867,7 +867,7 @@ bool C2_Node::canCommunicateFromSleeping()
                 // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
                 // logger.logMessage(newMessage);
 
-                adressedPacketTransmissionDisplay(nextNodeIdInPath.value());
+                adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
             }
             // start by decreasing for odd nodes
             if (!transmissionSlots.empty())
