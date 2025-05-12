@@ -788,7 +788,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         // it's an ACK packet and we are in an ACK window
         uint16_t localIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        //Visualiser Display behavior inside the above function.
+        //Visualiser Display behavior inside the below function.
         handleAckPacketReception(senderId, localIdPacket);
     }
 

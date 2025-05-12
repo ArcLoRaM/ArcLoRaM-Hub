@@ -43,6 +43,11 @@ public:
 
         initializeTransitionMap();
         setInitialState(NodeState::Sleeping);
+        // //Display the routing if visualiser connected
+        // if (common::visualiserConnected)
+        // {
+        //     displayRouting();
+        // }
 
         // decide which slots among the DATA communicating slots will actually be used to transmit information
         if (hopCount % 2 == 0)
@@ -132,26 +137,26 @@ protected:
     // Transmission------------------------------------------------------------------------------------
     void buildAndTransmitDataPacket(std::vector<uint8_t> payload);
     void buildAndTransmitAckPacket();
+    unsigned int localIDPacketCounter = 0; //the local Id of the packet we send. Uniquely identify packets in a link.
+    //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
+    uint8_t nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
+    uint8_t initialnbPaylaod = 2; // initial number of payload
+
 
     // Slot Strategy ---------------------------------------------------------------------------------------
     bool isOddSlot = false;
     bool isACKSlot = true;
     std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
 
-    unsigned int localIDPacketCounter = 0;
 
-    uint8_t nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
-    uint8_t initialnbPaylaod = 2; // initial number of payload
 
-    // TODO: use more aliases in the code
+
+    // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
     using SenderID = uint16_t;
     using PacketID = uint16_t;
-    using PacketList = std::vector<PacketID>;                   // Alias for a list of Packet IDs
-    using PacketMap = std::unordered_map<SenderID, PacketList>; // we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
-    // Adds a Packet ID to the sender's list
-    PacketMap packetsMap; // Data structure to store packets
-
-    // to display the number of retransmission in the visualiser
+    using PacketList = std::vector<PacketID>;                 
+    using PacketMap = std::unordered_map<SenderID, PacketList>; 
+    PacketMap packetsMap; 
 
     // Struct -------------------------------------------------------------------------------------------
 
