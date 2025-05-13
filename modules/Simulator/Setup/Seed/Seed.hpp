@@ -44,7 +44,7 @@ private:
 
     void initializeNodes();
 
-        //TODO: there is bug: the first node must have an ID=0, (we should be able to attribute any ID to the nodes)
+        //TODO: there is bug: the first node must have an ID=0, (we should be able to attribute any ID to the nodes)-> I didn't check this for a long time, maybe it's not the case anymore?
     #if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
 
     void initialize_RRC_Downlink_Line();

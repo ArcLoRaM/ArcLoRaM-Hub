@@ -1,4 +1,5 @@
 #include "Seed.hpp"
+#include "../Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.hpp"
 
 // we don't adopt the real time windows for the moment, as it is really impractical (a few dowens of ms every minutes...)
 
@@ -348,40 +349,59 @@ void Seed::initialize_RRC_Uplink_Line()
         C3 --------  C2 -------- C2 -------- C2 -------- C2
 
     */
+RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex, baseTime);
 
-    // create a C3 node
-    // Pattern: Sleep - Listen(Data) - Transmit(ACK) - Sleep (sleep during even slots)
-
-    std::pair<int, int> coordinates = std::make_pair(0, 0);
-    auto firstNode = std::make_shared<C3_Node>(0, logger, coordinates, dispatchCv, dispatchCvMutex);
-
-    for (size_t i = 0; i < common::totalNumberOfSlots; i++)
-    { // initially sleep
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanListen);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanTransmit);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
-    }
-
+    // Create the C3 node
+    auto firstNode = factory.createC3Node(0, {0, 0});
     listNode.push_back(firstNode);
+
 
     // Create C2 nodes in a line
     int hopCount = 1;
     for (int i = 1; i < 5; i++)
     {
-        std::pair<int, int> coordinate = std::make_pair(800 * i, 0);
+        auto coordinate = std::make_pair(800 * i, 0);
 
-        // Second COnstructor for C2 (as if Beacon Mode has already provided necessary information)
-        auto node = std::make_shared<C2_Node>(i, logger, coordinate, dispatchCv, dispatchCvMutex, i - 1, hopCount); // Create a smart pointer
-        hopCount++;
-        for (size_t i = 0; i < common::totalNumberOfSlots; i++)
-        {
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
-        }
+        // Use factory (mode-specific TDMA setup inside factory)
+        auto node = factory.createC2Node(i, coordinate, i - 1, hopCount);
         listNode.push_back(node);
+
+        hopCount++;
     }
+
+
+
+    //old stuff to erase
+    // std::pair<int, int> coordinates = std::make_pair(0, 0);
+    // auto firstNode = std::make_shared<C3_Node>(0, logger, coordinates, dispatchCv, dispatchCvMutex);
+
+    // for (size_t i = 0; i < common::totalNumberOfSlots; i++)
+    // { // initially sleep
+    //     firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanListen);
+    //     firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
+    //     firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanTransmit);
+    //     firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
+    // }
+
+    // listNode.push_back(firstNode);
+
+    // // Create C2 nodes in a line
+    // int hopCount = 1;
+    // for (int i = 1; i < 5; i++)
+    // {
+    //     std::pair<int, int> coordinate = std::make_pair(800 * i, 0);
+
+    //     // Second COnstructor for C2 (as if Beacon Mode has already provided necessary information)
+    //     auto node = std::make_shared<C2_Node>(i, logger, coordinate, dispatchCv, dispatchCvMutex, i - 1, hopCount); // Create a smart pointer
+    //     hopCount++;
+    //     for (size_t i = 0; i < common::totalNumberOfSlots; i++)
+    //     {
+    //         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
+    //         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
+    //         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
+    //         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
+    //     }
+    //     listNode.push_back(node);
+    // }
 }
 #endif

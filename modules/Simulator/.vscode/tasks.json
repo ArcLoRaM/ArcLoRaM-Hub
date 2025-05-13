@@ -2,6 +2,7 @@
     "tasks": [
         {
             "type": "shell",
+            //Dependent of your compiler
             "label": "C/C++: g++.exe build all files with sfml",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
@@ -12,7 +13,6 @@
                 "C2\\*.cpp",
                 "C3\\*.cpp",
                 //change witkh your location
-//change with your location
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", // Include path           
                 "-L","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\lib",
                 "-lsfml-system",
@@ -37,14 +37,19 @@
         },
         {
             "type": "cppbuild",
+            //Dependent of your compiler
+
             "label": "C/C++: g++.exe build active file",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                //maybe different in an OS other than Windows ( with the backslash)
                 "${workspaceFolder}\\main.cpp",
                 "${workspaceFolder}\\Node\\Clock\\Clock.cpp",
                 "${workspaceFolder}\\Setup\\Common.hpp",
+                "${workspaceFolder}\\Setup\\INodeFactory.hpp",
+                "${workspaceFolder}\\Setup\\Factories\\RrcUplinkNodeFactory\\RrcUplinkNodeFactory.cpp",
                 "${workspaceFolder}\\Connectivity\\Logger\\Logger.cpp",
                 "${workspaceFolder}\\Node\\Node.cpp",
                 "${workspaceFolder}\\Miscellaneous\\PacketTool\\PacketTool.cpp",

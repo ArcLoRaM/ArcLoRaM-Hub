@@ -95,6 +95,7 @@ protected:
     std::queue<std::pair<std::vector<uint8_t>,std::chrono::milliseconds >> transmitBuffer;//MSG + Time On Air (TOA)
  
     //to simulate interferences:
+    //would deserve to have a proper struc/class... TODO
     //old 
     std::atomic<std::chrono::steady_clock::time_point> timeOnAirEnd; // End of current Time On Air
     std::atomic<bool> stopReceiving{false};           // Signals the active thread to stop
