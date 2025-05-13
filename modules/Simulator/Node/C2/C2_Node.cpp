@@ -594,9 +594,10 @@ bool C2_Node::canSleepFromSleeping() { return false; }
 
 // Display------------------------------------------------------------------------------------------------------
 
-void C2_Node::adressedPacketTransmissionDisplay(uint16_t receiverId ){
+void C2_Node::adressedPacketTransmissionDisplay(uint16_t receiverId)
+{
     sf::Packet transmitPacketReceiver;
-    transmitMessagePacket transmitPacket(nodeId,receiverId , false);
+    transmitMessagePacket transmitPacket(nodeId, receiverId, false);
     transmitPacketReceiver << transmitPacket;
     logger.sendTcpPacket(transmitPacketReceiver);
 }
@@ -632,9 +633,9 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload = {})
                        common::hashFunctionBytesSize);
 
     // prepare the fields
-    std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                       // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                                        // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
     std::vector<uint8_t> receiverGlobalId = decimalToBytes(infoFromBeaconPhase.getNextNodeIdInPath(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
-    std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);           // we increase the counter if we receive the ACK
+    std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);                            // we increase the counter if we receive the ACK
 
     // Should be replaced by the parameter payload.
     std::vector<uint8_t> payloadPacket = {0xFF, 0xFF, 0xFF, 0xFF}; // Payload Size is 4 byte long in the simulation, 40 Bytes max in real life
@@ -672,10 +673,10 @@ void C2_Node::buildAndTransmitAckPacket()
     // prepare the fields:
     std::vector<uint8_t> senderGlobalIdPacket = decimalToBytes(nodeId, common::senderGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
 
-    auto ackInformationIds= ackInformation.getAndResetAckInformation();
+    auto ackInformationIds = ackInformation.getAndResetAckInformation();
     std::vector<uint8_t> receiverGlobalIdPacket = decimalToBytes(ackInformationIds.first, common::receiverGlobalIdBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-    std::vector<uint8_t> localIDPacket = decimalToBytes(ackInformationIds.second, common::localIDPacketBytesSize); // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-    std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                           // Hash Function is 4 byte long in the simulation AND in real life
+    std::vector<uint8_t> localIDPacket = decimalToBytes(ackInformationIds.second, common::localIDPacketBytesSize);            // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};                                                             // Hash Function is 4 byte long in the simulation AND in real life
 
     // Append all fields
     appendVector(ackPacket, common::typeACK);
@@ -689,9 +690,7 @@ void C2_Node::buildAndTransmitAckPacket()
     adressedPacketTransmissionDisplay(ackInformationIds.first);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-
 }
-
 
 // Receive------------------------------------------------------------------------------------------------------
 bool C2_Node::canNodeReceiveMessage()
@@ -709,22 +708,23 @@ bool C2_Node::canNodeReceiveMessage()
     return true;
 }
 
-void C2_Node::handleDataPacketReception(const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId){
+void C2_Node::handleDataPacketReception(const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId)
+{
 
-        // we store the local packet ID in map. This is how we know if the packet is new or not
-        auto &packetList = packetsMap[senderId]; // Get the vector for the sender
-        // Only add if the packet is not already present
-        if (std::find(packetList.begin(), packetList.end(), packetId) == packetList.end())
-        {
-            packetList.push_back(packetId);
-            // TODO: it's a simulation, in real implementation, we should save the message and add it to a buffer
-            nbPayloadLeft++;
-        }
+    // we store the local packet ID in map. This is how we know if the packet is new or not
+    auto &packetList = packetsMap[senderId]; // Get the vector for the sender
+    // Only add if the packet is not already present
+    if (std::find(packetList.begin(), packetList.end(), packetId) == packetList.end())
+    {
+        packetList.push_back(packetId);
+        // TODO: it's a simulation, in real implementation, we should save the message and add it to a buffer
+        nbPayloadLeft++;
+    }
 }
 
-
-void C2_Node::handleAckPacketReception( uint16_t senderId, uint32_t packetId){
-    //is it the Ack packet we were waiting for?
+void C2_Node::handleAckPacketReception(uint16_t senderId, uint32_t packetId)
+{
+    // is it the Ack packet we were waiting for?
     if (packetId == localIDPacketCounter)
     {
         // we received the ACK for the last packet we sent
@@ -733,7 +733,8 @@ void C2_Node::handleAckPacketReception( uint16_t senderId, uint32_t packetId){
         retransmissionCounterHelper.setIsExpectingAck(false);
         receptionStateDisplay(senderId, "received");
     }
-    else{
+    else
+    {
         dropAnimationDisplay();
     }
 }
@@ -762,7 +763,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
     // The packet must be adressed to us to be processed
     // TODO: put the name of the fields in the common file, or in a struct
     uint16_t receiverId = extractBytesFromField(message, "receiverGlobalId", common::dataFieldMap);
-    
+
     // if packet is not for this node,message is dropped
     if (receiverId != nodeId)
     {
@@ -771,14 +772,14 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         dropAnimationDisplay();
         return false;
     }
-    
+
     // is it a data packet and  are we in a data window
     if (message[0] == common::typeData[0] && !isACKSlot)
     {
         // we received a packet for us, we should send an ack no matter what happened before (ack can be lost so we should not check if we already sent one)
         auto lastLocalIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
         auto lastSenderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        ackInformation.setNewAckInformation(lastSenderId,lastLocalIdPacket);
+        ackInformation.setNewAckInformation(lastSenderId, lastLocalIdPacket);
         handleDataPacketReception(message, lastSenderId, lastLocalIdPacket);
         // Indicate the visualiser the packet is received and handled
         receptionStateDisplay(lastSenderId, "received");
@@ -788,21 +789,21 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         // it's an ACK packet and we are in an ACK window
         uint16_t localIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
         uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        //Visualiser Display behavior inside the below function.
+        // Visualiser Display behavior inside the below function.
         handleAckPacketReception(senderId, localIdPacket);
     }
 
-    //message has been handled correctly, even the case if data packet received in not a data window??? to check
+    // message has been handled correctly, even the case if data packet received in not a data window??? to check
     return true;
 }
-//End -  Receive------------------------------------------------------------------------------------------------------
+// End -  Receive------------------------------------------------------------------------------------------------------
 
-
-//State Transitions ---------------------------------------------------------------------------------
+// State Transitions ---------------------------------------------------------------------------------
 bool C2_Node::canCommunicateFromSleeping()
 {
 
-    // the first state transition, we display rooting in the visualiser if applicable
+    // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
+    //  the first state transition, we display rooting in the visualiser if applicable
     if (common::visualiserConnected)
     {
         if (!routingDisplayed)
@@ -814,94 +815,22 @@ bool C2_Node::canCommunicateFromSleeping()
 
     // Change of state is alwasy allowed
     currentState = NodeState::Communicating;
-    isTransmittingWhileCommunicating = false;
+
+    // This is a physical layer property that is updated in the network layer, not good !!!
+    isTransmittingWhileCommunicating = false; // used to detect when node cannot physically receive messages because they transmit
 
     nodeStateDisplay("Communicate");
 
     isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
     if (!isACKSlot)
     {
-        // we are in a data slot, let's check if we can transmit depending of the type of slot (even/odd) and hop count (see protocol definition)
+       
 
-        isOddSlot = !isOddSlot;
-
-        if (infoFromBeaconPhase.getHopCount() % 2 == 1)
-        {
-            // ODD
-            // start by decreasing for odd nodes
-            if (!transmissionSlots.empty())
-            {
-                for (int i = 0; i < transmissionSlots.size(); i++)
-                {
-                    transmissionSlots[i]--;
-                }
-            }
-            if (isOddSlot)
-            {
-                // It's our window to talk, but does the duty cycle allow it?
-                if (!transmissionSlots.empty() && transmissionSlots[0] == 0 && nbPayloadLeft > 0)
-                {
-
-                    transmissionSlots.erase(transmissionSlots.begin());
-
-                    // we have something to transmit and we reached the self allowed slot for effective transmission
-                    isTransmittingWhileCommunicating = true;
-
-                    buildAndTransmitDataPacket();
-
-                    // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                    retransmissionCounterHelper.setIsExpectingAck(true);
-
-                    // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
-                    // logger.logMessage(newMessage);
-
-                    adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
-                }
-            }
-        }
-        else if ((!isOddSlot && infoFromBeaconPhase.getHopCount() % 2 == 0))
-        {
-            // EVEN
-            //  we can transmit
-            if (!transmissionSlots.empty() && transmissionSlots[0] == 0 && nbPayloadLeft > 0)
-            {
-
-                transmissionSlots.erase(transmissionSlots.begin());
-
-                // we have something to transmit and we reached the self allowed slot for effective transmission
-                isTransmittingWhileCommunicating = true;
-
-                // call new function
-                buildAndTransmitDataPacket();
-
-                // once we have transmitted our data packet, we expect an ACK in the next ACK transmission window.
-                retransmissionCounterHelper.setIsExpectingAck(true);
-                // Log newMessage("Node:" + std::to_string(nodeId) + "has a Msg for Node" + std::to_string(nextNodeIdInPath.value()), true);
-                // logger.logMessage(newMessage);
-
-                adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
-            }
-            // start by decreasing for odd nodes
-            if (!transmissionSlots.empty())
-            {
-                for (int i = 0; i < transmissionSlots.size(); i++)
-                {
-                    transmissionSlots[i]--;
-                }
-            }
-        }
+        handleDataSlotPhase();
     }
     else
     {
-        // we are in ACK, do we have an ack to send?
-        if (ackInformation.shouldReplyAck())
-        {
-            isTransmittingWhileCommunicating = true;
-
-            //we also display the Ack Being transmitted in the function above
-            buildAndTransmitAckPacket();
-
-        }
+        handleAckSlotPhase();
     }
 
     return true;
@@ -911,7 +840,7 @@ bool C2_Node::canSleepFromCommunicating()
 {
     retransmissionCounterHelper.toggleSecondSleepWindow();
 
-    if ( retransmissionCounterHelper.getIsExpectingAck() && retransmissionCounterHelper.getSecondSleepWindow())
+    if (retransmissionCounterHelper.getIsExpectingAck() && retransmissionCounterHelper.getSecondSleepWindow())
     {
         // we sent a Data packet and didn't receive an ACK in the next transmission window, so there will be retransmission-> specific metric in the vizualiser.
         retransmissionPacket retransmissionPacket(nodeId);
@@ -942,7 +871,43 @@ bool C2_Node::canSleepFromTransmitting() { return false; }
 bool C2_Node::canSleepFromListening() { return false; }
 bool C2_Node::canSleepFromSleeping() { return false; }
 
-//End - State Transitions ---------------------------------------------------------------------------------
+// End - State Transitions ---------------------------------------------------------------------------------
+
+// Slot Strategy ----------------------------------------------------------------------------------
+void C2_Node::handleAckSlotPhase()
+{
+    if (ackInformation.shouldReplyAck())
+    {
+        // we have an ACK to send
+        isTransmittingWhileCommunicating = true;
+        buildAndTransmitAckPacket();
+    }
+
+     // Advance the global data slot category (mod 3) (part of the protocol) for the next iteration
+        currentDataSlotCategory = (currentDataSlotCategory + 1) % 3;
+}
+
+void C2_Node::handleDataSlotPhase()
+{
+    // Node can only act when its fixed category matches the current simulation slot category
+    if (fixedSlotCategory == currentDataSlotCategory)
+    {
+
+        if (slotManager.canTransmitNow() && nbPayloadLeft > 0)
+        {
+            isTransmittingWhileCommunicating = true;
+            slotManager.consumeSlot();
+
+            buildAndTransmitDataPacket();
+            retransmissionCounterHelper.setIsExpectingAck(true);
+
+            adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
+        }
+         slotManager.decrementAllSlots();
+    }
+}
+
+// End - Slot Strategy -------------------------------------------------------------------------------
 
 #else
 #error "Unknown COMMUNICATION_PERIOD mode"

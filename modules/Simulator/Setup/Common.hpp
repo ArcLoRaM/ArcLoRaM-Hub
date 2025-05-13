@@ -206,8 +206,8 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
     constexpr  const unsigned int durationACKWindow = 500; //ms
 
     //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr const int totalNumberOfSlots=50; //half for odd, half for even
-    constexpr const int maxNodeSlots=15; //the maximum number of slots a node can transmit (if one wants 100% transmission rate, should be equal to totalNumberOfSlots/2 )
+    constexpr const int totalNumberOfSlots=15; //Each node will dispose of 15 slots to transmit
+    constexpr const int maxNodeSlots=14;  //It will choose a limited number of them, randomly
     constexpr const int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
     // constexpr const int typePacket=0x03;
     constexpr const int timeOnAirDataPacket=100; //ms

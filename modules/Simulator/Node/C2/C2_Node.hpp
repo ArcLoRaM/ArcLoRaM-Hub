@@ -2,6 +2,7 @@
 #include "../Node.hpp"
 #include "../../Setup/Common.hpp"
 #include "../../Connectivity/TCP/packets.hpp"
+#include "C2RccUplinkSlotManager.hpp"
 // TODO:
 // instead of having multiple variables, prepare struct or objects that will contain the information needed to pass logic between receive() and transmit()
 
@@ -50,12 +51,30 @@ public:
         // }
 
         // decide which slots among the DATA communicating slots will actually be used to transmit information
-        if (hopCount % 2 == 0)
-            transmissionSlots = selectRandomEvenSlots(common::maxNodeSlots, common::totalNumberOfSlots);
-        else
-            transmissionSlots = selectRandomOddSlots(common::maxNodeSlots, common::totalNumberOfSlots);
+        slotManager.initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlots);
 
+        // Build the message string showing the selected slots
+        std::string slotsLogMsg = "Node " + std::to_string(nodeId) + " selected transmission slots: [";
+        const auto &slots = slotManager.getSlots();
+
+        for (size_t i = 0; i < slots.size(); ++i)
+        {
+            slotsLogMsg += std::to_string(slots[i]);
+            if (i != slots.size() - 1)
+            {
+                slotsLogMsg += ", ";
+            }
+        }
+        slotsLogMsg += "]";
+
+        // Log the message
+        Log slotLog(slotsLogMsg, true);
+        logger.logMessage(slotLog);
+
+        //The node will use the allowed category of slots to transmit
+        fixedSlotCategory = infoFromBeaconPhase.getHopCount() % 3;
         nbPayloadLeft = initialnbPaylaod;
+
     };
 
 #else
@@ -138,19 +157,21 @@ protected:
     void buildAndTransmitDataPacket(std::vector<uint8_t> payload);
     void buildAndTransmitAckPacket();
     unsigned int localIDPacketCounter = 0; //the local Id of the packet we send. Uniquely identify packets in a link.
+
     //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
     uint8_t nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
     uint8_t initialnbPaylaod = 2; // initial number of payload
 
 
     // Slot Strategy ---------------------------------------------------------------------------------------
-    bool isOddSlot = false;
+    // bool isOddSlot = false;
     bool isACKSlot = true;
-    std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
-
-
-
-
+    // std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
+    C2RccUplinkSlotManager slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)
+    void handleAckSlotPhase();
+    void handleDataSlotPhase();
+uint8_t currentDataSlotCategory = 0;
+uint8_t fixedSlotCategory;
     // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
     using SenderID = uint16_t;
     using PacketID = uint16_t;

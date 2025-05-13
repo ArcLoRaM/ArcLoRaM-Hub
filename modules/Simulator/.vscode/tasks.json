@@ -52,6 +52,7 @@
                 "${workspaceFolder}\\SimulationManager\\SimulationManager.cpp",
                 "${workspaceFolder}\\Node\\C1\\C1_Node.cpp",
                 "${workspaceFolder}\\Node\\C2\\C2_Node.cpp",
+                "${workspaceFolder}\\Node\\C2\\C2RccUplinkSlotManager.cpp",
                 "${workspaceFolder}\\Node\\C3\\C3_Node.cpp",
                 "${workspaceFolder}\\Connectivity\\TCP\\Client.cpp",
                 "${workspaceFolder}\\Connectivity\\TCP\\packets.cpp",

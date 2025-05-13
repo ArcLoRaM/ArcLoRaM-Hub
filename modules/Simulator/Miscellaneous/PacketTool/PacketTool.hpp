@@ -123,3 +123,23 @@ inline std::vector<int> selectRandomEvenSlots(int m, int nbSlotsPossible) {
 
     return selected;
 }
+
+
+inline std::vector<int> selectRandomModuloSlots(int moduloGroup, int m, int nbSlotsPossible) {
+    std::vector<int> slots;
+    for (int i = 0; i < nbSlotsPossible; ++i) {
+        if (i % 3 == moduloGroup) {
+            slots.push_back(i);
+        }
+    }
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::shuffle(slots.begin(), slots.end(), rng);
+
+    m = std::min(m, static_cast<int>(slots.size()));
+    std::vector<int> selected(slots.begin(), slots.begin() + m);
+
+    std::sort(selected.begin(), selected.end());
+    return selected;
+}
