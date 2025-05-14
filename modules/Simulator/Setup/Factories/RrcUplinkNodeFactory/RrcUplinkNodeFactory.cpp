@@ -10,7 +10,7 @@ RrcUplinkNodeFactory::RrcUplinkNodeFactory(Logger& logger, std::condition_variab
 std::shared_ptr<C3_Node> RrcUplinkNodeFactory::createC3Node(int id, std::pair<int, int> coordinates) {
     auto node = std::make_shared<C3_Node>(id, logger, coordinates, dispatchCv, dispatchCvMutex);
 
-    // TDMA setup for RRC_UPLINK mode (same as your current Seed logic)
+    // TDMA setup for RRC_UPLINK mode 
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {
         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanListen);
         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
@@ -24,7 +24,7 @@ std::shared_ptr<C3_Node> RrcUplinkNodeFactory::createC3Node(int id, std::pair<in
 std::shared_ptr<C2_Node> RrcUplinkNodeFactory::createC2Node(int id, std::pair<int, int> coordinates, int nextHop, int hopCount) {
     auto node = std::make_shared<C2_Node>(id, logger, coordinates, dispatchCv, dispatchCvMutex, nextHop, hopCount);
 
-    // TDMA setup for RRC_UPLINK mode (same as your current Seed logic)
+    // TDMA setup for RRC_UPLINK mode
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {
         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
         node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);

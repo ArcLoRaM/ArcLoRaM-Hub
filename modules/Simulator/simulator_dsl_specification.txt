@@ -1,0 +1,51 @@
+
+# DSL Specification for Simulator Deployment Config File
+
+## File Extension:
+.simcfg
+
+## Structure:
+1. MODE Declaration (mandatory, must be first non-comment line)
+   MODE <ModeName>
+
+2. NODE Declarations (one per node)
+   NODE <ID> <Class> <X> <Y> [param1=value1 param2=value2 ...]
+
+3. Comments and blank lines allowed, starting with '#'.
+
+## Example (RRC_Uplink Mode):
+# Example deployment file
+MODE RRC_Uplink
+
+NODE 0 C3 0 0
+
+NODE 1 C2 600 600 nextHop=0 hopCount=1
+NODE 2 C2 1200 0 nextHop=1 hopCount=2
+NODE 3 C2 1800 0 nextHop=2 hopCount=3
+
+## Validation Rules per Mode and Class:
+
+| Mode         | Class | Mandatory Params    | Optional Params (future-proof) |
+|--------------|-------|---------------------|--------------------------------|
+| RRC_Uplink   | C3    | None                | txPower, antennaGain           |
+| RRC_Uplink   | C2    | nextHop, hopCount   | batteryLevel, txPower          |
+| RRC_Uplink   | C1    | Not supported       | N/A                            |
+| RRC_Downlink | TBD   | TBD                 | TBD                            |
+| ENC_Uplink   | TBD   | TBD                 | TBD                            |
+| ENC_Beacon   | TBD   | TBD                 | TBD                            |
+
+- Missing mandatory parameters -> ERROR.
+- Unknown or unsupported parameters -> WARNING.
+- Duplicate node IDs -> ERROR.
+- Unknown classes or unsupported classes for the current MODE -> ERROR.
+
+## Guidelines for Extensibility:
+- Always declare MODE first.
+- Use simple, readable, flat text format.
+- Class and mode-specific validations handled strictly at parsing.
+- Optional sections (e.g., [SCHEDULE], [LINKS]) may be added in the future.
+
+## Notes:
+- This DSL format enables full dynamic, runtime-driven simulator configuration.
+- Replaces compile-time macros (COMMUNICATION_PERIOD) with file-driven modes.
+- Ensures compatibility with GUI or TCP-based scenario creation in the future.

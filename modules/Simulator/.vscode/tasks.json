@@ -47,9 +47,12 @@
                 //maybe different in an OS other than Windows ( with the backslash)
                 "${workspaceFolder}\\main.cpp",
                 "${workspaceFolder}\\Node\\Clock\\Clock.cpp",
+                //should we include hpp when no cpp is present?
                 "${workspaceFolder}\\Setup\\Common.hpp",
-                "${workspaceFolder}\\Setup\\INodeFactory.hpp",
+                "${workspaceFolder}\\Setup\\Factories\\INodeFactory.hpp",
+                "${workspaceFolder}\\Setup\\Factories\\FactorySelector\\FactorySelector.cpp",
                 "${workspaceFolder}\\Setup\\Factories\\RrcUplinkNodeFactory\\RrcUplinkNodeFactory.cpp",
+                "${workspaceFolder}\\Setup\\DeploymentManager\\DeploymentManager.cpp",
                 "${workspaceFolder}\\Connectivity\\Logger\\Logger.cpp",
                 "${workspaceFolder}\\Node\\Node.cpp",
                 "${workspaceFolder}\\Miscellaneous\\PacketTool\\PacketTool.cpp",

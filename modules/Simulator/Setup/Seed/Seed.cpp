@@ -1,5 +1,7 @@
 #include "Seed.hpp"
 #include "../Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.hpp"
+#include "../Factories/FactorySelector/FactorySelector.hpp"
+#include "../DeploymentManager/DeploymentManager.hpp"
 
 // we don't adopt the real time windows for the moment, as it is really impractical (a few dowens of ms every minutes...)
 
@@ -46,11 +48,22 @@ void Seed::initializeNodes()
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
     if (use_case == "RRC_Uplink_Mesh")
     {
-        initialize_RRC_Uplink_Mesh();
+        if(common::readConfigFromFile){
+            initialize_RRC_Uplink_Mesh_FromFile();
+        }
+        else{
+            initialize_RRC_Uplink_Mesh();
+        }
     }
     else if (use_case == "RRC_Uplink_Line")
     {
-        initialize_RRC_Uplink_Line();
+        if(common::readConfigFromFile){
+            initialize_RRC_Uplink_Line_FromFile();
+        }
+        else{
+            initialize_RRC_Uplink_Line();
+        }
+        
     }
 #endif
 }
@@ -290,57 +303,49 @@ void Seed::initialize_RRC_Uplink_Mesh()
      Even:3,4
  */
 
-    // create a C3 node
-    std::pair<int, int> coordinates = std::make_pair(0, 0);
-    auto firstNode = std::make_shared<C3_Node>(0, logger, coordinates, dispatchCv, dispatchCvMutex);
-
-    for (size_t i = 0; i < common::totalNumberOfSlots; i++)
-    { // initially sleep
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanListen);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanTransmit);
-        firstNode->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
-    }
-    listNode.push_back(firstNode);
-
-    // Create C2 nodes in a mesh configuration
-    int nbC2Nodes = 6;
-    std::vector<std::pair<int, int>> coordinatesC2 = {std::make_pair(600, 600), std::make_pair(600, -600), std::make_pair(1200, 0),
-                                                      std::make_pair(1200, 1200), std::make_pair(1800, 600), std::make_pair(1800, -600)};
-
-    // the Id follows the location in the vector
-    std::vector<C2_Node_Mesh_Parameter> C2_Parameters;
-
-    C2_Node_Mesh_Parameter node1 = {coordinatesC2[0], 1, 0};
-    C2_Parameters.push_back(node1);
-    C2_Node_Mesh_Parameter node2 = {coordinatesC2[1], 1, 0};
-    C2_Parameters.push_back(node2);
-    C2_Node_Mesh_Parameter node3 = {coordinatesC2[2], 2, 1};
-    C2_Parameters.push_back(node3);
-    C2_Node_Mesh_Parameter node4 = {coordinatesC2[3], 2, 1};
-    C2_Parameters.push_back(node4);
-    C2_Node_Mesh_Parameter node5 = {coordinatesC2[4], 3, 4};
-    C2_Parameters.push_back(node5);
-    C2_Node_Mesh_Parameter node6 = {coordinatesC2[5], 3, 3};
-    C2_Parameters.push_back(node6);
 
 
-    for (int i = 1; i < nbC2Nodes + 1; i++)
+
+    auto factory = FactorySelector::getFactory(common::getCurrentCommunicationMode(),logger, dispatchCv, dispatchCvMutex, baseTime);
+
+    // Create the C3 node
+    auto c3Node = factory->createC3Node(0, {0, 0});
+    listNode.push_back(c3Node);
+
+    // Define C2 node parameters
+    std::vector<C2_Node_Mesh_Parameter> C2_Parameters = {
+        {{600, 600}, 1, 0},
+        {{600, -600}, 1, 0},
+        {{1200, 0}, 2, 1},
+        {{1200, 1200}, 2, 1},
+        {{1800, 600}, 3, 4},
+        {{1800, -600}, 3, 3}
+    };
+
+    // Create and add C2 nodes via factory
+    for (int i = 1; i <= static_cast<int>(C2_Parameters.size()); i++)
     {
-
-        auto node = std::make_shared<C2_Node>(i, logger, C2_Parameters[i - 1].coordinates, dispatchCv, dispatchCvMutex, C2_Parameters[i - 1].nextNodeIdInPath, C2_Parameters[i - 1].hopCount); // Create a smart pointer
-
-        for (size_t i = 0; i < common::totalNumberOfSlots; i++)
-        {
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-            node->addActivation(baseTime + (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
-        }
+        const auto& param = C2_Parameters[i - 1];
+        auto node = factory->createC2Node(i, param.coordinates, param.nextNodeIdInPath, param.hopCount);
         listNode.push_back(node);
     }
+
+
 }
 
+
+void Seed::initialize_RRC_Uplink_Mesh_FromFile()
+{
+    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex, baseTime);
+
+    // Load from the deployment file
+    auto nodes = deploymentManager.loadDeploymentFromFile("Setup/config/deployment_mesh.simcfg");
+
+    // Take ownership of the nodes
+    listNode = std::move(nodes);
+    Log fileReadingLog("Deployment loaded from file: deployment_mesh.simcfg", true);
+    logger.logMessage(fileReadingLog);
+}
 
 void Seed::initialize_RRC_Uplink_Line()
 {
@@ -349,6 +354,8 @@ void Seed::initialize_RRC_Uplink_Line()
         C3 --------  C2 -------- C2 -------- C2 -------- C2
 
     */
+
+    //should use the factory selector
 RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex, baseTime);
 
     // Create the C3 node
@@ -403,5 +410,20 @@ RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex, baseTime);
     //     }
     //     listNode.push_back(node);
     // }
+}
+
+
+
+void Seed::initialize_RRC_Uplink_Line_FromFile()
+{
+    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex, baseTime);
+
+    // Load from the deployment file
+    auto nodes = deploymentManager.loadDeploymentFromFile("Setup/config/deployment_line.simcfg");
+
+    // Take ownership of the nodes
+    listNode = std::move(nodes);
+    Log fileReadingLog("Deployment loaded from file: deployment_line.simcfg", true);
+    logger.logMessage(fileReadingLog);
 }
 #endif

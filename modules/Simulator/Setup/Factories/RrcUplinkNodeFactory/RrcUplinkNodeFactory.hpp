@@ -1,5 +1,5 @@
 #pragma once
-#include "../../INodeFactory.hpp"
+#include "../INodeFactory.hpp"
 #include "../../../Connectivity/Logger/Logger.hpp"
 #include <condition_variable>
 #include <mutex>

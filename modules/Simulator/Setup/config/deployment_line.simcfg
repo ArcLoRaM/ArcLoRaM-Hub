@@ -1,0 +1,8 @@
+# Line topology example for RRC_Uplink mode
+MODE RRC_Uplink
+
+NODE 0 C3 0 0
+NODE 1 C2 800 0 nextHop=0 hopCount=1
+NODE 2 C2 1600 0 nextHop=1 hopCount=2
+NODE 3 C2 2400 0 nextHop=2 hopCount=3
+NODE 4 C2 3200 0 nextHop=3 hopCount=4

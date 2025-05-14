@@ -54,6 +54,9 @@ private:
     #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
     void initialize_RRC_Uplink_Mesh();
+    void initialize_RRC_Uplink_Mesh_FromFile();
+
     void initialize_RRC_Uplink_Line();
+    void initialize_RRC_Uplink_Line_FromFile();
     #endif
 };

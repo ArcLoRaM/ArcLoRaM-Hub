@@ -66,8 +66,6 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 
 
 
-
-
 //-----------------------------------------COMMUNICATION MODE-----------------------------------------
 #define COMMUNICATION_PERIOD 3
 
@@ -81,7 +79,7 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 
 //-----------------------------------------TOPOLOGY-----------------------------------------
 
-#define TOPOLOGY 1
+#define TOPOLOGY 3
 #define LINE 1
 #define STAR 2 //not implemented
 #define MESH 3
@@ -105,6 +103,31 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
     #error "Unknown TOPOLOGY mode"
 #endif
 
+//This is the new system to transition towards a runtime driven configuration, not at compile time.
+enum class CommunicationMode {
+    RRC_Beacon = 1,
+    RRC_Downlink = 2,
+    RRC_Uplink = 3,
+    ENC_Beacon = 11,
+    ENC_Downlink = 12,
+    ENC_Uplink = 13
+};
+
+enum class Topology {
+    Line = 1,
+    Star = 2,
+    Mesh = 3,
+    Mesh_Self_Healing = 4
+};
+
+// Temporary compatibility adapter
+constexpr CommunicationMode getCurrentCommunicationMode() {
+    return static_cast<CommunicationMode>(COMMUNICATION_PERIOD);
+}
+
+constexpr Topology getCurrentTopology() {
+    return static_cast<Topology>(TOPOLOGY);
+}
 
 
 #if COMMUNICATION_PERIOD == RRC_DOWNLINK
@@ -204,10 +227,10 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
     constexpr  const unsigned int durationDataWindow = 900; //ms
     constexpr  const unsigned int durationSleepWindowSecondary = 800; //ms
     constexpr  const unsigned int durationACKWindow = 500; //ms
-
+    constexpr  const bool readConfigFromFile = true;
     //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different
     constexpr const int totalNumberOfSlots=15; //Each node will dispose of 15 slots to transmit
-    constexpr const int maxNodeSlots=14;  //It will choose a limited number of them, randomly
+    constexpr const int maxNodeSlots=6;  //It will choose a limited number of them, randomly
     constexpr const int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
     // constexpr const int typePacket=0x03;
     constexpr const int timeOnAirDataPacket=100; //ms
