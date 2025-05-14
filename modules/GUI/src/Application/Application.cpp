@@ -1,39 +1,49 @@
 #include "Application.hpp"
-#include <iostream>
-#include <SFML/Graphics.hpp>
+#include "../Screens/NetworkVisualisationScreen/NetworkVisualisationScreen.hpp" // Initial screen
+#include <thread>
+#include <atomic>
 
-// Application::Application()
-//     : window(sf::Vector2u(windowWidth, windowHeight), "ArcLoRaM GUI")
-// {
-//     // Start with home screen
-//     currentScreen = std::make_unique<HomeScreen>(*this);
-// }
+Application::Application()
+    : window( sf::VideoMode(sf::Vector2u(windowWidth, windowHeight)), "ArcLoRaM GUI",sf::Style::Default)
+{
+    // Start at HomeScreen
+    changeScreen(std::make_unique<NetworkVisualisationScreen>(*this));
 
-// void Application::run() {
-//     sf::Clock clock;
-//     while (window.isOpen()) {
-//         sf::Event event;
-//         while (window.pollEvent(event)) {
-//             if (event.type == sf::Event::Closed)
-//                 window.close();
+}
 
-//             handleEvent(event);
-//         }
+void Application::run() {
 
-//         float deltaTime = clock.restart().asSeconds();
+    //que de la merde
+    divsi
+    std::atomic<bool> shouldRun{true};
+    std::thread network([&]() { networkThread(manager, shouldRun); });
 
-//         currentScreen->update(deltaTime);
+    sf::Clock clock;
+    while (window.isOpen()) {
+        // "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
+        //  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
+                window.close();
 
-//         window.clear();
-//         currentScreen->draw(window);
-//         window.display();
-//     }
-// }
+            currentScreen->handleEvent(event);
+        }
 
-// void Application::handleEvent(const sf::Event& event) {
-//     currentScreen->handleEvent(event);
-// }
+        float deltaTime = clock.restart().asSeconds();
+        currentScreen->update(deltaTime);
+        window.clear();
+        currentScreen->draw(window);
+        window.display();
+        
+        //delay to limit the frame rate
+        //TODO
+    }
+}
 
-// void Application::changeScreen(std::unique_ptr<Screen> newScreen) {
-//     currentScreen = std::move(newScreen);
-// }
+void Application::changeScreen(std::unique_ptr<Screen> newScreen) {
+    currentScreen = std::move(newScreen);
+}
+
+sf::RenderWindow& Application::getWindow() {
+    return window;
+}

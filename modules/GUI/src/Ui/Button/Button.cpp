@@ -2,31 +2,30 @@
 
 #include "Button.hpp"
 #include <iostream>
+#include "../../Shared/RessourceManager/RessourceManager.hpp"
 
-Button::Button(float x, float y, float width, float height,
+Button::Button(sf::RenderWindow& window,float x, float y, float width, float height,
     sf::Color color, std::string& stateRef,
-    const std::string& on, const std::string& off, const std::string& iconPath)
-    : state(stateRef), onState(on), offState(off) {
+    const std::string& on, const std::string& off, const std::string& ressourceKey)
+    : window(window),state(stateRef), onState(on), offState(off) {
     shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(sf::Vector2f(x, y));
     shape.setFillColor(color);
     // Load the icon texture
-    if (!iconTexture.loadFromFile(iconPath)) {
-        throw std::runtime_error("Failed to load icon texture from " + iconPath);
-    }
 
+    iconTexture = &ResourceManager::getInstance().getTexture(ressourceKey);
     // Set up the sprite
-    icon = std::make_optional<sf::Sprite>(iconTexture);
+    icon = std::make_optional<sf::Sprite>(*iconTexture);
 
     // Scale the icon to fit inside the button if needed
-    float scaleX = (width * 0.6f) / iconTexture.getSize().x;
-    float scaleY = (height * 0.6f) / iconTexture.getSize().y;
+    float scaleX = (width * 0.6f) / iconTexture->getSize().x;
+    float scaleY = (height * 0.6f) / iconTexture->getSize().y;
     icon->setScale(sf::Vector2f(scaleX, scaleY));
 
     // Center the icon inside the button
     icon->setPosition(sf::Vector2f(
-        x + (width - iconTexture.getSize().x * scaleX) / 2.f,
-        y + (height - iconTexture.getSize().y * scaleY) / 2.f
+        x + (width - iconTexture->getSize().x * scaleX) / 2.f,
+        y + (height - iconTexture->getSize().y * scaleY) / 2.f
     ));
 }
 
@@ -35,7 +34,7 @@ void Button::draw(sf::RenderWindow& window) {
     window.draw(*icon); // Draw the icon
 }
 
-void Button::handleEvent(const sf::Event& event, const sf::RenderWindow& window) {
+void Button::handleEvent(const sf::Event& event) {
 
     if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {

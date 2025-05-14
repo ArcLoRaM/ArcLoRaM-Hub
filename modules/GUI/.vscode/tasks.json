@@ -9,6 +9,7 @@
                 "-g",
 
                 "${workspaceFolder}\\main.cpp",
+                "${workspaceFolder}\\src\\Application\\Application.cpp",
 
                 //UI
                 "${workspaceFolder}\\src\\Ui\\Button\\Button.cpp",
@@ -29,6 +30,11 @@
                 "${workspaceFolder}\\src\\Network\\network.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
+
+                //Screens
+
+                "${workspaceFolder}\\src\\Screens\\NetworkVisualisationScreen\\NetworkVisualisationScreen.cpp",
+
 
 
                 //change with your location

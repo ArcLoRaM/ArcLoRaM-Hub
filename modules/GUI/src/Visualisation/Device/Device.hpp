@@ -5,8 +5,13 @@
 
 class Device {
 
+private:
+sf::RenderWindow& window;
+    
+
+
 public:
-    Device(int nodeId,int classNode, std::pair<int, int> coordinates,double batteryLevel=0);
+    Device(sf::RenderWindow& window,int nodeId,int classNode, std::pair<int, int> coordinates,double batteryLevel=0);
     std::pair<int, int> coordinates;
     int nodeId=0;
     int classNode;
@@ -21,7 +26,7 @@ public:
     // sf::Texture iconTexture; // Texture for the icon
     void draw(sf::RenderWindow& window);
     void changePNG(std::string state);
-    void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
+    void handleEvent(const sf::Event& event);
     // Info window
     sf::RectangleShape infoWindow;
     bool displayInfoWindow=false;

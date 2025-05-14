@@ -7,9 +7,9 @@
 #include "../../Shared/Common/Common.hpp"
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 
-Device::Device(int nodeId,
+Device::Device(sf::RenderWindow& window,int nodeId,
     int classNode, std::pair<int, int> coordinates,double batteryLevel):
-    nodeId(nodeId), classNode(classNode), coordinates(coordinates),batteryLevel(batteryLevel) {
+    nodeId(nodeId), classNode(classNode), coordinates(coordinates),batteryLevel(batteryLevel),window(window) {
 
        
 
@@ -100,7 +100,7 @@ void Device::changePNG(std::string state)
     shape.setTexture(iconTexture);
 }
 
-void Device::handleEvent(const sf::Event &event, const sf::RenderWindow &window)
+void Device::handleEvent(const sf::Event &event)
 {
     if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
     {

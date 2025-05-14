@@ -11,20 +11,14 @@ inline void displayThread(VisualiserManager &manager)
 
     sf::Vector2u windowSize = sf::Vector2u(windowWidth, windowHeight);
     sf::RenderWindow window(sf::VideoMode(windowSize), "ArcLoRaM GUI", sf::Style::Default);
-    sf::Font font;
+    sf::Font* font;
 
     //Content View:
     sf::View networkView(window.getDefaultView()); // Copy default view initially
 
 
 
-    //Todo: centralize Font access (right now other classes are calling openFromFile too)
-    if (!font.openFromFile("assets/arial.ttf"))
-    {
-        std::cerr << "Error loading font\n";
-        isRunning = false;
-        return;
-    }
+    font = &ResourceManager::getInstance().getFont("Arial");
     
 
     while (window.isOpen() && isRunning)
@@ -32,7 +26,7 @@ inline void displayThread(VisualiserManager &manager)
 
         // "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
         //  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
-        while (const std::optional event = window.pollEvent())
+        while (const std::optional<sf::Event> event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
             {
@@ -89,13 +83,13 @@ inline void displayThread(VisualiserManager &manager)
             // Handle button clicks
             for (auto &button : manager.buttons)
             {
-                button->handleEvent(*event, window);
+                button->handleEvent(*event);
             }
 
             // Handle Device Clicks
             for (auto &device : manager.devices)
             {
-                device->handleEvent(*event, window);
+                device->handleEvent(*event);
             }
         }
 
@@ -132,7 +126,7 @@ inline void displayThread(VisualiserManager &manager)
                 }
                 for (auto it = logMessages.rbegin(); it != logMessages.rend(); ++it)
                 {
-                    sf::Text text(font, *it, 10);
+                    sf::Text text(*font, *it, 10);
                     text.setFillColor(sf::Color::White);
                     text.setPosition(sf::Vector2f(10.0f, y));
                     window.draw(text);

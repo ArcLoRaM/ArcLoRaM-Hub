@@ -1,19 +1,19 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "src/Screens/Screen.hpp"
 #include <memory>
-// #include "../../Display/Screens/Screen.hpp"
 
+class Application {
+public:
+    Application();
+    void run();
 
-// class Application {
-// public:
-//     Application();
-//     void run();
+    void changeScreen(std::unique_ptr<Screen> newScreen);
 
-// private:
-//     sf::RenderWindow window;
-//     std::unique_ptr<Screen> currentScreen;
+    sf::RenderWindow& getWindow();
 
-//     void handleEvent(const sf::Event& event);
-//     void changeScreen(std::unique_ptr<Screen> newScreen);
-// };
+private:
+    sf::RenderWindow window;
+    std::unique_ptr<Screen> currentScreen;
+};

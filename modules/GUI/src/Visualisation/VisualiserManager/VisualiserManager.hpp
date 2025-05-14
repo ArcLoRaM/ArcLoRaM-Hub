@@ -42,6 +42,8 @@ public:
     VisualiserManager();
     void update();
     void draw(sf::RenderWindow& window);
+
+    //should be private
     std::vector<std::unique_ptr<Button>> buttons; // List of buttons
     std::vector<std::unique_ptr<Device>> devices; // List of devices (if used elsewhere)
     std::vector<std::unique_ptr<Arrow>> arrows; // List of arrows
