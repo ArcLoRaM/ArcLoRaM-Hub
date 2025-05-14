@@ -7,22 +7,32 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+
                 "${workspaceFolder}\\main.cpp",
-                "${workspaceFolder}\\Arrow\\Arrow.cpp",
-                "${workspaceFolder}\\BroadcastAnimation\\BroadcastAnimation.cpp",
-                "${workspaceFolder}\\Button\\Button.cpp",
-                "${workspaceFolder}\\Common\\Common.cpp",
-                "${workspaceFolder}\\Device\\Device.cpp",
-                "${workspaceFolder}\\PacketDrop\\PacketDrop.cpp",
-                "${workspaceFolder}\\Packets\\Packets.cpp",
-                "${workspaceFolder}\\ReceptionIcon\\ReceptionIcon.cpp",
-                "${workspaceFolder}\\VisualiserManager\\VisualiserManager.cpp",
-                "${workspaceFolder}\\network.cpp",
-                "${workspaceFolder}\\display.cpp",
+
+                //UI
+                "${workspaceFolder}\\src\\Ui\\Button\\Button.cpp",
+
+                //Shared
+                "${workspaceFolder}\\src\\Shared\\Common\\Common.cpp",
+                "${workspaceFolder}\\src\\Shared\\RessourceManager\\RessourceManager.cpp",
+
+                //Visualisation
+                "${workspaceFolder}\\src\\Visualisation\\Device\\Device.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\PacketDrop\\PacketDrop.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\ReceptionIcon\\ReceptionIcon.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\VisualiserManager\\VisualiserManager.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\display.cpp",
+                
+                //Network                
+                "${workspaceFolder}\\src\\Network\\Packets\\Packets.cpp",
+                "${workspaceFolder}\\src\\Network\\network.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
 
 
                 //change with your location
-                "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", // Include path 
+                "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", 
                 "-L","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\lib",
                 
                 "-lsfml-system",
