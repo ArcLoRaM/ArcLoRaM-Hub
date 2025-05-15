@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include "src/Screens/Screen.hpp"
+#include "../Screens/Screen.hpp"
 #include <memory>
 
 class Application {

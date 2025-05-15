@@ -17,6 +17,7 @@
                 //Shared
                 "${workspaceFolder}\\src\\Shared\\Common\\Common.cpp",
                 "${workspaceFolder}\\src\\Shared\\RessourceManager\\RessourceManager.cpp",
+                "${workspaceFolder}\\src\\Shared\\InputManager\\InputManager.cpp",
 
                 //Visualisation
                 "${workspaceFolder}\\src\\Visualisation\\Device\\Device.cpp",
@@ -24,12 +25,16 @@
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\ReceptionIcon\\ReceptionIcon.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\VisualiserManager\\VisualiserManager.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\display.cpp",
+                 "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
+                
                 
                 //Network                
                 "${workspaceFolder}\\src\\Network\\Packets\\Packets.cpp",
                 "${workspaceFolder}\\src\\Network\\network.cpp",
-                "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
-                "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
+                "${workspaceFolder}\\src\\Network\\NetworkManager\\NetworkManager.cpp",
+
+                
 
                 //Screens
 

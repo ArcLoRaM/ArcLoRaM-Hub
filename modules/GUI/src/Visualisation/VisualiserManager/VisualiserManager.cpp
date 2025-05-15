@@ -8,7 +8,8 @@
 #include <iostream>
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 
-VisualiserManager::VisualiserManager()
+VisualiserManager::VisualiserManager(sf::RenderWindow& window)
+    : window(window)
 {
 
     font = &ResourceManager::getInstance().getFont("Arial");
@@ -43,6 +44,9 @@ VisualiserManager::VisualiserManager()
     energyExpenditure->setFillColor(sf::Color::White); 
     energyExpenditureString="Energy Expenditure: ";
           
+
+    std::unique_ptr<Button> buttonRouting =std::make_unique <Button> (window,x4coor, y4coor, width4, height4, color4, state4, on, off,"Rooting_Button");
+    addButton(std::move(buttonRouting));
 
 }
 

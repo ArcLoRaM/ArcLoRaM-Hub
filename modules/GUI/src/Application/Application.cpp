@@ -7,18 +7,15 @@ Application::Application()
     : window( sf::VideoMode(sf::Vector2u(windowWidth, windowHeight)), "ArcLoRaM GUI",sf::Style::Default)
 {
     // Start at HomeScreen
-    changeScreen(std::make_unique<NetworkVisualisationScreen>(*this));
+    changeScreen(std::make_unique<NetworkVisualisationScreen>(window));
 
 }
 
 void Application::run() {
 
-    //que de la merde
-    divsi
-    std::atomic<bool> shouldRun{true};
-    std::thread network([&]() { networkThread(manager, shouldRun); });
 
-    sf::Clock clock;
+
+    sf::Clock mainClock;
     while (window.isOpen()) {
         // "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
         //  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
@@ -29,7 +26,7 @@ void Application::run() {
             currentScreen->handleEvent(event);
         }
 
-        float deltaTime = clock.restart().asSeconds();
+        float deltaTime = mainClock.restart().asSeconds();
         currentScreen->update(deltaTime);
         window.clear();
         currentScreen->draw(window);

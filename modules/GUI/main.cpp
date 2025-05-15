@@ -22,11 +22,13 @@
 int main() {
 
     try {
+         std::cout << "Before Assets loaded\n";
         // Load all assets (fonts, textures, etc.)
         ResourceManager::getInstance().loadAll();
-
         // Start the Application
+        std::cout << "Before Application created\n";
         Application app;
+        std::cout << "Application created\n";
         app.run();
     }
     catch (const std::exception& e) {

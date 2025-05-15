@@ -38,8 +38,13 @@ private:
     std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
     void drawRootings(sf::RenderWindow& window);
 
+
+    //suppress RenderWindow when you have the new input system.
+    sf::RenderWindow& window;
+
 public:
-    VisualiserManager();
+    //supress RenderWindow when you have the new input system.
+    VisualiserManager(sf::RenderWindow& window);
     void update();
     void draw(sf::RenderWindow& window);
 
