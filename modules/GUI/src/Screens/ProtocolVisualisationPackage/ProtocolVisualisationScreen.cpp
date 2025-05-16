@@ -2,33 +2,41 @@
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
 
-ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer)
+ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, ScreenAction backAction)
     : manager(),
-      networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth,(float) config::windowHeight}))
- 
-
+      networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
-
-
-
-
-        tcpServer.setPacketHandler([this](sf::Packet& packet) {
+    tcpServer.setPacketHandler([this](sf::Packet& packet) {
         packetController.handlePacket(packet, state, manager);
     });
+
+    float buttonWidth = 150.f;
+    float buttonHeight = 50.f;
+    float posX = config::windowWidth - buttonWidth - 20.f;  // Top-right corner, 20px margin
+    float posY = 20.f;
+
+    backButton = std::make_unique<Button>(
+        posX,
+        posY,
+        buttonWidth,
+        buttonHeight,
+        sf::Color(200, 50, 50),
+        "Back",
+        "Arial"
+    );
+    backButton->setOnClick(backAction);
 }
 
 void ProtocolVisualisationScreen::handleEvent(InputManager& input)
 {
-    //Change global Screen Information 
+    backButton->update(input);
 
-    // Move the view of the topology network
     if (input.isKeyPressed(sf::Keyboard::Scancode::Left)) {
         networkView.move({-10.f, 0.f});
     }
     if (input.isKeyPressed(sf::Keyboard::Scancode::Right)) {
         networkView.move({10.f, 0.f});
     }
-
     if (input.isKeyPressed(sf::Keyboard::Scancode::Up)) {
         networkView.move({0.f, -10.f});
     }
@@ -43,18 +51,16 @@ void ProtocolVisualisationScreen::handleEvent(InputManager& input)
     else if (wheelDelta < 0.f) {
         networkView.zoom(1.1f);
     }
-    
 }
 
-void ProtocolVisualisationScreen::update(float deltaTime, InputManager &input)
+void ProtocolVisualisationScreen::update(float deltaTime, InputManager& input)
 {
-    //deltatime is not used in this version as every animation have their own clock, but could be !
+    (void)deltaTime;
     manager.update(input);
 }
 
-void ProtocolVisualisationScreen::draw(sf::RenderWindow &window)
+void ProtocolVisualisationScreen::draw(sf::RenderWindow& window)
 {
-
-   
-    manager.draw(window,networkView,state);
+    manager.draw(window, networkView, state);
+    backButton->draw(window);
 }

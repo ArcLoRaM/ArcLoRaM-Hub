@@ -8,17 +8,16 @@
 #include "HomePageState.hpp"
 #include "../../Network/TcpServer/TcpServer.hpp"
 
-class HomePageScreen : public Screen  {
 
+class HomePageScreen : public Screen {
+public:
+    HomePageScreen(std::vector<std::pair<std::string, ScreenAction>> actions);
 
+    void handleEvent(InputManager& input) override;
+    void update(float deltaTime, InputManager& input) override;
+    void draw(sf::RenderWindow& window) override;
+
+private:
     std::vector<std::unique_ptr<Button>> buttons;
     sf::View view;
-    HomePageState state; // State of the home page
-
-public:
-    HomePageScreen(TcpServer& tcpServer);
-    void handleEvent(InputManager& input);
-void update(float deltaTime, InputManager& input) override;
-
-    void draw(sf::RenderWindow& window);
 };
