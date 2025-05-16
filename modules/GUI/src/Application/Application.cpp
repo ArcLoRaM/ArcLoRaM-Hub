@@ -1,5 +1,6 @@
 #include "Application.hpp"
-#include "../Screens/ProtocolVisualisationPackage/ProtocolVisualisationScreen.hpp" // Initial screen
+#include "../Screens/HomePackage/HomePageScreen.hpp"
+#include "../Screens/ProtocolVisualisationPackage/ProtocolVisualisationScreen.hpp" 
 #include <thread>
 #include <atomic>
 #include "../Shared/InputManager/InputManager.hpp"
@@ -10,7 +11,7 @@ Application::Application()
 {
        tcpServer.start(5000);
     // Start at HomeScreen
-    changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer));
+    changeScreen(std::make_unique<HomePageScreen>(tcpServer));
 
 }
 

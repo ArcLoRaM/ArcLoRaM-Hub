@@ -35,9 +35,35 @@ Button::Button(float x, float y, float width, float height, sf::Color color, con
     ));
 }
 
+
+//with text
+
+Button::Button(float x, float y, float width, float height, sf::Color color, const std::string& labelText, const std::string& fontKey)
+{
+    shape.setSize(sf::Vector2f(width, height));
+    shape.setPosition(sf::Vector2f(x, y));
+    shape.setFillColor(color);
+
+    font = &ResourceManager::getInstance().getFont(fontKey);
+
+    text.emplace(*font, labelText, 30);
+    text->setFillColor(sf::Color::White);
+
+    sf::FloatRect textBounds = text->getLocalBounds();
+    text->setOrigin({textBounds.position.x + textBounds.size.x / 2.f,
+        textBounds.position.y + textBounds.size.y / 2.f}
+        
+    );
+    text->setPosition({x + width / 2.f, y + height / 2.f} );
+}
+
+
+
+
 void Button::draw(sf::RenderWindow& window) {
     window.draw(shape);
-    window.draw(*icon); // Draw the icon
+    if (icon) window.draw(*icon);
+    if (text) window.draw(*text);
 }
 
 void Button::setOnClick(std::function<void()> callback) {

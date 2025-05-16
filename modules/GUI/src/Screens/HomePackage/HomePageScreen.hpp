@@ -6,6 +6,7 @@
 #include "../../UI/Button/Button.hpp"
 #include "../Screen.hpp"
 #include "HomePageState.hpp"
+#include "../../Network/TcpServer/TcpServer.hpp"
 
 class HomePageScreen : public Screen  {
 
@@ -15,8 +16,9 @@ class HomePageScreen : public Screen  {
     HomePageState state; // State of the home page
 
 public:
-    HomePageScreen();
+    HomePageScreen(TcpServer& tcpServer);
     void handleEvent(InputManager& input);
-    void update(InputManager& input);
+void update(float deltaTime, InputManager& input) override;
+
     void draw(sf::RenderWindow& window);
 };

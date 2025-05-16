@@ -1,7 +1,7 @@
 #include "HomePageScreen.hpp"
 #include "../../Shared/Config.hpp"
 
-HomePageScreen::HomePageScreen()
+HomePageScreen::HomePageScreen(TcpServer& tcpServer)
     : view(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
     float buttonWidth = 300.f;
@@ -26,11 +26,14 @@ void HomePageScreen::handleEvent(InputManager& input)
     // Possible future use (navigation, etc.)
 }
 
-void HomePageScreen::update(InputManager& input)
+void HomePageScreen::update(float deltaTime, InputManager& input)
 {
+    (void)deltaTime;
+
     for (auto& btn : buttons)
         btn->update(input);
 }
+
 
 void HomePageScreen::draw(sf::RenderWindow& window)
 {
