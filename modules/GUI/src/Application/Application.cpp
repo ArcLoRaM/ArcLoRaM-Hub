@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include "../Screens/HomePackage/HomePageScreen.hpp"
 #include "../Screens/ProtocolVisualisationPackage/ProtocolVisualisationScreen.hpp"
+#include "../Screens/TopologyEditorPackage/TopologyEditorScreen.hpp"
 #include <thread>
 #include <atomic>
 #include "../Shared/InputManager/InputManager.hpp"
@@ -15,8 +16,18 @@ Application::Application()
 auto homePageActions = std::make_shared<std::vector<std::pair<std::string, ScreenAction>>>();
 
 *homePageActions = {
-    { "New Topology", []() { /* Placeholder */ } },
-    { "Edit Topology", []() { /* Placeholder */ } },
+    { "New Topology",  [this, homePageActions]() {
+        auto backToHome = [this, homePageActions]() {
+            changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
+        };
+        changeScreen(std::make_unique<TopologyEditorScreen>(backToHome));
+    }},
+    { "Edit Topology", [this, homePageActions]() {
+        auto backToHome = [this, homePageActions]() {
+            changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
+        };
+        changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, backToHome));
+    }},
     { "Network Visualisation", [this, homePageActions]() {
         auto backToHome = [this, homePageActions]() {
             changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
@@ -27,19 +38,13 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
 
 changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
 }
-
 void Application::run()
 {
-
-    // remains scoped
     InputManager inputManager;
-
     sf::Clock mainClock;
 
     while (window.isOpen())
     {
-        // "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
-        //  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -47,23 +52,30 @@ void Application::run()
 
             inputManager.handleEvent(event);
 
-            currentScreen->handleEvent(inputManager);
+            if (currentScreen)
+                currentScreen->handleEvent(inputManager);
         }
 
         float deltaTime = mainClock.restart().asSeconds();
-        currentScreen->update(deltaTime, inputManager);
-        window.clear();
-        currentScreen->draw(window);
-        window.display();
 
-        // must be at the end of the frame
+        if (currentScreen) {
+            currentScreen->update(deltaTime, inputManager);
+
+            window.clear();
+            currentScreen->draw(window);
+            window.display();
+        }
+
         inputManager.postUpdate(window);
+        if (nextScreen) {
+             currentScreen = std::move(nextScreen);
+}
     }
 }
 
 void Application::changeScreen(std::unique_ptr<Screen> newScreen)
 {
-    currentScreen = std::move(newScreen);
+    nextScreen = std::move(newScreen);
 }
 
 sf::RenderWindow &Application::getWindow()

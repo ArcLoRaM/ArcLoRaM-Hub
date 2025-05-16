@@ -28,8 +28,15 @@ void InputManager::handleEvent(const std::optional<sf::Event>& event) {
 }
 
 void InputManager::postUpdate(const sf::RenderWindow& window) {
+
+    //the mouse position in the given window
     mouseScreenPosition = sf::Mouse::getPosition(window);
+
+    //use the current view as reference
     mouseWorldPosition = window.mapPixelToCoords(mouseScreenPosition);
+
+    // UI position use default view explicitly
+    mouseUIScreenPosition = window.mapPixelToCoords(mouseScreenPosition, window.getDefaultView());
 
     justPressedMouseButtons.clear();  // Reset per-frame
     accumulatedMouseWheelDelta = 0.f;
@@ -42,7 +49,9 @@ sf::Vector2i InputManager::getMouseScreenPosition() const {
 sf::Vector2f InputManager::getMouseWorldPosition() const {
     return mouseWorldPosition;
 }
-
+sf::Vector2f InputManager::getMouseUIScreenPosition() const {
+    return mouseUIScreenPosition;
+}
 bool InputManager::isKeyPressed(sf::Keyboard::Scancode key) const {
     return pressedKeys.contains(key);
 }

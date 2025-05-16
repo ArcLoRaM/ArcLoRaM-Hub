@@ -14,6 +14,7 @@ public:
 
     sf::Vector2i getMouseScreenPosition() const;
     sf::Vector2f getMouseWorldPosition() const;
+    sf::Vector2f getMouseUIScreenPosition() const;
 
     bool isKeyPressed(sf::Keyboard::Scancode key) const;
     bool isMouseButtonPressed(sf::Mouse::Button button) const;
@@ -24,8 +25,10 @@ public:
     float getMouseWheelDelta() const;
 
 private:
+//you should have only two mouse positin? Check
     sf::Vector2i mouseScreenPosition{};
     sf::Vector2f mouseWorldPosition{};
+    sf::Vector2f mouseUIScreenPosition{};  // <-- Add this
 
     std::unordered_set<sf::Keyboard::Scancode> pressedKeys;
     std::unordered_set<sf::Mouse::Button> pressedMouseButtons;

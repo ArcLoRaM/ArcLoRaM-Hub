@@ -18,6 +18,8 @@ public:
 private:
     sf::RenderWindow window;
     std::unique_ptr<Screen> currentScreen;
+    std::unique_ptr<Screen> nextScreen;
+
     TcpServer tcpServer; // Owns the server, lives as long as the application
     InputManager inputManager;
 };

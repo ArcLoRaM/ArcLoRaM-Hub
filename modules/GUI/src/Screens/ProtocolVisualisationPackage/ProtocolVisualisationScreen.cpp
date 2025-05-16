@@ -60,7 +60,9 @@ void ProtocolVisualisationScreen::update(float deltaTime, InputManager& input)
 }
 
 void ProtocolVisualisationScreen::draw(sf::RenderWindow& window)
-{
-    manager.draw(window, networkView, state);
+{    
+    window.setView(window.getDefaultView());
     backButton->draw(window);
+    manager.draw(window, networkView, state);
+
 }

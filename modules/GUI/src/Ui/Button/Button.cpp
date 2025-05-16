@@ -71,10 +71,10 @@ void Button::setOnClick(std::function<void()> callback) {
 }
 
 void Button::update(const InputManager& input) {
-    sf::Vector2f mouseWorldPosition = input.getMouseWorldPosition();
+    sf::Vector2f mousePos = input.getMouseUIScreenPosition();  // <-- Important!
 
     bool wasHovered = isHovered;
-    isHovered = shape.getGlobalBounds().contains(mouseWorldPosition);
+    isHovered = shape.getGlobalBounds().contains(mousePos);
 
     if (isHovered && !wasHovered) {
         shape.setFillColor(sf::Color(shape.getFillColor().r, shape.getFillColor().g, shape.getFillColor().b, 200));
