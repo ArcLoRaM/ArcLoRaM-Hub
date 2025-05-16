@@ -16,7 +16,7 @@
 #include "../../Visualisation/Animations/PacketDrop/PacketDrop.hpp"
 #include "../../Visualisation/Animations/ReceptionIcon/ReceptionIcon.hpp"
 #include "ProtocolVisualisationState.hpp"
-
+#include "../../Shared/InputManager/InputManager.hpp"
 
 class VisualiserManager {
 private:
@@ -34,6 +34,7 @@ private:
     //Routing
     std::unordered_set<int> devicesId; // Stores unique devices ID
     std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
+    bool routingDisplayEnabled = false; // Flag to control routing display
     void drawRootings(sf::RenderWindow& window);
 
     std::vector<std::unique_ptr<Button>> buttons; // List of buttons
@@ -53,7 +54,7 @@ private:
 
 public:
     VisualiserManager();
-    void update();
+    void update(InputManager & inputManager);
     void draw(sf::RenderWindow& window, sf::View& networkView,const ProtocolVisualisationState& state);
 
     void updateDevicesState(int nodeId, std::string state);
@@ -76,6 +77,8 @@ public:
 
 };
 
+
+//For the routing Arrow
 // Function to create an arrowhead shape
 inline sf::ConvexShape createArrowhead(sf::Vector2f position, sf::Vector2f direction, float headLength, float headWidth) {
     // Normalize the direction

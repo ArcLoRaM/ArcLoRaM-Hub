@@ -19,7 +19,7 @@ class ProtocolPacketController : public IPacketController {
     void handleSystemPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleTickPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleStateNodePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
-    void handlePositionPacket(sf::RenderWindow & window,sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
+    void handlePositionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleTransmitMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleReceiveMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleRoutingDecisionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);

@@ -14,7 +14,7 @@ class ProtocolVisualisationScreen : public Screen {
 public:
     explicit ProtocolVisualisationScreen(TcpServer& tcpServer);
     void handleEvent(InputManager& input) override;
-    void update(float deltaTime) override;
+    void update(float deltaTime,InputManager &input) override;
     void draw(sf::RenderWindow& window) override;
 
 private:
@@ -22,7 +22,6 @@ private:
     
     VisualiserManager manager;
     sf::View networkView;
-    sf::Font* font; // Reference from ResourceManager
     ProtocolVisualisationState state; 
     ProtocolPacketController packetController;
 

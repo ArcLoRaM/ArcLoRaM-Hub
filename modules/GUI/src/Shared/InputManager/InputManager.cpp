@@ -1,4 +1,6 @@
 #include "InputManager.hpp"
+#include <iostream>
+
 void InputManager::handleEvent(const std::optional<sf::Event>& event) {
     if (!event) return;
 
@@ -11,8 +13,7 @@ void InputManager::handleEvent(const std::optional<sf::Event>& event) {
     else if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
         if (!pressedMouseButtons.contains(mousePressed->button)) {
             justPressedMouseButtons.insert(mousePressed->button);
-            auto now = std::chrono::steady_clock::now();
-            lastClickTime[mousePressed->button] = now;
+            std::cout << "Mouse button pressed: " << static_cast<int>(mousePressed->button) << std::endl;
         }
         pressedMouseButtons.insert(mousePressed->button);
     }
@@ -28,21 +29,18 @@ void InputManager::handleEvent(const std::optional<sf::Event>& event) {
 
 void InputManager::postUpdate(const sf::RenderWindow& window) {
     mouseScreenPosition = sf::Mouse::getPosition(window);
-    justPressedMouseButtons.clear();
-    accumulatedMouseWheelDelta = 0.f; // Clear wheel delta after frame
-}
+    mouseWorldPosition = window.mapPixelToCoords(mouseScreenPosition);
 
-float InputManager::getMouseWheelDelta() const {
-    return accumulatedMouseWheelDelta;
+    justPressedMouseButtons.clear();  // Reset per-frame
+    accumulatedMouseWheelDelta = 0.f;
 }
-
 
 sf::Vector2i InputManager::getMouseScreenPosition() const {
     return mouseScreenPosition;
 }
 
-sf::Vector2f InputManager::getMouseWorldPosition(const sf::RenderWindow& window) const {
-    return window.mapPixelToCoords(mouseScreenPosition);
+sf::Vector2f InputManager::getMouseWorldPosition() const {
+    return mouseWorldPosition;
 }
 
 bool InputManager::isKeyPressed(sf::Keyboard::Scancode key) const {
@@ -53,13 +51,10 @@ bool InputManager::isMouseButtonPressed(sf::Mouse::Button button) const {
     return pressedMouseButtons.contains(button);
 }
 
-bool InputManager::isMouseJustPressed(sf::Mouse::Button button) const {
-    return justPressedMouseButtons.contains(button);
+bool InputManager::isMouseJustPressed() const {
+    return !justPressedMouseButtons.empty();
 }
 
-bool InputManager::isDoubleClick(sf::Mouse::Button button) const {
-    if (!lastClickTime.contains(button)) return false;
-    auto now = std::chrono::steady_clock::now();
-    auto duration = std::chrono::duration<float>(now - lastClickTime.at(button)).count();
-    return duration <= doubleClickThresholdSec;
+float InputManager::getMouseWheelDelta() const {
+    return accumulatedMouseWheelDelta;
 }

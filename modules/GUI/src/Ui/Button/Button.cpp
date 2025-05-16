@@ -4,16 +4,22 @@
 #include <iostream>
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 
-Button::Button(sf::RenderWindow& window,float x, float y, float width, float height,
-    sf::Color color, std::string& stateRef,
-    const std::string& on, const std::string& off, const std::string& ressourceKey)
-    : window(window),state(stateRef), onState(on), offState(off) {
-    shape.setSize(sf::Vector2f(width, height));
+
+// Button::Button(sf::RenderWindow& window,float x, float y, float width, float height,
+//     sf::Color color, std::string& stateRef,
+//     const std::string& on, const std::string& off, const std::string& ressourceKey)
+//     : window(window),state(stateRef), onState(on), offState(off) {
+
+// }
+
+Button::Button(float x, float y, float width, float height, sf::Color color, const std::string & resourceKey)
+{
+        shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(sf::Vector2f(x, y));
     shape.setFillColor(color);
     // Load the icon texture
 
-    iconTexture = &ResourceManager::getInstance().getTexture(ressourceKey);
+    iconTexture = &ResourceManager::getInstance().getTexture(resourceKey);
     // Set up the sprite
     icon = std::make_optional<sf::Sprite>(*iconTexture);
 
@@ -34,25 +40,26 @@ void Button::draw(sf::RenderWindow& window) {
     window.draw(*icon); // Draw the icon
 }
 
-void Button::handleEvent(const sf::Event& event) {
-
-    if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
-    {
-        if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-        {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mousePos);
-    
-            if (shape.getGlobalBounds().contains(mouseWorldPos)) {
-                // Toggle state and update global variable
-                std::cout<<"Button pressed, stateis "<<state<<std::endl;
-                state = (state == offState) ? onState : offState;
-    
-            }
-        }
-    }
+void Button::setOnClick(std::function<void()> callback) {
+    onClickAction = std::move(callback);
 }
 
-std::string Button::getState() const {
-    return state;
+void Button::update(const InputManager& input) {
+    sf::Vector2f mouseWorldPosition = input.getMouseWorldPosition();
+
+    bool wasHovered = isHovered;
+    isHovered = shape.getGlobalBounds().contains(mouseWorldPosition);
+
+    if (isHovered && !wasHovered) {
+        shape.setFillColor(sf::Color(shape.getFillColor().r, shape.getFillColor().g, shape.getFillColor().b, 200));
+    } else if (!isHovered && wasHovered) {
+        shape.setFillColor(sf::Color(shape.getFillColor().r, shape.getFillColor().g, shape.getFillColor().b, 255));
+    }
+
+    if (isHovered && input.isMouseJustPressed()) {
+        if (onClickAction) {
+            onClickAction(); // Execute the assigned action
+            std::cout << "onClickAction executed" << std::endl; 
+        }
+    }
 }

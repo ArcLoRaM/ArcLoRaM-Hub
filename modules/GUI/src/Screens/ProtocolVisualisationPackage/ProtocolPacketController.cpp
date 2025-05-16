@@ -12,7 +12,7 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
     case 0: handleSystemPacket(packet, state,manager); break;
     case 1: handleTickPacket(packet, state,manager); break;
     case 2: handleStateNodePacket(packet, state,manager); break;
-    case 3: /*handlePositionPacket(window,packet, state,manager)*/; break;
+    case 3: handlePositionPacket(packet, state,manager); break;
     case 4: handleTransmitMessagePacket(packet, state,manager); break;
     case 5: handleReceiveMessagePacket(packet, state,manager); break;
     case 6: handleRoutingDecisionPacket(packet, state,manager); break;
@@ -91,7 +91,7 @@ void ProtocolPacketController::handleStateNodePacket(sf::Packet& packet,Protocol
     }
 }
 
-void ProtocolPacketController::handlePositionPacket(sf::RenderWindow &window,sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
+void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     positionPacket pp;
     packet >> pp.nodeId >> pp.classNode >> pp.coordinates.first >> pp.coordinates.second >> pp.batteryLevel;
 
@@ -101,7 +101,7 @@ void ProtocolPacketController::handlePositionPacket(sf::RenderWindow &window,sf:
     pp.coordinates.second *= config::distanceDivider;
 
     
-        auto device = std::make_unique<Device>(window,pp.nodeId, pp.classNode, pp.coordinates, pp.batteryLevel);
+        auto device = std::make_unique<Device>(pp.nodeId, pp.classNode, pp.coordinates, pp.batteryLevel);
         manager.addDevice(std::move(device));
         manager.addDeviceId(pp.nodeId);
     

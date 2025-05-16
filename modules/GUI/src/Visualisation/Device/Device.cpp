@@ -1,123 +1,84 @@
-
-
-
-
 #include "Device.hpp"
-#include <iostream>
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
+#include <iostream>
 
+Device::Device(int nodeId, int classNode, std::pair<int, int> coordinates, double batteryLevel)
+    : nodeId(nodeId), classNode(classNode), coordinates(coordinates), batteryLevel(batteryLevel) {
 
-Device::Device(sf::RenderWindow& window,int nodeId,
-    int classNode, std::pair<int, int> coordinates,double batteryLevel):
-    nodeId(nodeId), classNode(classNode), coordinates(coordinates),batteryLevel(batteryLevel),window(window) {
+    shape = sf::CircleShape(config::radiusIcon);
 
-       
+    std::string classNodeString = (classNode == 2) ? "C2" : (classNode == 3) ? "C3" : "Unknown";
+    if (classNodeString != "Unknown") {
+        iconTexture = &ResourceManager::getInstance().getTexture(classNodeString + "_Sleep");
+        shape.setTexture(iconTexture);
+        shape.setPosition({coordinates.first - config::radiusIcon, coordinates.second - config::radiusIcon});
+    } else {
+        std::cerr << "Error: classNode not recognized" << std::endl;
+    }
 
-        shape= sf::CircleShape (config::radiusIcon);
-        
+    font = &ResourceManager::getInstance().getFont("Arial");
 
+    infoWindow.setSize({150, 80});
+    infoWindow.setFillColor(sf::Color(0, 0, 0, 200));
+    infoWindow.setOutlineThickness(2);
+    infoWindow.setOutlineColor(sf::Color::White);
 
+    textId = "Node ID: " + std::to_string(nodeId);
+    infoTextId = sf::Text(*font);
+    infoTextId->setCharacterSize(14);
+    infoTextId->setString(textId);
+    infoTextId->setFillColor(sf::Color::White);
 
-        state="Sleep";
-
-        //depending of the class, we load the corresponding icon
-        if(classNode==3){
-
-         
-            iconTexture = &ResourceManager::getInstance().getTexture("C3_Sleep");
-        
-            shape.setTexture(iconTexture);
-            shape.setPosition(sf::Vector2f(
-                coordinates.first - config::radiusIcon,
-                coordinates.second - config::radiusIcon
-            ));
-
-        }
-        else if(classNode==2){
-             iconTexture = &ResourceManager::getInstance().getTexture("C2_Sleep");
-          
-            shape.setTexture(iconTexture);
-            shape.setPosition(sf::Vector2f(
-                coordinates.first- config::radiusIcon ,
-                coordinates.second- config::radiusIcon
-            ));
-        }
-        else{
-            std::cerr<<"Error: classNode not recognized"<<std::endl;
-        }
-        
-        font = &ResourceManager::getInstance().getFont("Arial");
-
-        //Info WIndow
-        infoWindow.setSize(sf::Vector2f(150, 80));
-        infoWindow.setFillColor(sf::Color(0, 0, 0, 200)); // Semi-transparent black
-        infoWindow.setOutlineThickness(2);
-        infoWindow.setOutlineColor(sf::Color::White);
-        textId="Node ID:"+std::to_string(nodeId);
-
-        infoTextId = sf::Text(*font);
-        infoTextId->setCharacterSize(14);
-        infoTextId->setString(textId);
-        infoTextId->setFillColor(sf::Color::White);
-        textBattery="Battery: "+std::to_string(batteryLevel);
-
-        infoTextBattery = sf::Text(*font);
-        infoTextBattery->setCharacterSize(14);
-        infoTextBattery->setString(textBattery);
-        infoTextBattery->setFillColor(sf::Color::White);
-        
-
-
+    textBattery = "Battery: " + std::to_string(batteryLevel);
+    infoTextBattery = sf::Text(*font);
+    infoTextBattery->setCharacterSize(14);
+    infoTextBattery->setString(textBattery);
+    infoTextBattery->setFillColor(sf::Color::White);
 }
 
-void Device::draw(sf::RenderWindow &window)
-{
+void Device::draw(sf::RenderWindow& window) {
     window.draw(shape);
-    if(displayInfoWindow){
+
+    if (displayInfoWindow) {
         window.draw(infoWindow);
         window.draw(*infoTextId);
         window.draw(*infoTextBattery);
     }
-    //window.draw(icon);
 }
 
-void Device::changePNG(std::string state)
-{
-    std::string classNodeString;
-    if(classNode==2){
-        classNodeString="C2";
-    }
-    else if(classNode==3){
-        classNodeString="C3";
-    }
-    else if(classNode==1){
-        classNodeString="C1";
-    }
-    else{
-        std::cerr<<"Error: classNode not recognized"<<std::endl;
-    }
-    iconTexture = &ResourceManager::getInstance().getTexture(classNodeString+"_"+state);
-    shape.setTexture(iconTexture);
-}
+void Device::update(const InputManager& input) {
+    sf::Vector2f mouseWorldPos = input.getMouseWorldPosition();
+    bool wasHovered = isHovered;
+    isHovered = shape.getGlobalBounds().contains(mouseWorldPos);
 
-void Device::handleEvent(const sf::Event &event)
-{
-    if (const auto* mouseButtonPressed = event.getIf<sf::Event::MouseButtonPressed>())
-    {
-        if (mouseButtonPressed->button == sf::Mouse::Button::Left)
-        {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            sf::Vector2f mouseWorldPos = window.mapPixelToCoords(mousePos);
-    
-            if (shape.getGlobalBounds().contains(mouseWorldPos)){
-                displayInfoWindow=!displayInfoWindow;
-                if(displayInfoWindow){
-                    infoWindow.setPosition(mouseWorldPos + sf::Vector2f(10, 10));
-                    infoTextId->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 10));
-                    infoTextBattery->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 30));
-                }
-            }
+    // Visual feedback (hover effect)
+    if (isHovered && !wasHovered) {
+        shape.setScale(sf::Vector2f{1.f, 1.f}); // Slight zoom on hover
+    } else if (!isHovered && wasHovered) {
+        shape.setScale(sf::Vector2f{1.f, 1.f}); // Reset scale
+    }
+
+    // Click to toggle info window
+    if (isHovered && input.isMouseJustPressed()) {
+        displayInfoWindow = !displayInfoWindow;
+
+        if (displayInfoWindow) {
+            infoWindow.setPosition(mouseWorldPos + sf::Vector2f(10, 10));
+            infoTextId->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 10));
+            infoTextBattery->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 30));
         }
+    }
+}
+
+void Device::changePNG(const std::string& newState) {
+    state = newState;
+
+    std::string classNodeString = (classNode == 2) ? "C2" : (classNode == 3) ? "C3" : "Unknown";
+    if (classNodeString != "Unknown") {
+        iconTexture = &ResourceManager::getInstance().getTexture(classNodeString + "_" + state);
+        shape.setTexture(iconTexture);
+    } else {
+        std::cerr << "Error: classNode not recognized" << std::endl;
     }
 }

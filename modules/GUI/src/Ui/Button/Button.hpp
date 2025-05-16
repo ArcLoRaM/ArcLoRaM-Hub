@@ -4,35 +4,28 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <stdexcept>
+#include <functional>
+#include "../../Shared/InputManager/InputManager.hpp"
 
 class Button {
 private:
     sf::RectangleShape shape;
-    std::string& state; // Reference to the global state this button controls
-    std::optional< sf::Sprite >icon;    // Icon inside the button
-    sf::Texture* iconTexture; // Texture for the icon
-    std::string onState;
-    std::string offState;
-    sf::RenderWindow& window;
+    std::optional<sf::Sprite> icon;
+    sf::Texture* iconTexture = nullptr;
 
+    bool isHovered = false;
+
+    std::function<void()> onClickAction; // callback for click action
 
 public:
-    // Constructor
-    Button( sf::RenderWindow& window, float x, float y, float width, float height,
-        sf::Color color, std::string& stateRef,
-        const std::string& on, const std::string& off, const std::string& ressourceKey);
+    Button(float x, float y, float width, float height,
+           sf::Color color, const std::string& resourceKey);
 
-    // Draw the button
     void draw(sf::RenderWindow& window);
+    void update(const InputManager& input);
 
-    // Handle events like mouse clicks
-    void handleEvent(const sf::Event& event);
-
-    // Get the current state of the button
-    std::string getState() const;
-
-    
-
+    void setOnClick(std::function<void()> callback);
 };
+
 
 #endif // BUTTON_HPP

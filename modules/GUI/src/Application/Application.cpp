@@ -20,6 +20,7 @@ void Application::run() {
     InputManager inputManager;
 
     sf::Clock mainClock;
+
     while (window.isOpen()) {
         // "C++ lets you deduce the template parameter which is why you can write const std::optional event instead of
         //  const std::optional<sf::Event> event. const auto event is another valid choice if you prefer a shorter expression."
@@ -32,15 +33,16 @@ void Application::run() {
             currentScreen->handleEvent(inputManager);
         }
         
-        inputManager.postUpdate(window);
+
 
         float deltaTime = mainClock.restart().asSeconds();
-        currentScreen->update(deltaTime);
+        currentScreen->update(deltaTime,inputManager);
         window.clear();
         currentScreen->draw(window);
         window.display();
         
-   
+        //must be at the end of the frame
+        inputManager.postUpdate(window);
     }
 }
 

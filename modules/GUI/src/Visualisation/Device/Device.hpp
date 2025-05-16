@@ -1,39 +1,42 @@
 #pragma once
 
-#include <utility>
 #include <SFML/Graphics.hpp>
+#include <string>
+#include <optional>
+#include "../../Shared/InputManager/InputManager.hpp"
 
 class Device {
-
 private:
-sf::RenderWindow& window;
-    
+    sf::CircleShape shape;
+    sf::Texture* iconTexture = nullptr;
 
+    std::optional<sf::Text> infoTextId;
+    std::optional<sf::Text> infoTextBattery;
+    sf::RectangleShape infoWindow;
+
+    std::string textId;
+    std::string textBattery;
+    sf::Font* font = nullptr;
+
+    bool displayInfoWindow = false;
+    bool isHovered = false;
 
 public:
-    Device(sf::RenderWindow& window,int nodeId,int classNode, std::pair<int, int> coordinates,double batteryLevel=0);
+    int nodeId = 0;
+    int classNode = 0;
+    double batteryLevel = 0;
+    std::string state = "Sleep";
+
     std::pair<int, int> coordinates;
-    int nodeId=0;
-    int classNode;
-    double batteryLevel=0;
 
-    sf::CircleShape shape;
-    sf::Texture* iconTexture;    // Texture for the icon
-    std::string state;
+    Device(int nodeId, int classNode, std::pair<int, int> coordinates, double batteryLevel = 0);
 
-    // sf::RectangleShape shape;
-    // sf::Sprite icon;    // Icon inside the button
-    // sf::Texture iconTexture; // Texture for the icon
     void draw(sf::RenderWindow& window);
-    void changePNG(std::string state);
-    void handleEvent(const sf::Event& event);
-    // Info window
-    sf::RectangleShape infoWindow;
-    bool displayInfoWindow=false;
+    void update(const InputManager& input);
 
-    std::optional< sf::Text> infoTextId;
-     std::string textId;
-     std::string textBattery;
-     sf::Font* font; 
-    std::optional< sf::Text> infoTextBattery;
+    void changePNG(const std::string& state);
+
+    sf::Vector2f getPosition() const {
+        return shape.getPosition();
+    }
 };

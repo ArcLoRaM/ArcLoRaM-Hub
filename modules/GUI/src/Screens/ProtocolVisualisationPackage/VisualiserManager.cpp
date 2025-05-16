@@ -50,9 +50,13 @@ VisualiserManager::VisualiserManager()
     const float height4 = 40;
     const sf::Color color4 = sf::Color::Yellow;
 
-    // // Todo: change how you handle the state of the button - boolean, not better?
-    // std::unique_ptr<Button> buttonRouting = std::make_unique<Button>(window, x4coor, y4coor, width4, height4, color4, state4, on, off, "Rooting_Button");
-    // addButton(std::move(buttonRouting));
+        auto buttonRouting = std::make_unique<Button>(x4coor, y4coor, width4, height4, color4, "Rooting_Button");
+         buttonRouting->setOnClick([this]() {
+        // Toggle internal state (could be a bool, enum, etc.)
+        routingDisplayEnabled = !routingDisplayEnabled;
+        std::cout << "Routing display toggled: " << (routingDisplayEnabled ? "ON" : "OFF") << std::endl;    
+    });
+     buttons.push_back(std::move(buttonRouting));
 }
 
 void VisualiserManager::addButton(std::unique_ptr<Button> button)
@@ -147,8 +151,9 @@ void VisualiserManager::removeRouting(int id1, int id2)
         std::cout << "********One or both devices do not exist.********\n";
     }
 }
-void VisualiserManager::update()
-{
+void VisualiserManager::update(InputManager &inputManager)
+{   
+    //Update animations and their life cycle
     {
         std::lock_guard<std::mutex> lock(broadcastAnimationsMutex);
         for (auto &animation : broadcastAnimations)
@@ -186,6 +191,20 @@ void VisualiserManager::update()
                                             { return icon->isFinished(); }),
                              receptionIcons.end());
     }
+
+    //with interactivity through inputManager Injection
+    {
+        std::lock_guard<std::mutex> lock(buttonsMutex);
+        for (auto &button : buttons)
+            button->update(inputManager);
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(devicesMutex);
+        for (auto &device : devices)
+            device->update(inputManager);
+    }
+
 }
 
 void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, const ProtocolVisualisationState &state)
@@ -233,7 +252,7 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, co
 
     window.setView(networkView);
 
-    if (buttons[0]->getState() == "ON")
+    if (routingDisplayEnabled)
         drawRootings(window);
 
     {
@@ -309,7 +328,7 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
             {
                 if (device1->nodeId == device)
                 {
-                    start = device1->shape.getPosition();
+                    start = device1->getPosition();
                     // center the start position
                     start.x += config::radiusIcon;
                     start.y += config::radiusIcon;
@@ -318,7 +337,7 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
                     {
                         if (device2->nodeId == connectedDevice)
                         {
-                            end = device2->shape.getPosition();
+                            end = device2->getPosition();
                             // center the end position
                             end.x += config::radiusIcon;
                             end.y += config::radiusIcon;
