@@ -1,10 +1,10 @@
 #include "Arrow.hpp"
 #include <cmath> // For trigonometric functions
-#include "../../../Shared/Common/Common.hpp"
 #include "../../../Shared/RessourceManager/RessourceManager.hpp"
+#include "../../../Shared/Config.hpp"
 // Constructor
 Arrow::Arrow(const sf::Vector2f& start, const sf::Vector2f& end,  int senderId, int receiverId, sf::Color color)
-    : start(start), end(end), progress(0.0f), duration(arrowDuration), SenderId(senderId), ReceiverId(receiverId), receptionDuration(receptionDuration), receptionComplete(false), color(color) {
+    : start(start), end(end), progress(0.0f), duration(config::arrowDuration), SenderId(senderId), ReceiverId(receiverId), receptionDuration(receptionDuration), receptionComplete(false), color(color) {
     // Initialize line (shaft of the arrow)
 
     line.setSize(sf::Vector2f(0, 7)); // Initially, the line length is 0, thickness = 7
@@ -33,7 +33,7 @@ float Arrow::calculateAngle(const sf::Vector2f& p1, const sf::Vector2f& p2) cons
 void Arrow::update() {
     // Update progress based on elapsed time
     float elapsed = clock.getElapsedTime().asSeconds();
-    progress = elapsed / arrowDuration;
+    progress = elapsed / config::arrowDuration;
 
     if (progress > 0.9f) { //we shorten a bit the arrow for clarity TODO: make the progress stopped at a fixed distance from the receiver, not relative because it might be weird when there is a lot of distance between two nodes.
 

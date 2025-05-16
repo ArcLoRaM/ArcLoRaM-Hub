@@ -1,19 +1,23 @@
 #include "Application.hpp"
-#include "../Screens/NetworkVisualisationScreen/NetworkVisualisationScreen.hpp" // Initial screen
+#include "../Screens/ProtocolVisualisationPackage/ProtocolVisualisationScreen.hpp" // Initial screen
 #include <thread>
 #include <atomic>
+#include "../Shared/InputManager/InputManager.hpp"
+#include "../Shared/Config.hpp"
 
 Application::Application()
-    : window( sf::VideoMode(sf::Vector2u(windowWidth, windowHeight)), "ArcLoRaM GUI",sf::Style::Default)
+    : window( sf::VideoMode(sf::Vector2u(config::windowWidth, config::windowHeight)), "ArcLoRaM GUI",sf::Style::Default)
 {
+       tcpServer.start(5000);
     // Start at HomeScreen
-    changeScreen(std::make_unique<NetworkVisualisationScreen>(window));
+    changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer));
 
 }
 
 void Application::run() {
 
-
+    //remains scoped
+    InputManager inputManager;
 
     sf::Clock mainClock;
     while (window.isOpen()) {
@@ -22,9 +26,13 @@ void Application::run() {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
+                
+                inputManager.handleEvent(event);
 
-            currentScreen->handleEvent(event);
+            currentScreen->handleEvent(inputManager);
         }
+        
+        inputManager.postUpdate(window);
 
         float deltaTime = mainClock.restart().asSeconds();
         currentScreen->update(deltaTime);
@@ -32,8 +40,7 @@ void Application::run() {
         currentScreen->draw(window);
         window.display();
         
-        //delay to limit the frame rate
-        //TODO
+   
     }
 }
 

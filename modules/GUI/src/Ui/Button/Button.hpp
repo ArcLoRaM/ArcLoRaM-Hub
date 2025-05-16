@@ -30,6 +30,9 @@ public:
 
     // Get the current state of the button
     std::string getState() const;
+
+    
+
 };
 
 #endif // BUTTON_HPP

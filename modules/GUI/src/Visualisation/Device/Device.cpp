@@ -4,8 +4,9 @@
 
 #include "Device.hpp"
 #include <iostream>
-#include "../../Shared/Common/Common.hpp"
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
+#include "../../Shared/Config.hpp"
+
 
 Device::Device(sf::RenderWindow& window,int nodeId,
     int classNode, std::pair<int, int> coordinates,double batteryLevel):
@@ -13,7 +14,7 @@ Device::Device(sf::RenderWindow& window,int nodeId,
 
        
 
-        shape= sf::CircleShape (radiusIcon);
+        shape= sf::CircleShape (config::radiusIcon);
         
 
 
@@ -28,8 +29,8 @@ Device::Device(sf::RenderWindow& window,int nodeId,
         
             shape.setTexture(iconTexture);
             shape.setPosition(sf::Vector2f(
-                coordinates.first - radiusIcon,
-                coordinates.second - radiusIcon
+                coordinates.first - config::radiusIcon,
+                coordinates.second - config::radiusIcon
             ));
 
         }
@@ -38,8 +39,8 @@ Device::Device(sf::RenderWindow& window,int nodeId,
           
             shape.setTexture(iconTexture);
             shape.setPosition(sf::Vector2f(
-                coordinates.first- radiusIcon ,
-                coordinates.second- radiusIcon
+                coordinates.first- config::radiusIcon ,
+                coordinates.second- config::radiusIcon
             ));
         }
         else{

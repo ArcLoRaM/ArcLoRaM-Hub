@@ -1,7 +1,7 @@
 #include "ReceptionIcon.hpp"
-#include "../../../Shared/Common/Common.hpp"
 #include "../../../Shared/RessourceManager/RessourceManager.hpp"
-
+#include "../../../Shared/Config.hpp"
+#include <cmath>
 ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& receiverPos, std::string state)
 {
 
@@ -26,7 +26,7 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
         throw std::runtime_error("Invalid reception state");
     }
 
-        icon->setScale(sf::Vector2f(radiusIcon/icon->getLocalBounds().size.x,radiusIcon/icon->getLocalBounds().size.y));
+        icon->setScale(sf::Vector2f(config::radiusIcon/icon->getLocalBounds().size.x,config::radiusIcon/icon->getLocalBounds().size.y));
         icon->setPosition(iconPosition);
 
         // Center the icon on the calculated position
@@ -44,7 +44,7 @@ if(!isFinished()){
 
 bool ReceptionIcon::isFinished() const
 {       
-     if (receptionClock.getElapsedTime().asSeconds() >= receptionDuration) {
+     if (receptionClock.getElapsedTime().asSeconds() >= config::receptionDuration) {
 
         return true;
         }
@@ -67,7 +67,7 @@ sf::Vector2f ReceptionIcon::getPointOnLine(const sf::Vector2f& senderPos, const 
     }
 
     // Scale the normalized direction vector by the radius
-    sf::Vector2f result = receiverPos + direction * (float)radiusIcon;
+    sf::Vector2f result = receiverPos + direction * (float)config::radiusIcon;
 
     return result;
 }

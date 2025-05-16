@@ -7,6 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-std=gnu++20",
 
                 "${workspaceFolder}\\main.cpp",
                 "${workspaceFolder}\\src\\Application\\Application.cpp",
@@ -15,7 +16,6 @@
                 "${workspaceFolder}\\src\\Ui\\Button\\Button.cpp",
 
                 //Shared
-                "${workspaceFolder}\\src\\Shared\\Common\\Common.cpp",
                 "${workspaceFolder}\\src\\Shared\\RessourceManager\\RessourceManager.cpp",
                 "${workspaceFolder}\\src\\Shared\\InputManager\\InputManager.cpp",
 
@@ -23,27 +23,25 @@
                 "${workspaceFolder}\\src\\Visualisation\\Device\\Device.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\PacketDrop\\PacketDrop.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\ReceptionIcon\\ReceptionIcon.cpp",
-                "${workspaceFolder}\\src\\Visualisation\\VisualiserManager\\VisualiserManager.cpp",
-                "${workspaceFolder}\\src\\Visualisation\\display.cpp",
                  "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
                 
                 
                 //Network                
                 "${workspaceFolder}\\src\\Network\\Packets\\Packets.cpp",
-                "${workspaceFolder}\\src\\Network\\network.cpp",
-                "${workspaceFolder}\\src\\Network\\NetworkManager\\NetworkManager.cpp",
-
+                "${workspaceFolder}\\src\\Network\\TcpServer\\TcpServer.cpp",
                 
 
                 //Screens
 
-                "${workspaceFolder}\\src\\Screens\\NetworkVisualisationScreen\\NetworkVisualisationScreen.cpp",
-
-
+                "${workspaceFolder}\\src\\Screens\\ProtocolVisualisationPackage\\ProtocolVisualisationScreen.cpp",
+                "${workspaceFolder}\\src\\Screens\\ProtocolVisualisationPackage\\ProtocolPacketController.cpp",
+                         "${workspaceFolder}\\src\\Screens\\ProtocolVisualisationPackage\\VisualiserManager.cpp",
 
                 //change with your location
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", 
+                //Necessary when you have several cpp in the same folder
+                "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\GUI\\src\\Screens\\ProtocolVisualisationScreenPackage",
                 "-L","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\lib",
                 
                 "-lsfml-system",

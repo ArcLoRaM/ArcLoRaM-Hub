@@ -1,5 +1,5 @@
 #include "BroadcastAnimation.hpp"
-#include "../../../Shared/Common/Common.hpp"
+#include "../../../Shared/Config.hpp"
 
 BroadcastAnimation::BroadcastAnimation(const sf::Vector2f& startPosition, float duration)
     : startPosition(startPosition), duration(duration){
@@ -23,8 +23,7 @@ void BroadcastAnimation::update() {
     }
 
     // Calculate the current radius
-    float currentRadius = progress * DISTANCE_THRESHOLD;
-
+    float currentRadius = progress * config::distanceThreshold; 
     circle.setRadius(currentRadius);
 
     // Adjust the origin to keep the circle centered

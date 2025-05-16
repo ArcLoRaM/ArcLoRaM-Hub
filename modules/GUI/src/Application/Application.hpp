@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include "../Screens/Screen.hpp"
 #include <memory>
+#include "../Network/TcpServer/TcpServer.hpp"
+#include "../Shared/InputManager/InputManager.hpp"
 
 class Application {
 public:
@@ -16,4 +18,6 @@ public:
 private:
     sf::RenderWindow window;
     std::unique_ptr<Screen> currentScreen;
+    TcpServer tcpServer; // Owns the server, lives as long as the application
+    InputManager inputManager;
 };
