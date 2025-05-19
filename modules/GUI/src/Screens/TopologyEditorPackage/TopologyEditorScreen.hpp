@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
+#include "TopologyEditorManager.hpp"
+#include "TopologyEditorState.hpp"
 
 class TopologyEditorScreen : public Screen {
 public:
@@ -27,11 +29,11 @@ private:
 
     sf::View editorView;
     std::unique_ptr<Button> backButton;
-    std::unique_ptr<Button> saveButton;
-    std::unique_ptr<Button> addNodeButton;
-    std::unique_ptr<Button> addLinkButton;
+    
+  
+    TopologyEditorState editorState;
+    TopologyEditorManager editorManager;
 
 
-    // Interaction state
-    enum class EditorMode { Idle, AddingNode, AddingLink } mode = EditorMode::Idle;
+
 };

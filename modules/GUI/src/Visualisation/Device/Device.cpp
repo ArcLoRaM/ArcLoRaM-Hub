@@ -12,7 +12,10 @@ Device::Device(int nodeId, int classNode, std::pair<int, int> coordinates, doubl
     if (classNodeString != "Unknown") {
         iconTexture = &ResourceManager::getInstance().getTexture(classNodeString + "_Sleep");
         shape.setTexture(iconTexture);
-        shape.setPosition({coordinates.first - config::radiusIcon, coordinates.second - config::radiusIcon});
+        shape.setPosition(sf::Vector2f(
+            static_cast<float>(coordinates.first - config::radiusIcon),
+            static_cast<float>(coordinates.second - config::radiusIcon)
+        ));
     } else {
         std::cerr << "Error: classNode not recognized" << std::endl;
     }

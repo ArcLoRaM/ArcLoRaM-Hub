@@ -27,7 +27,7 @@ public:
     double batteryLevel = 0;
     std::string state = "Sleep";
 
-    std::pair<int, int> coordinates;
+    std::pair<int, int> coordinates; // why is it a pair? Should be a vector of two floats
 
     Device(int nodeId, int classNode, std::pair<int, int> coordinates, double batteryLevel = 0);
 

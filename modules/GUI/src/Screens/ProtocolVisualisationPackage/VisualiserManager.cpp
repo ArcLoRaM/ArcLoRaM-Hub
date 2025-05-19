@@ -210,7 +210,6 @@ void VisualiserManager::update(InputManager &inputManager)
 void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, const ProtocolVisualisationState &state)
 {
 
-    window.setView(window.getDefaultView());
 
     // Todo: have their own mutexes
     window.setView(window.getDefaultView());

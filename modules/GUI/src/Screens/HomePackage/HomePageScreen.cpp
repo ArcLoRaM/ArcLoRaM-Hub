@@ -22,7 +22,8 @@ HomePageScreen::HomePageScreen(std::vector<std::pair<std::string, ScreenAction>>
             buttonHeight,
             sf::Color(50, 150, 250),
             label,
-            "Arial"
+            "Arial",
+            false
         );
         btn->setOnClick(action);
         buttons.push_back(std::move(btn));

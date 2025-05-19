@@ -10,6 +10,8 @@ using ScreenAction = std::function<void()>;
 class Screen {
 public:
     virtual ~Screen() = default;
+
+    //should change the name to handleInput
     virtual void handleEvent(InputManager& input) = 0;
     virtual void update(float deltaTime,InputManager &input) = 0;
     virtual void draw(sf::RenderWindow& window) = 0;

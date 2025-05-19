@@ -12,7 +12,8 @@
 
 // }
 
-Button::Button(float x, float y, float width, float height, sf::Color color, const std::string & resourceKey)
+Button::Button(float x, float y, float width, float height, sf::Color color, const std::string & resourceKey, bool pushable)
+:pushable(pushable)
 {
         shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(sf::Vector2f(x, y));
@@ -38,8 +39,10 @@ Button::Button(float x, float y, float width, float height, sf::Color color, con
 
 //with text
 
-Button::Button(float x, float y, float width, float height, sf::Color color, const std::string& labelText, const std::string& fontKey)
+Button::Button(float x, float y, float width, float height, sf::Color color, const std::string& labelText, const std::string& fontKey, bool pushable)
+:pushable(pushable)
 {
+
     shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(sf::Vector2f(x, y));
     shape.setFillColor(color);
@@ -52,9 +55,9 @@ Button::Button(float x, float y, float width, float height, sf::Color color, con
     sf::FloatRect textBounds = text->getLocalBounds();
     text->setOrigin({textBounds.position.x + textBounds.size.x / 2.f,
         textBounds.position.y + textBounds.size.y / 2.f}
-        
     );
     text->setPosition({x + width / 2.f, y + height / 2.f} );
+
 }
 
 
@@ -70,6 +73,13 @@ void Button::setOnClick(std::function<void()> callback) {
     onClickAction = std::move(callback);
 }
 
+void Button::depush()
+{
+    if (pushable) {
+        pushed = false;
+    }
+}
+
 void Button::update(const InputManager& input) {
     sf::Vector2f mousePos = input.getMouseUIScreenPosition();  // <-- Important!
 
@@ -83,9 +93,23 @@ void Button::update(const InputManager& input) {
     }
 
     if (isHovered && input.isMouseJustPressed()) {
+
+
+        if (pushable) {
+            pushed = !pushed; // Toggle state
+
+        }
         if (onClickAction) {
             onClickAction(); // Execute the assigned action
-            std::cout << "onClickAction executed" << std::endl; 
         }
+
+
     }
+
+    // Determine final color based on hover and push state
+    // Apply hover effect with transparency only, preserving base color
+    sf::Color baseColor = shape.getFillColor();
+    uint8_t alpha = (isHovered || pushed) ? 200 : 255;
+    baseColor.a = alpha;
+    shape.setFillColor(baseColor);
 }

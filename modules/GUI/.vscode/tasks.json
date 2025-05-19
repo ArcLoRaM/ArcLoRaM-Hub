@@ -23,7 +23,7 @@
                 "${workspaceFolder}\\src\\Visualisation\\Device\\Device.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\PacketDrop\\PacketDrop.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\ReceptionIcon\\ReceptionIcon.cpp",
-                 "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
+                "${workspaceFolder}\\src\\Visualisation\\Animations\\Arrow\\Arrow.cpp",
                 "${workspaceFolder}\\src\\Visualisation\\Animations\\BroadcastAnimation\\BroadcastAnimation.cpp",
                 
                 
@@ -39,13 +39,16 @@
                 "${workspaceFolder}\\src\\Screens\\ProtocolVisualisationPackage\\VisualiserManager.cpp",
                 "${workspaceFolder}\\src\\Screens\\HomePackage\\HomePageScreen.cpp",
                 "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorScreen.cpp",
-
+                "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorManager.cpp",
+                "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorState.cpp",
+                
                 //change with your location
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", 
                 //Necessary when you have several cpp in the same folder
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\GUI\\src\\Screens\\ProtocolVisualisationScreenPackage",
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\GUI\\src\\Screens\\HomePackage",
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\GUI\\src\\Screens\\TopologyEditorPackage",
+                "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\GUI\\src\\Shared\\Libraries",
                 "-L","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\lib",
                 
                 "-lsfml-system",

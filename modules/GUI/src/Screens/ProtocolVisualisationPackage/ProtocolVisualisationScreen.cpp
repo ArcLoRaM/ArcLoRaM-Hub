@@ -22,7 +22,8 @@ ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, S
         buttonHeight,
         sf::Color(200, 50, 50),
         "Back",
-        "Arial"
+        "Arial",
+        false
     );
     backButton->setOnClick(backAction);
 }

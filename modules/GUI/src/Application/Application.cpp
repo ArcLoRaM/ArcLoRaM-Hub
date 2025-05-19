@@ -12,9 +12,8 @@ Application::Application()
 {
     tcpServer.start(5000);
 
-    // Set the initial screen to the home page
 auto homePageActions = std::make_shared<std::vector<std::pair<std::string, ScreenAction>>>();
-
+//provision the actions for the home page
 *homePageActions = {
     { "New Topology",  [this, homePageActions]() {
         auto backToHome = [this, homePageActions]() {
@@ -26,7 +25,7 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         auto backToHome = [this, homePageActions]() {
             changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
         };
-        changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, backToHome));
+        changeScreen(std::make_unique<TopologyEditorScreen>( backToHome));
     }},
     { "Network Visualisation", [this, homePageActions]() {
         auto backToHome = [this, homePageActions]() {
@@ -35,8 +34,9 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, backToHome));
     }}
 };
-
+    // Set the initial screen to the home page
 changeScreen(std::make_unique<HomePageScreen>(*homePageActions));
+std::cout << "Application object created" << std::endl;
 }
 void Application::run()
 {
