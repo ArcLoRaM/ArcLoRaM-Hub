@@ -39,4 +39,7 @@ public:
     sf::Vector2f getPosition() const {
         return shape.getPosition();
     }
+    sf::Vector2f getSize() const {
+        return shape.getGlobalBounds().size;
+    }
 };

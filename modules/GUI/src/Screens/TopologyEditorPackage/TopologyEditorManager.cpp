@@ -54,6 +54,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
     addNodeC1Button->setOnClick([this, &state]()
                                 {
                                     // state.setEditorMode(EditorMode::AddingC1Node);
+                                    // addNodeC3Button->depush();
+                                    // addNodeC1Button->depush();
                                 });
     posY += buttonHeight + spacingY;
     addNodeC2Button = std::make_unique<Button>(
@@ -75,6 +77,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             }
             else{
             state.setEditorMode(EditorMode::AddingC2Node);
+            addNodeC3Button->depush();
+            addNodeC1Button->depush();
             } });
 
     posY += buttonHeight + spacingY;
@@ -95,6 +99,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             }
             else{
             state.setEditorMode(EditorMode::AddingC3Node);
+            addNodeC2Button->depush();
+            addNodeC1Button->depush();
             } });
 
     posY += buttonHeight + spacingY;
@@ -247,11 +253,57 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
 
 
     window.setView(editorView);
+    sf::RectangleShape worldRect = convertRectangleToTopologyView(window, editorView,topologyBounds);
+
     for (auto &[_, device] : visualNodes)
     {
-        
-        device->draw(window);
+        if(isBoundsFullyInsideRect(device->getPosition(), device->getSize(), worldRect.getGlobalBounds()))
+        {
+            device->draw(window);
+        }
     }
 
     // Draw routing too...
+}
+
+sf::RectangleShape TopologyEditorManager::convertRectangleToTopologyView(
+    const sf::RenderWindow& window,
+    const sf::View& topologyView,
+    const sf::RectangleShape& screenRect
+) {
+    // Extract position and size in default view space
+    sf::Vector2f topLeftDefault = screenRect.getPosition();
+    sf::Vector2f sizeDefault    = screenRect.getSize();
+
+    // Convert top-left and bottom-right corners to topology view space
+    sf::Vector2f topLeft = window.mapPixelToCoords(
+        sf::Vector2i(static_cast<int>(topLeftDefault.x), static_cast<int>(topLeftDefault.y)),
+        topologyView
+    );
+
+    sf::Vector2f bottomRight = window.mapPixelToCoords(
+        sf::Vector2i(static_cast<int>(topLeftDefault.x + sizeDefault.x),
+                     static_cast<int>(topLeftDefault.y + sizeDefault.y)),
+        topologyView
+    );
+
+    // Create and return a new rectangle in topology view space
+    sf::RectangleShape worldRect;
+    worldRect.setPosition(topLeft);
+    worldRect.setSize(bottomRight - topLeft);
+    return worldRect;
+}
+
+
+
+
+bool TopologyEditorManager::isBoundsFullyInsideRect(
+    const sf::Vector2f& position,  // top-left corner
+    const sf::Vector2f& size,
+    const sf::FloatRect& rect
+) {
+    sf::Vector2f topLeft     = position;
+    sf::Vector2f bottomRight = position + size;
+
+    return rect.contains(topLeft) && rect.contains(bottomRight);
 }

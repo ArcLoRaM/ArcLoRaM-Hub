@@ -85,3 +85,4 @@ void Device::changePNG(const std::string& newState) {
         std::cerr << "Error: classNode not recognized" << std::endl;
     }
 }
+

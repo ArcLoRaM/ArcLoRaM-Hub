@@ -19,6 +19,19 @@ public:
     void setSelectedNode(std::optional<int> nodeId);
     std::optional<int> getSelectedNode() const;
 
+sf::RectangleShape convertRectangleToTopologyView(
+    const sf::RenderWindow& window,
+    const sf::View& topologyView,
+    const sf::RectangleShape& screenRect
+);
+
+
+bool isBoundsFullyInsideRect(
+    const sf::Vector2f& position,  // top-left corner
+    const sf::Vector2f& size,
+    const sf::FloatRect& rect
+);
+
 private:
 
     std::unordered_map<int, std::unique_ptr<Device>> visualNodes;
@@ -32,12 +45,14 @@ private:
     Dropdown<TopologyMode> modeDropdown;
     TopologyEditorState& state;
     sf::RectangleShape topologyBounds;
-    
+
 
     std::unique_ptr<Button> saveButton;
     std::unique_ptr<Button> addLinkButton;  
     std::unique_ptr<Button> addNodeC1Button;
     std::unique_ptr<Button> addNodeC2Button;
     std::unique_ptr<Button> addNodeC3Button;
+
+    
 };
 
