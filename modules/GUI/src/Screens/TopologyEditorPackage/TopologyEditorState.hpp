@@ -15,7 +15,8 @@ enum class EditorMode {
     AddingC3Node,
     AddingLink,
     CuttingNode,
-    CuttingLink
+    CuttingLink,
+    MovingNode
 };
 
 enum class DeviceClass {

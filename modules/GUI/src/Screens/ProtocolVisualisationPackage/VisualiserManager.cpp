@@ -7,6 +7,7 @@
 #include <iostream>
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
+#include "../../Shared/Helper.hpp"
 
 
 VisualiserManager::VisualiserManager()

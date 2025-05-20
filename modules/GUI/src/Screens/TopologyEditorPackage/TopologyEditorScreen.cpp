@@ -86,14 +86,9 @@ void TopologyEditorScreen::update(float deltaTime, InputManager& input)
 
 void TopologyEditorScreen::draw(sf::RenderWindow& window)
 {
-
-
-    // TODO: Draw topology nodes, links, etc. here
-
     // Switch back to default view for UI buttons
     window.setView(window.getDefaultView());
-
     if (backButton) backButton->draw(window);
+    
     editorManager.draw(window,editorView);
-
 }

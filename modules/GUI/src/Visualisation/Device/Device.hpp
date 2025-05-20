@@ -4,7 +4,7 @@
 #include <string>
 #include <optional>
 #include "../../Shared/InputManager/InputManager.hpp"
-
+#include "../../Shared/Config.hpp"
 class Device {
 private:
     sf::CircleShape shape;
@@ -29,7 +29,8 @@ public:
     double batteryLevel = 0;
     std::string state = "Sleep";
 
-    std::pair<int, int> coordinates; // why is it a pair? Should be a vector of two floats: Todo
+    std::pair<int, int> coordinates; 
+    // why is it a pair? Should be a vector of two floats: Todo
 
     Device(int nodeId, int classNode, std::pair<int, int> coordinates, double batteryLevel = 0);
 
@@ -40,6 +41,13 @@ public:
 
     sf::Vector2f getPosition() const {
         return shape.getPosition();
+    }
+    void changePosition(const sf::Vector2f& newCenteredPos) {
+        //Todo: get rid of Coordinates !!! It doesn't make any sense
+        coordinates.first = static_cast<int>(newCenteredPos.x);
+        coordinates.second = static_cast<int>(newCenteredPos.y);
+        sf::Vector2f newPos = {newCenteredPos.x - config::radiusIcon, newCenteredPos.y - config::radiusIcon};
+        shape.setPosition(newPos);
     }
     sf::Vector2f getSize() const {
         return shape.getGlobalBounds().size;
