@@ -13,7 +13,9 @@ enum class EditorMode {
     AddingC1Node,
     AddingC2Node,
     AddingC3Node,
-    AddingLink
+    AddingLink,
+    CuttingNode,
+    CuttingLink
 };
 
 enum class DeviceClass {
@@ -64,5 +66,6 @@ private:
     TopologyMode currentMode{TopologyMode::RRC_Uplink};
     EditorMode currentEditorMode{EditorMode::Idle};
     std::unordered_map<int, TopologyNode> nodes;
+
 
 };

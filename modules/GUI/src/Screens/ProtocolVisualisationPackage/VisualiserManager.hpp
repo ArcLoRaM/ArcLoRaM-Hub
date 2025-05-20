@@ -52,6 +52,7 @@ private:
     std::vector<std::unique_ptr<ReceptionIcon>> receptionIcons;
     mutable std::mutex receptionIconsMutex; 
 
+    
 public:
     VisualiserManager();
     void update(InputManager & inputManager);

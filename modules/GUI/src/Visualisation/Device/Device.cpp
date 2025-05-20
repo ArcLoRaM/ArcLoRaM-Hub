@@ -57,7 +57,7 @@ void Device::update(const InputManager& input) {
 
     // Visual feedback (hover effect)
     if (isHovered && !wasHovered) {
-        shape.setScale(sf::Vector2f{1.f, 1.f}); // Slight zoom on hover
+        shape.setScale(sf::Vector2f{1.15f, 1.15f}); // Slight zoom on hover
     } else if (!isHovered && wasHovered) {
         shape.setScale(sf::Vector2f{1.f, 1.f}); // Reset scale
     }
