@@ -5,7 +5,7 @@
 #include "../../Shared/Helper.hpp"
 
 TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
-    : nodeCounter(0), selectedNodeId(std::nullopt),
+    :  selectedNodeId(std::nullopt),
       modeDropdown(180.f, 30.f), state(state)
 {
     coordText.emplace(ResourceManager::getInstance().getFont("Arial"));
@@ -89,7 +89,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             cutNodeButton->depush();
             cutLinkButton->depush();
             moveNodeButton->depush();
-            link.reset();
+            state.resetLink();
             } });
 
     posY += buttonHeight + spacingY;
@@ -116,7 +116,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             cutNodeButton->depush();
             cutLinkButton->depush();
             moveNodeButton->depush();
-            link.reset();
+            state.resetLink();
             } });
 
     posY += buttonHeight + spacingY;
@@ -143,7 +143,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             cutLinkButton->depush();
             cutNodeButton->depush();
             moveNodeButton->depush();
-            link.reset();
+            state.resetLink();
             } });
 
     posY += 50.f + spacingY;
@@ -170,8 +170,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             addLinkButton->depush();
             cutLinkButton->depush();
             moveNodeButton->depush();
-
-            link.reset();
+            state.resetLink();
 
             } }
         );
@@ -200,7 +199,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             addLinkButton->depush();
             cutNodeButton->depush();
             moveNodeButton->depush();
-            link.reset();
+            state.resetLink();
 
             } }
         );
@@ -229,7 +228,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
             addLinkButton->depush();
             cutNodeButton->depush();
             cutLinkButton->depush();
-            link.reset();
+            state.resetLink();
 
             } }
         );
@@ -237,8 +236,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
 
 void TopologyEditorManager::handleInput(const InputManager &input)
 {
-    sf::Vector2f mouseWorld = input.getMouseWorldPosition();
 
+    sf::Vector2f mouseWorld = input.getMouseWorldPosition();
     std::ostringstream ss;
     ss << "X: " << static_cast<int>(mouseWorld.x) << " Y: " << static_cast<int>(mouseWorld.y);
     coordText->setString(ss.str());
@@ -247,12 +246,15 @@ void TopologyEditorManager::handleInput(const InputManager &input)
 
     // needs to be before the button updates
     // needs to do C1
+
+    const std::unordered_map<int, std::unique_ptr<Device>>& nodes = state.getNodes();
+
     if (topologyBounds.getGlobalBounds().contains(input.getMouseUIScreenPosition()))
     {
         if(state.getEditorMode() == EditorMode::MovingNode && selectedNodeId.has_value())
         {
-            auto it = visualNodes.find(*selectedNodeId);
-            if (it != visualNodes.end())
+            auto it = nodes.find(*selectedNodeId);
+            if (it != nodes.end())
             {
                 auto &device = it->second;
                 device->changePosition(mouseWorld);
@@ -260,72 +262,77 @@ void TopologyEditorManager::handleInput(const InputManager &input)
             }
         }
 
-        else if (state.getEditorMode() == EditorMode::AddingC2Node && input.isMouseJustPressed())
+        else if (state.getEditorMode() == EditorMode::AddingC1Node && input.isLeftMouseJustPressed())
+        {
+            //TODO
+            
+        }
+        else if (state.getEditorMode() == EditorMode::AddingC2Node && input.isLeftMouseJustPressed())
         {
             DeviceClass cls = DeviceClass::C2;
-            // for the save logic
-            state.addNode(nodeCounter, cls, mouseWorld);
-            // for the visualisation
-            addVisualNode(nodeCounter, cls, mouseWorld);
-            ++nodeCounter;
+      
+            state.addNode( cls, mouseWorld);
+            
         }
 
-        else if (state.getEditorMode() == EditorMode::AddingC3Node && input.isMouseJustPressed())
+        else if (state.getEditorMode() == EditorMode::AddingC3Node && input.isLeftMouseJustPressed())
         {
             DeviceClass cls = DeviceClass::C3;
             // for the save logic
-            state.addNode(nodeCounter, cls, mouseWorld);
-            // for the visualisation
-            addVisualNode(nodeCounter, cls, mouseWorld);
-            ++nodeCounter;
+            state.addNode( cls, mouseWorld);
+ 
         }
 
  
 
-        bool CuttingNode=(state.getEditorMode() == EditorMode::CuttingNode && input.isMouseJustPressed());
-        bool AddingLink=(state.getEditorMode() == EditorMode::AddingLink && input.isMouseJustPressed());
-        bool CuttingLink=(state.getEditorMode() == EditorMode::CuttingLink && input.isMouseJustPressed());
-        bool MovingNode=(state.getEditorMode() == EditorMode::MovingNode && input.isMouseJustPressed());
+        bool CuttingNode=(state.getEditorMode() == EditorMode::CuttingNode && input.isLeftMouseJustPressed());
+        bool AddingLink=(state.getEditorMode() == EditorMode::AddingLink && input.isLeftMouseJustPressed());
+        bool CuttingLink=(state.getEditorMode() == EditorMode::CuttingLink && input.isLeftMouseJustPressed());
+        bool MovingNode=(state.getEditorMode() == EditorMode::MovingNode && input.isLeftMouseJustPressed());
+        bool NodeBroadcast=(input.isRightMouseJustPressed());
         //manual iterator to avoid invalidating the iterator when erasing
-        for (auto it = visualNodes.begin(); it != visualNodes.end();)
+        for (auto it = nodes.begin(); it != nodes.end();)
         {
             auto &device = it->second;
             device->update(input);
+                int nodeId = device->getNodeId();
 
             if (CuttingNode && device->getIsHovered())
             {
                 // Remove the routing inward and outward
-                std::cout << "********Removing node " << device->nodeId << "********.\n";
-                removeRouting(device->nodeId, std::nullopt);
-                removeRouting(std::nullopt, device->nodeId);
-                std::cout << "********After Removing node " << device->nodeId << "********.\n";
-
-                state.removeNode(device->nodeId);
-                it = visualNodes.erase(it); // ✅ erase returns next valid iterator
+                std::cout << "********Removing node " << nodeId << "********.\n";
+                state.removeRouting(nodeId, std::nullopt);
+                state.removeRouting(std::nullopt, nodeId);
+                state.removeNode(it);
+                std::cout << "********After Removing node " << nodeId << "********.\n";
             }
+
+            //for operations that do not involve suppressing the node (otherwise it messes up with the iterator)
             else
             {
                 if (AddingLink && device->getIsHovered())
                 {
-                    link.add(device->nodeId);
-                    if (link.isComplete())
+                                        // The pending Link is used for creation and deletion, is it cleared when we change mode
+
+                    state.addLink(nodeId);
+                    if (state.isLinkComplete())
                     {
                         // Add the routing
-                        addRouting(link.nodes[0], link.nodes[1]);
+                        state.addRouting();
                         // Reset the link
-                        link.reset();
+                        state.resetLink();
                     }
                 }
                 else if(CuttingLink && device->getIsHovered())
                 {
-                    // Check if the link is complete
-                    link.add(device->nodeId);
-                    if (link.isComplete())
+                    // The pending Link is used for creation and deletion, is it cleared when we change mode
+                    state.addLink(device->getNodeId());
+                    if (state.isLinkComplete())
                     {
                         // Remove the routing
-                        removeRouting(link.nodes[0], link.nodes[1]);
+                        state.removeSpecificRouting();
                         // Reset the link
-                        link.reset();
+                        state.resetLink();
                     }
                 }
                 else if (MovingNode && device->getIsHovered())
@@ -337,9 +344,14 @@ void TopologyEditorManager::handleInput(const InputManager &input)
                         selectedNodeId = std::nullopt;
                     }
                     else{
-                        selectedNodeId = device->nodeId;
+                        selectedNodeId = device->getNodeId();
 
                     }
+                }
+                else if (NodeBroadcast && device->getIsHovered())
+                {
+                    // Start the broadcast animation
+                    startBroadcast(device->getCenteredPosition(), config::broadcastDuration);
                 }
 
                 ++it; // Only increment if not erased
@@ -366,95 +378,23 @@ void TopologyEditorManager::handleInput(const InputManager &input)
         moveNodeButton->update(input);
 
 
+    //broadcast animations
+
+
+
+
 }
 
-bool TopologyEditorManager::addRouting(int id1, int id2)
+
+
+
+
+void TopologyEditorManager::startBroadcast(const sf::Vector2f &startPosition, float duration)
 {
-    if(id1 == id2)
-    {
-        std::cout << "********Cannot connect a device to itself.********\n";
-        return false;
-    }
-    // ID1 ---> ID2 , path towards ID2
-    if (visualNodes.count(id1) && visualNodes.count(id2))
-    {
-        // Check if the devices are already connected
-        if (routings[id1].count(id2) > 0)
-        {
-            std::cout << "********Devices are already connected.********\n";
-            return false;
-        }
-        
-     else   // Add the routing
-    {
-        routings[id1].insert(id2); // Only store id2 in id1's adjacency list
-        return true;
-    } }
-    else
-    {
-        std::cout << "********One or both devices do not exist.********\n";
-        return false;
-    }
+    auto animation = std::make_unique<BroadcastAnimation>(startPosition, duration);
+    broadcastAnimations.push_back(std::move(animation));
 }
 
-bool TopologyEditorManager::removeRouting(std::optional<int> id1, std::optional<int> id2)
-{
-    // Invalid if neither are provided
-    if (!id1 && !id2) {
-        std::cerr << "Error: Must provide at least one ID.\n";
-        return false;
-    }
-
-    if (id1 && id2) {
-        if(*id1 == *id2)
-        {
-            std::cout << "********Cannot remove a link to itself.********\n";
-            return false;
-        }
-
-        // Case 1: remove specific link from id1 to id2
-        if (!visualNodes.count(*id1) || !visualNodes.count(*id2)) {
-            std::cout << "********One or both devices do not exist.********\n";
-            return false;
-        }
-
-        auto it = routings.find(*id1);
-        if (it != routings.end() && it->second.erase(*id2) > 0) {
-            return true;
-        } else {
-            std::cout << "********Devices are not connected.********\n";
-            return false;
-        }
-    }
-
-    // One of the two is set
-    int targetId = id1 ? *id1 : *id2;
-
-    if (!visualNodes.count(targetId)) {
-        std::cout << "********Device " << targetId << " does not exist.********\n";
-        return false;
-    }
-
-    bool removedAny = false;
-
-    // Remove all outbound links
-    if (routings.erase(targetId) > 0) {
-        removedAny = true;
-    }
-
-    // Remove all inbound links
-    for (auto& [from, targets] : routings) {
-        if (targets.erase(targetId) > 0) {
-            removedAny = true;
-        }
-    }
-
-    if (!removedAny) {
-        std::cout << "********No routings found involving device " << targetId << ".********\n";
-    }
-
-    return removedAny;
-}
 
 
 void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
@@ -462,6 +402,8 @@ void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
     //Todo: you can probably optimize this function, too much nested for loops
     
     //for each Device...
+    const auto& routings = state.getRoutings();
+    const auto& nodes = state.getNodes();
     for (const auto &[deviceId, connectedDevicesId] : routings)
     {
         //for each connected device to the first device...
@@ -472,16 +414,16 @@ void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
             sf::Vector2f end;
             bool foundPos = false;
 
-            auto it = visualNodes.find(connectedDeviceId);
-            if (it != visualNodes.end()) {
+            auto it = nodes.find(connectedDeviceId);
+            if (it != nodes.end()) {
                 // Access the value
                 start =  it->second->getPosition();
                 // center the start position
                     start.x += config::radiusIcon;
                     start.y += config::radiusIcon;
                 
-                auto it2 = visualNodes.find(deviceId);
-                if (it2 != visualNodes.end()) {
+                auto it2 = nodes.find(deviceId);
+                if (it2 != nodes.end()) {
                     // Access the value
                     end =  it2->second->getPosition();
                     // center the end position
@@ -507,6 +449,12 @@ void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
 
 void TopologyEditorManager::update(float deltaTime)
 {
+for (auto &animation : broadcastAnimations)
+        animation->update();
+    broadcastAnimations.erase(std::remove_if(broadcastAnimations.begin(), broadcastAnimations.end(),
+                        [](const std::unique_ptr<BroadcastAnimation> &animation)
+                        { return animation->isFinished(); }),
+        broadcastAnimations.end());
 }
 
 void TopologyEditorManager::setSelectedNode(std::optional<int> nodeId)
@@ -518,32 +466,8 @@ std::optional<int> TopologyEditorManager::getSelectedNode() const
     return std::optional<int>();
 }
 
-void TopologyEditorManager::addVisualNode(int id, DeviceClass cls, sf::Vector2f pos)
-{
-    auto battery = 100.0; // dummy default
-    int dClass = 0;
 
-    if (cls == DeviceClass::C1)
-    {
-        dClass = 1;
-    }
-    else if (cls == DeviceClass::C2)
-    {
-        dClass = 2;
-    }
-    else if (cls == DeviceClass::C3)
-    {
-        dClass = 3;
-    }
 
-    visualNodes[id] = std::make_unique<Device>(id, dClass, std::make_pair((int)pos.x, (int)pos.y), battery);
-}
-
-std::optional<int> TopologyEditorManager::getNodeAtPosition(sf::Vector2f position)
-{
-
-    return std::optional<int>();
-}
 
 void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
 {
@@ -589,7 +513,7 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
     window.setView(editorView);
     sf::RectangleShape worldRect = convertRectangleToTopologyView(window, editorView, topologyBounds);
 
-    for (auto &[_, device] : visualNodes)
+    for (auto &[_, device] : state.getNodes())
     {
         if (isBoundsFullyInsideRect(device->getPosition(), device->getSize(), worldRect.getGlobalBounds()))
         {
@@ -598,6 +522,8 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
     }
 
     drawRootings(window);
+    for (auto &animation : broadcastAnimations)
+        animation->draw(window);
 }
 
 sf::RectangleShape TopologyEditorManager::convertRectangleToTopologyView(

@@ -18,11 +18,16 @@ public:
 
     bool isKeyPressed(sf::Keyboard::Scancode key) const;
     bool isMouseButtonPressed(sf::Mouse::Button button) const;
+    bool isRightMouseJustPressed() const;
+    bool isLeftMouseJustPressed() const;
 
-    // New simplified interface
+    // For any Mouse Button 
     bool isMouseJustPressed() const;
 
     float getMouseWheelDelta() const;
+    bool isMouseDoubleClicked(sf::Mouse::Button button) const {
+    return doubleClickedMouseButtons.contains(button);
+}
 
 private:
 //you should have only two mouse positin? Check
@@ -35,4 +40,11 @@ private:
     std::unordered_set<sf::Mouse::Button> justPressedMouseButtons;
 
     float accumulatedMouseWheelDelta = 0.f;
+
+
+    //double click
+    std::unordered_map<sf::Mouse::Button, std::chrono::steady_clock::time_point> lastClickTime;
+std::unordered_set<sf::Mouse::Button> doubleClickedMouseButtons;
+const std::chrono::milliseconds doubleClickThreshold = std::chrono::milliseconds(400);
+
 };

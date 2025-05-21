@@ -5,6 +5,21 @@
 #include <optional>
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
+
+enum class DeviceState {
+    Sleep,
+    Listen,
+    Transmit,
+    Communicate
+};
+
+enum class DeviceClass {
+    C1,
+    C2,
+    C3
+};
+
+
 class Device {
 private:
     sf::CircleShape shape;
@@ -12,43 +27,56 @@ private:
 
     std::optional<sf::Text> infoTextId;
     std::optional<sf::Text> infoTextBattery;
+    std::optional<sf::Text> infoTextCoordinates;
     sf::RectangleShape infoWindow;
 
     std::string textId;
     std::string textBattery;
+    std::string textCoordinates;
+
+
     sf::Font* font = nullptr;
 
     bool displayInfoWindow = false;
     bool isHovered = false;
+    sf::Vector2f centeredPosition;
 
+    int nodeId = 0;
+    DeviceClass classNode ;
+    double batteryLevel = 0;
+    DeviceState state = DeviceState::Sleep;
+    std::string getTextureKey(DeviceClass cls, DeviceState state);
 public:
 
-    //should be private: Todo
-    int nodeId = 0;
-    int classNode = 0;
-    double batteryLevel = 0;
-    std::string state = "Sleep";
+    Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel = 0);
 
-    std::pair<int, int> coordinates; 
-    // why is it a pair? Should be a vector of two floats: Todo
-
-    Device(int nodeId, int classNode, std::pair<int, int> coordinates, double batteryLevel = 0);
+    void updateCoordinatesString();
 
     void draw(sf::RenderWindow& window);
     void update(const InputManager& input);
 
-    void changePNG(const std::string& state);
+    void setState(DeviceState newState);
 
+    //return the position of the Shape (top left corner)
     sf::Vector2f getPosition() const {
         return shape.getPosition();
     }
-    void changePosition(const sf::Vector2f& newCenteredPos) {
-        //Todo: get rid of Coordinates !!! It doesn't make any sense
-        coordinates.first = static_cast<int>(newCenteredPos.x);
-        coordinates.second = static_cast<int>(newCenteredPos.y);
-        sf::Vector2f newPos = {newCenteredPos.x - config::radiusIcon, newCenteredPos.y - config::radiusIcon};
-        shape.setPosition(newPos);
+
+    //return the centered position of the Shape (you want to use this one most of the time)
+    sf::Vector2f getCenteredPosition() const {
+        return centeredPosition;
     }
+
+    int getNodeId() const {
+        return nodeId;
+    }
+
+void changePosition(const sf::Vector2f& newCenteredPos) {
+    centeredPosition = newCenteredPos;
+    shape.setPosition(centeredPosition - sf::Vector2f(config::radiusIcon, config::radiusIcon));
+    updateCoordinatesString();
+}
+
     sf::Vector2f getSize() const {
         return shape.getGlobalBounds().size;
     }

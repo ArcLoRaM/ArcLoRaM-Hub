@@ -152,6 +152,8 @@ void VisualiserManager::removeRouting(int id1, int id2)
         std::cout << "********One or both devices do not exist.********\n";
     }
 }
+
+
 void VisualiserManager::update(InputManager &inputManager)
 {   
     //Update animations and their life cycle
@@ -164,6 +166,7 @@ void VisualiserManager::update(InputManager &inputManager)
                                                  { return animation->isFinished(); }),
                                   broadcastAnimations.end());
     }
+
 
     {
         std::lock_guard<std::mutex> lock(dropAnimationsMutex);
@@ -286,15 +289,14 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, co
     }
 }
 
-void VisualiserManager::updateDevicesState(int nodeId, std::string state)
+void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
     for (auto &device : devices)
     {
-        if (device->nodeId == nodeId)
+        if (device->getNodeId()== nodeId)
         {
-            device->state = state;
-            device->changePNG(state);
+            device->setState(state);
         }
     }
 }
@@ -304,10 +306,9 @@ std::pair<sf::Vector2f, bool> VisualiserManager::findDeviceCoordinates(int nodeI
     std::lock_guard<std::mutex> lock(devicesMutex);
     for (const auto &device : devices)
     {
-        if (device->nodeId == nodeId)
+        if (device->getNodeId() == nodeId)
         {
-
-            return {sf::Vector2f(static_cast<float>(device->coordinates.first), static_cast<float>(device->coordinates.second)), true};
+            return {device->getCenteredPosition(), true};
         }
     }
     return {{}, false};
@@ -324,9 +325,10 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
             sf::Vector2f start;
             sf::Vector2f end;
             bool foundPos = false;
+            
             for (auto &device1 : devices)
             {
-                if (device1->nodeId == device)
+                if (device1->getNodeId() == device)
                 {
                     start = device1->getPosition();
                     // center the start position
@@ -335,7 +337,7 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
                     // get end position
                     for (auto &device2 : devices)
                     {
-                        if (device2->nodeId == connectedDevice)
+                        if (device2->getNodeId()== connectedDevice)
                         {
                             end = device2->getPosition();
                             // center the end position

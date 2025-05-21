@@ -2,6 +2,8 @@
 #include "../../Network/Packets/Packets.hpp"
 #include "../../Shared/Config.hpp"
 #include <iostream>
+#include <magic_enum.hpp>
+#include "../../Visualisation/Device/Device.hpp"
 
 void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualisationState &state, VisualiserManager &manager)
 {
@@ -84,7 +86,15 @@ void ProtocolPacketController::handleStateNodePacket(sf::Packet& packet,Protocol
     stateNodePacket snp;
     packet >> snp.nodeId >> snp.state;
 
-    manager.updateDevicesState(snp.nodeId, snp.state);
+    std::optional<DeviceState> maybeState = magic_enum::enum_cast<DeviceState>(snp.state);
+
+    if (maybeState) {
+        manager.updateDevicesState(snp.nodeId,*maybeState);
+    } else {
+        std::cerr << "Invalid state string in Protocol Packet Controller" << std::endl;
+    }
+
+
 
     if (snp.state == "Communicate") {
         state.energyExp++;
@@ -100,8 +110,19 @@ void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolV
     pp.coordinates.first *= config::distanceDivider;
     pp.coordinates.second *= config::distanceDivider;
 
-    
-        auto device = std::make_unique<Device>(pp.nodeId, pp.classNode, pp.coordinates, pp.batteryLevel);
+    //Todo: change the packet definition to use a sf::Vector2f instead of a pair
+    //and what about the classNode ? should we use an enum class instead of an int ?
+    DeviceClass deviceClass ;
+    if(pp.classNode==1) deviceClass = DeviceClass::C1;
+    else if(pp.classNode==2) deviceClass = DeviceClass::C2;
+    else if(pp.classNode==3) deviceClass = DeviceClass::C3;
+    else {
+        std::cerr << "Invalid classNode in Protocol Packet Controller" << std::endl;
+        return;
+    }
+
+    sf::Vector2f position(static_cast<float>(pp.coordinates.first), static_cast<float>(pp.coordinates.second));
+        auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position, pp.batteryLevel);
         manager.addDevice(std::move(device));
         manager.addDeviceId(pp.nodeId);
     

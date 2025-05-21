@@ -59,7 +59,7 @@ public:
     void update(InputManager & inputManager);
     void draw(sf::RenderWindow& window, sf::View& networkView,const ProtocolVisualisationState& state);
 
-    void updateDevicesState(int nodeId, std::string state);
+    void updateDevicesState(int nodeId,  DeviceState state);
 
     void addButton(std::unique_ptr<Button> button);
     void addDevice(std::unique_ptr<Device> device);

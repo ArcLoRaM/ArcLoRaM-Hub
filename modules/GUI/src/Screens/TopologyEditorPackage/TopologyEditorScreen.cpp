@@ -79,8 +79,8 @@ void TopologyEditorScreen::update(float deltaTime, InputManager& input)
     (void)input;
 
     // Example: Update model visualization, nodes, links, etc.
+    //we don´t need delta time for now because there is no general animation.
     editorManager.update(deltaTime);
-
 }
 
 
@@ -89,6 +89,5 @@ void TopologyEditorScreen::draw(sf::RenderWindow& window)
     // Switch back to default view for UI buttons
     window.setView(window.getDefaultView());
     if (backButton) backButton->draw(window);
-    
     editorManager.draw(window,editorView);
 }

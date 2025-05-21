@@ -19,6 +19,5 @@ int main() {
         std::cerr << "Fatal error: " << e.what() << '\n';
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
