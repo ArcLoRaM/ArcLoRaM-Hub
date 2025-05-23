@@ -41,7 +41,7 @@
                 "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorScreen.cpp",
                 "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorManager.cpp",
                 "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyEditorState.cpp",
-                
+                "${workspaceFolder}\\src\\Screens\\TopologyEditorPackage\\TopologyConfigIO.cpp",
                 //change with your location
                 "-I","C:\\Users\\srcla\\Desktop\\ArcLoRaM\\ArcLoRaM-Hub\\modules\\libraries\\SFML-3.0.0\\include", 
                 //Necessary when you have several cpp in the same folder

@@ -61,6 +61,7 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "fstream": "cpp"
     }
 }

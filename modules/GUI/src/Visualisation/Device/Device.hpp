@@ -83,4 +83,6 @@ void changePosition(const sf::Vector2f& newCenteredPos) {
     bool getIsHovered() const {
         return isHovered;
     }
+    DeviceClass getClass() const { return classNode; }
+
 };

@@ -3,6 +3,8 @@
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
 #include "../../Shared/Helper.hpp"
+#include "TopologyConfigIO.hpp"
+
 
 TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
     :  selectedNodeId(std::nullopt),
@@ -20,8 +22,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
     modeDropdown.setPosition({200.f, 40.f});
     modeDropdown.setCallback([this, &state](TopologyMode mode)
                              {
-        state.setTopologyMode(mode);
-        std::cout << "Selected mode: " << static_cast<int>(mode) << std::endl; });
+    state.setTopologyMode(mode);
+    std::cout << "Selected mode: " << static_cast<int>(mode) << std::endl; });
 
     // create SAVE + C1,2,3 Add Nodes + Routing Button:
 
@@ -43,9 +45,9 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
         "Save",
         "Arial",
         false);
-    saveButton->setOnClick([this]()
+    saveButton->setOnClick([this,&state]()
                            {
-                               // TODO: Save functionality
+                             TopologyConfigIO::write("topology_config.txt", state.getNodes(), state.getRoutings(), state.getTopologyMode());
                            });
 
     posY += buttonHeight + spacingY;
@@ -247,7 +249,7 @@ void TopologyEditorManager::handleInput(const InputManager &input)
     // needs to be before the button updates
     // needs to do C1
 
-    const std::unordered_map<int, std::unique_ptr<Device>>& nodes = state.getNodes();
+    std::unordered_map<int, std::unique_ptr<Device>>& nodes = state.getNodes();
 
     if (topologyBounds.getGlobalBounds().contains(input.getMouseUIScreenPosition()))
     {
@@ -303,7 +305,7 @@ void TopologyEditorManager::handleInput(const InputManager &input)
                 std::cout << "********Removing node " << nodeId << "********.\n";
                 state.removeRouting(nodeId, std::nullopt);
                 state.removeRouting(std::nullopt, nodeId);
-                state.removeNode(it);
+                it = state.removeNode(it);
                 std::cout << "********After Removing node " << nodeId << "********.\n";
             }
 
@@ -399,48 +401,20 @@ void TopologyEditorManager::startBroadcast(const sf::Vector2f &startPosition, fl
 
 void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
 {
-    //Todo: you can probably optimize this function, too much nested for loops
     
+
     //for each Device...
     const auto& routings = state.getRoutings();
     const auto& nodes = state.getNodes();
-    for (const auto &[deviceId, connectedDevicesId] : routings)
-    {
-        //for each connected device to the first device...
-        for (const auto &connectedDeviceId : connectedDevicesId)
-        {
-            // get start position and end position of these two devices
-            sf::Vector2f start;
-            sf::Vector2f end;
-            bool foundPos = false;
-
-            auto it = nodes.find(connectedDeviceId);
-            if (it != nodes.end()) {
-                // Access the value
-                start =  it->second->getPosition();
-                // center the start position
-                    start.x += config::radiusIcon;
-                    start.y += config::radiusIcon;
-                
-                auto it2 = nodes.find(deviceId);
-                if (it2 != nodes.end()) {
-                    // Access the value
-                    end =  it2->second->getPosition();
-                    // center the end position
-                    end.x += config::radiusIcon;
-                    end.y += config::radiusIcon;
-                    foundPos = true;
-                }
-                else {
-                    throw (std::runtime_error("Device2 not found in Rooting Drawing"));
-                }
-            } else {
-                throw (std::runtime_error("Device1 not found in Rooting Drawing"));
-            }
-
-            if (foundPos)
-            {
+    for (const auto &[deviceId, connectedDevicesId] : routings) {
+        for (const auto &connectedDeviceId : connectedDevicesId) {
+            sf::Vector2f start, end;
+            if (nodes.count(deviceId) && nodes.count(connectedDeviceId)) {
+                start = nodes.at(deviceId)->getCenteredPosition();         // source
+                end   = nodes.at(connectedDeviceId)->getCenteredPosition(); // destination
                 drawArrowWithHeads(window, start, end, 35.f);
+            } else {
+                throw std::runtime_error("Device not found in Rooting Drawing");
             }
         }
     }

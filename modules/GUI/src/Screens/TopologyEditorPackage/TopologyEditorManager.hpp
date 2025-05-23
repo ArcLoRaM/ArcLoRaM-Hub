@@ -35,6 +35,8 @@ bool isBoundsFullyInsideRect(
     const sf::FloatRect& rect
 );
 
+
+
 private:
 
     std::optional<sf::Text> coordText;
@@ -54,15 +56,10 @@ private:
     std::unique_ptr<Button> addNodeC3Button;
     std::unique_ptr<Button> moveNodeButton;
 
- 
-
     //broadcast animations
     void startBroadcast(const sf::Vector2f& startPosition, float duration);
     std::vector<std::unique_ptr<BroadcastAnimation>> broadcastAnimations; 
-
     void drawRootings(sf::RenderWindow& window);
-
-
 };
 
 

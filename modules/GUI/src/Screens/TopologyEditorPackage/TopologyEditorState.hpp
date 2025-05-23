@@ -58,14 +58,16 @@ class TopologyEditorState {
 public:
     void setTopologyMode(TopologyMode newMode);
 
-    // TopologyMode getMode() const;
+    const TopologyMode getTopologyMode()const {return currentMode; } 
 
     std::unordered_map<int, std::unique_ptr<Device>>::iterator removeNode(std::unordered_map<int, std::unique_ptr<Device>>::iterator it);
 
     const std::unordered_map<int, std::unique_ptr<Device>>& getNodes() const{
         return nodes;
     }
-
+     std::unordered_map<int, std::unique_ptr<Device>>& getNodes() {
+        return nodes;
+    }
     const std::unordered_map<int, std::unordered_set<int>>& getRoutings() const{
         return routings;
     }
@@ -82,35 +84,37 @@ public:
         return link.isComplete();
     }
     void clear();
-
-    
     void setEditorMode(EditorMode newMode);
-
     EditorMode getEditorMode() const;
     void addNode( DeviceClass cls, sf::Vector2f position);
     bool addRouting();
     bool removeRouting(std::optional<int> id1, std::optional<int> id2);
-void removeSpecificRouting();
+    void removeSpecificRouting();
 
-    
+    void resetState()
+    {
+        nodes.clear();
+        routings.clear();
+        nodeCounter = 0;
+    };
+    void addNode(std::unique_ptr<Device>& newNode, int id){nodes[id]=std::move(newNode);};
+
+
+    //Todo: put them in private, you already started the job, needs to fix in ConfigIO
+    int nodeCounter = 0;
+    std::unordered_map<int, std::unique_ptr<Device>> nodes;
+    std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
+
 private:
     
     EditorMode currentEditorMode{EditorMode::Idle};
-
     TopologyMode currentMode{TopologyMode::RRC_Uplink};
-
-
-    std::unordered_map<int, std::unique_ptr<Device>> nodes;
 
 
 
     //Routing: 
-    std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
     bool routingDisplayEnabled = false; // Flag to control routing display
 
     PendingLink link;
-    int nodeCounter = 0;
-
-
 };
 
