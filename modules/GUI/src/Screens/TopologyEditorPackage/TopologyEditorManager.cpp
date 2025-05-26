@@ -47,7 +47,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
         false);
     saveButton->setOnClick([this,&state]()
                            {
-                             TopologyConfigIO::write("topology_config.txt", state.getNodes(), state.getRoutings(), state.getTopologyMode());
+                            TopologyConfigIO::write("topology_config.txt", state.getNodes(), state.getRoutings(), state.getTopologyMode());
                            });
 
     posY += buttonHeight + spacingY;

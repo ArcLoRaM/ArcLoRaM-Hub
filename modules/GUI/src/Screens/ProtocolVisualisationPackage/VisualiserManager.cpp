@@ -8,9 +8,9 @@
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
 #include "../../Shared/Helper.hpp"
+#include "CsvMetricWriter.hpp"
 
-
-VisualiserManager::VisualiserManager()
+VisualiserManager::VisualiserManager(ProtocolVisualisationState &state)
 
 {
 
@@ -25,25 +25,32 @@ VisualiserManager::VisualiserManager()
     communicationMode->setPosition(position1);
     communicationMode->setFillColor(sf::Color::White);
 
-    tickNb.emplace(*font);
-    tickNb->setCharacterSize(20);
-    sf::Vector2f position2(10.f, 120.f);
-    tickNb->setPosition(position2);
-    tickNb->setFillColor(sf::Color::White);
-
     nbRetransmission.emplace(*font);
     nbRetransmission->setCharacterSize(20);
-    sf::Vector2f position3(10.f, 60.f);
+    sf::Vector2f position3(10.f, 80.f);
     nbRetransmission->setPosition(position3);
     nbRetransmission->setFillColor(sf::Color::White);
     nbRetransmissionString = "Retransmissions:  ";
 
     energyExpenditure.emplace(*font);
     energyExpenditure->setCharacterSize(20);
-    sf::Vector2f position4(10.f, 90.f);
+    sf::Vector2f position4(10.f, 110.f);
     energyExpenditure->setPosition(position4);
     energyExpenditure->setFillColor(sf::Color::White);
     energyExpenditureString = "Energy Expenditure: ";
+
+    tickNb.emplace(*font);
+    tickNb->setCharacterSize(20);
+    sf::Vector2f position2(10.f, 150.f);
+    tickNb->setPosition(position2);
+    tickNb->setFillColor(sf::Color::White);
+
+    pdrText.emplace(*font);
+    pdrText->setCharacterSize(20);
+    sf::Vector2f position5(10.f, 180.f);
+    pdrText->setPosition(position5);
+    pdrText->setFillColor(sf::Color::White);
+    pdrString = "PDR: ";
 
     const float x4coor = 1800.f - 350.f;
     const float y4coor = 100.f;
@@ -51,13 +58,31 @@ VisualiserManager::VisualiserManager()
     const float height4 = 40;
     const sf::Color color4 = sf::Color::Yellow;
 
-        auto buttonRouting = std::make_unique<Button>(x4coor, y4coor, width4, height4, color4, "Rooting_Button");
-         buttonRouting->setOnClick([this]() {
-        // Toggle internal state (could be a bool, enum, etc.)
-        routingDisplayEnabled = !routingDisplayEnabled;
-        std::cout << "Routing display toggled: " << (routingDisplayEnabled ? "ON" : "OFF") << std::endl;    
-    });
-     buttons.push_back(std::move(buttonRouting));
+    auto buttonRouting = std::make_unique<Button>(x4coor, y4coor, width4, height4, color4, "Rooting_Button");
+    buttonRouting->setOnClick([this]()
+                              {
+                                  // Toggle internal state (could be a bool, enum, etc.)
+                                  routingDisplayEnabled = !routingDisplayEnabled;
+                                  // std::cout << "Routing display toggled: " << (routingDisplayEnabled ? "ON" : "OFF") << std::endl;
+                              });
+
+    buttons.push_back(std::move(buttonRouting));
+
+    const float y5coor = 160.f;
+    const sf::Color color5 = sf::Color::Green;
+
+    auto buttonSave = std::make_unique<Button>(x4coor, y5coor, width4, height4, color5, "Save", "Arial", false);
+    buttonSave->setOnClick([this, &state]()
+                           {
+            try {
+        CsvMetricWriter writer;
+        writer.writeNetworkMetricsToCsv("network_state.csv", *this, state);
+        std::cout << "Network state saved to network_state.csv\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Error writing CSV: " << e.what() << '\n';
+    } });
+
+    buttons.push_back(std::move(buttonSave));
 }
 
 void VisualiserManager::addButton(std::unique_ptr<Button> button)
@@ -153,10 +178,35 @@ void VisualiserManager::removeRouting(int id1, int id2)
     }
 }
 
+void VisualiserManager::addRetransmission(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    for (auto &device : devices)
+    {
+        if (device->getNodeId() == nodeId)
+        {
+            device->metrics.incrementRetransmission();
+            break;
+        }
+    }
+}
+
+void VisualiserManager::incrementPacketSent(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    for (auto &device : devices)
+    {
+        if (device->getNodeId() == nodeId)
+        {
+            device->metrics.incrementPacketSent();
+            break;
+        }
+    }
+}
 
 void VisualiserManager::update(InputManager &inputManager)
-{   
-    //Update animations and their life cycle
+{
+    // Update animations and their life cycle
     {
         std::lock_guard<std::mutex> lock(broadcastAnimationsMutex);
         for (auto &animation : broadcastAnimations)
@@ -166,7 +216,6 @@ void VisualiserManager::update(InputManager &inputManager)
                                                  { return animation->isFinished(); }),
                                   broadcastAnimations.end());
     }
-
 
     {
         std::lock_guard<std::mutex> lock(dropAnimationsMutex);
@@ -196,7 +245,7 @@ void VisualiserManager::update(InputManager &inputManager)
                              receptionIcons.end());
     }
 
-    //with interactivity through inputManager Injection
+    // with interactivity through inputManager Injection
     {
         std::lock_guard<std::mutex> lock(buttonsMutex);
         for (auto &button : buttons)
@@ -208,12 +257,10 @@ void VisualiserManager::update(InputManager &inputManager)
         for (auto &device : devices)
             device->update(inputManager);
     }
-
 }
 
-void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, const ProtocolVisualisationState &state)
+void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, ProtocolVisualisationState &state)
 {
-
 
     // Todo: have their own mutexes
     window.setView(window.getDefaultView());
@@ -229,6 +276,8 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, co
     nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
     window.draw(*nbRetransmission);
 
+    pdrText->setString(pdrString + std::to_string(state.totalPacketsReceived) + "/" + std::to_string(state.totalPacketsSent) + "=" + std::to_string(state.totalPacketsSent > 0 ? static_cast<float>(state.totalPacketsReceived) / state.totalPacketsSent * 100 : 0) + "%");
+    window.draw(*pdrText);
     {
         std::lock_guard<std::mutex> lock(buttonsMutex);
         for (auto &button : buttons)
@@ -237,11 +286,16 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, co
         }
     }
 
-    // Draw logs (temporary retained from your code)
+    // Draw logs and also get rid of the oldest log messages if the limit is reached
     {
         std::lock_guard<std::mutex> lock(state.logMutex);
 
         float y = 940.0f;
+
+        if (state.logMessages.size() > 10)
+        {
+            state.logMessages.erase(state.logMessages.begin(), state.logMessages.end() - 10);
+        }
 
         for (auto it = state.logMessages.rbegin(); it != state.logMessages.rend(); ++it)
         {
@@ -294,7 +348,7 @@ void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
     std::lock_guard<std::mutex> lock(devicesMutex);
     for (auto &device : devices)
     {
-        if (device->getNodeId()== nodeId)
+        if (device->getNodeId() == nodeId)
         {
             device->setState(state);
         }
@@ -325,24 +379,22 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
             sf::Vector2f start;
             sf::Vector2f end;
             bool foundPos = false;
-            
+
             for (auto &device1 : devices)
             {
                 if (device1->getNodeId() == device)
                 {
-                    start = device1->getPosition();
-                    // center the start position
-                    start.x += config::radiusIcon;
-                    start.y += config::radiusIcon;
+                    start = device1->getCenteredPosition();
+
                     // get end position
                     for (auto &device2 : devices)
                     {
-                        if (device2->getNodeId()== connectedDevice)
+                        if (device2->getNodeId() == connectedDevice)
                         {
-                            end = device2->getPosition();
-                            // center the end position
-                            end.x += config::radiusIcon;
-                            end.y += config::radiusIcon;
+                            end = device2->getCenteredPosition();
+                            // // center the end position
+                            // end.x += config::radiusIcon;
+                            // end.y += config::radiusIcon;
                             foundPos = true;
                         }
                     }

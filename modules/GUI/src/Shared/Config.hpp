@@ -15,6 +15,7 @@ namespace config {
     inline float distanceDivider=0.4f;
 
 
+    inline int maxLogMessages = 10; // Maximum number of log messages to keep in the log
 
     //Animations 
     inline sf::Color dataArrowColor = sf::Color::Red;

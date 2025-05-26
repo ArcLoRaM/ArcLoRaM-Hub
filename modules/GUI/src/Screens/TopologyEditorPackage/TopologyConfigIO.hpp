@@ -1,12 +1,13 @@
+#pragma once // Recommended or use include guards
+
+
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
 #include <optional>
-
-// Forward declarations
-class Device;
-enum class TopologyMode;
+#include "TopologyEditorState.hpp"
+#include "../../Visualisation/Device/Device.hpp"
 
 
 class TopologyConfigIO {
@@ -17,7 +18,7 @@ public:
                       const std::unordered_map<int, std::unordered_set<int>>& routings,
                       TopologyMode mode);
     // Placeholder for future extension
-    static bool read(const std::string& path, TopologyEditorState& state);
+   static bool read(const std::string& path, TopologyEditorState& state);
 
 private:
 

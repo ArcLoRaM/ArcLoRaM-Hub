@@ -18,4 +18,10 @@ struct ProtocolVisualisationState {
         //     state.logMessages.erase(state.logMessages.begin());
     std::vector<std::string> logMessages;
     mutable std::mutex logMutex; // Mutex for thread-safe access to log messages
+
+
+    
+    int totalPacketsSent = 0; // Total packets sent
+    int totalPacketsReceived = 0; // Total packets received
+
 };

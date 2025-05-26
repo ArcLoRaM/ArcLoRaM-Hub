@@ -12,7 +12,7 @@ Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition, 
     iconTexture= &ResourceManager::getInstance().getTexture(getTextureKey(classNode, state));
     shape.setTexture(iconTexture);
         shape.setPosition(sf::Vector2f(
-            centeredPosition - sf::Vector2f(config::radiusIcon/2, config::radiusIcon/2)
+            centeredPosition - sf::Vector2f(config::radiusIcon, config::radiusIcon)
         ));
 
 

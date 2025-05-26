@@ -3,7 +3,7 @@
 #include "../../Shared/Config.hpp"
 
 ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, ScreenAction backAction)
-    : manager(),
+    : manager(state),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
     tcpServer.setPacketHandler([this](sf::Packet& packet) {

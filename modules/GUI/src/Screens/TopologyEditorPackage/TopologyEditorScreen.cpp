@@ -1,22 +1,25 @@
 #include "TopologyEditorScreen.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
-
+#include "TopologyConfigIO.hpp"
 
 TopologyEditorScreen::TopologyEditorScreen(ScreenAction backAction)
     : editorView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
     , editorManager(editorState)
 {
     initializeUI(backAction);
-    // TopologyModel stays empty for new topology
 }
 
-// TopologyEditorScreen::TopologyEditorScreen(const std::filesystem::path& topologyFilePath, ScreenAction backAction)
-//     : editorView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
-// {
-//     initializeUI(backAction);
-//     // loadTopologyFromFile(topologyFilePath);
-// }
+TopologyEditorScreen::TopologyEditorScreen(const std::string &topologyFilePath, ScreenAction backAction)
+:editorView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
+    , editorManager(editorState)
+{
+
+    initializeUI(backAction);
+   TopologyConfigIO::read(topologyFilePath,editorState);
+
+}
+
 
 
 void TopologyEditorScreen::initializeUI(ScreenAction backAction)

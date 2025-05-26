@@ -20,6 +20,63 @@ enum class DeviceClass {
 };
 
 
+#pragma once
+
+struct DeviceMetrics {
+public:
+    // Energy slot counters
+    void incrementListeningData()         { ++slotListeningData; }
+    void incrementTransmittingData()      { ++slotTransmittingData; }
+    void incrementListeningAck()          { ++slotListeningAck; }
+    void incrementTransmittingAck()       { ++slotTransmittingAck; }
+
+    // Transmission stats
+    void incrementRetransmission()        { ++nbRetransmissions; }
+    void incrementPacketSent()            { ++nbPacketsSent; }
+
+    void reset() {
+        slotListeningData = 0;
+        slotTransmittingData = 0;
+        slotListeningAck = 0;
+        slotTransmittingAck = 0;
+        nbRetransmissions = 0;
+        nbPacketsSent = 0;
+    }
+
+    // Accessors for CSV export
+    int getListeningDataSlots()     const { return slotListeningData; }
+    int getTransmittingDataSlots()  const { return slotTransmittingData; }
+    int getListeningAckSlots()      const { return slotListeningAck; }
+    int getTransmittingAckSlots()   const { return slotTransmittingAck; }
+
+    int getRetransmissions()        const { return nbRetransmissions; }
+    int getPacketsSent()            const { return nbPacketsSent; }
+
+    // Derived metric (if needed)
+    double getPacketDeliveryRatio() const {
+        return nbPacketsSent > 0
+            ? static_cast<double>(nbPacketsSent - nbRetransmissions) / nbPacketsSent
+            : 0.0;
+    }
+
+    // Simplified energy estimate (can be refined)
+    int getTotalEnergySlots() const {
+        return slotListeningData + slotTransmittingData +
+               slotListeningAck + slotTransmittingAck;
+    }
+
+private:
+    // Energy expenditure slots
+    int slotListeningData = 0;
+    int slotTransmittingData = 0;
+    int slotListeningAck = 0;
+    int slotTransmittingAck = 0;
+
+    // Packet transmission metrics
+    int nbRetransmissions = 0;
+    int nbPacketsSent = 0;
+};
+
 class Device {
 private:
     sf::CircleShape shape;
@@ -41,11 +98,19 @@ private:
     bool isHovered = false;
     sf::Vector2f centeredPosition;
 
+
+    //Do a proper enum for the device Info if it grows larger: Todo.
     int nodeId = 0;
     DeviceClass classNode ;
     double batteryLevel = 0;
     DeviceState state = DeviceState::Sleep;
+    unsigned int hopCount = 0;
     std::string getTextureKey(DeviceClass cls, DeviceState state);
+
+
+
+    
+
 public:
 
     Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel = 0);
@@ -70,12 +135,15 @@ public:
     int getNodeId() const {
         return nodeId;
     }
+    int getHopCount() const {
+        return hopCount;
+    }
 
-void changePosition(const sf::Vector2f& newCenteredPos) {
-    centeredPosition = newCenteredPos;
-    shape.setPosition(centeredPosition - sf::Vector2f(config::radiusIcon, config::radiusIcon));
-    updateCoordinatesString();
-}
+    void changePosition(const sf::Vector2f& newCenteredPos) {
+        centeredPosition = newCenteredPos;
+        shape.setPosition(centeredPosition - sf::Vector2f(config::radiusIcon, config::radiusIcon));
+        updateCoordinatesString();
+    }
 
     sf::Vector2f getSize() const {
         return shape.getGlobalBounds().size;
@@ -85,4 +153,9 @@ void changePosition(const sf::Vector2f& newCenteredPos) {
     }
     DeviceClass getClass() const { return classNode; }
 
+
+    DeviceMetrics metrics;
+
 };
+
+

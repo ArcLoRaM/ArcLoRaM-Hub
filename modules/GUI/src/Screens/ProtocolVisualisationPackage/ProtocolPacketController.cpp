@@ -77,7 +77,14 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
         manager.addArrow(std::move(arrow));
     }
 
+
+    //Metrics
     state.energyExp += 20;
+    state.totalPacketsSent++;
+
+    if(tmp.isACK) {
+        // manager.(tmp.senderId);
+    }
 }
 
 
@@ -151,12 +158,17 @@ void ProtocolPacketController::handleReceiveMessagePacket(sf::Packet& packet,Pro
     } else {
         auto icon = std::make_unique<ReceptionIcon>(senderCoordinates, receiverCoordinates, rmp.state);
         manager.addReceptionIcon(std::move(icon));
+        if(rmp.state == "received") {
+            // If the state is "received", we can assume the packet was successfully received
+            state.totalPacketsReceived++;
+        }
     }
 
     std::string message = "Received receiveMessagePacket: senderId=" + std::to_string(rmp.senderId) + ", receiverId=" + std::to_string(rmp.receiverId) + ", state=" + rmp.state;
     {
         std::lock_guard<std::mutex> lock(state.logMutex);
         state.logMessages.push_back(message);
+        
     }
 }
 
@@ -218,5 +230,12 @@ void ProtocolPacketController::handleDropAnimationPacket(sf::Packet& packet,Prot
 
 void ProtocolPacketController::handleRetransmissionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     //FOr now, we only count the retransmission
+
+    retransmissionPacket rp;
+    packet >> rp.nodeId;
+
+    manager.addRetransmission(rp.nodeId);
+
     state.retransmissions++;
+
 }

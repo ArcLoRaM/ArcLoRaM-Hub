@@ -7,8 +7,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
-#include "../../Visualisation/Device/Device.hpp"
-#include "TopologyEditorState.hpp"
+
 
 // Helper function to compute nextHop and hopCount for a node toward any C3
 std::optional<std::pair<int, int>> TopologyConfigIO::computeRoutingInfo(
@@ -70,7 +69,7 @@ void TopologyConfigIO::write(const std::string& path,
         return;
     }
 
-    outFile << "topologyMode=" << std::string(magic_enum::enum_name(mode)) << "\n";
+    outFile << "topologyMode= " << std::string(magic_enum::enum_name(mode)) << "\n";
 
     for (const auto& [id, device] : nodes) {
         const auto cls = device->getClass();
@@ -94,6 +93,7 @@ void TopologyConfigIO::write(const std::string& path,
         outFile << "\n";
     }
     outFile.close();
+    std::cout << "Topology configuration written to " << path << "\n";
 }
 
 
@@ -174,3 +174,4 @@ bool TopologyConfigIO::read(const std::string& path, TopologyEditorState& state)
 
     return true;
 }
+

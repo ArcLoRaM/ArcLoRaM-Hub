@@ -60,6 +60,11 @@ private:
     void startBroadcast(const sf::Vector2f& startPosition, float duration);
     std::vector<std::unique_ptr<BroadcastAnimation>> broadcastAnimations; 
     void drawRootings(sf::RenderWindow& window);
+
+
+
+
+    
 };
 
 

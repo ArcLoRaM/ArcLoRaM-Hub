@@ -15,7 +15,7 @@ public:
     explicit TopologyEditorScreen(ScreenAction backAction);
 
     // Constructor for editing existing topology from file
-    TopologyEditorScreen(const std::filesystem::path& topologyFilePath, ScreenAction backAction);
+    TopologyEditorScreen(const std::string& topologyFilePath, ScreenAction backAction);
 
     // Overridden Screen methods
     void handleEvent(InputManager& input) override;

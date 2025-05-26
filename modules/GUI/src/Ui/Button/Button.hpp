@@ -24,5 +24,5 @@ public:
     void draw(sf::RenderWindow& window);
     void update(const InputManager& input);
     void setOnClick(std::function<void()> callback);
-    void depush() ;
+    void depush();
 };
