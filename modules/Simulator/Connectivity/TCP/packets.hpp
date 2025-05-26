@@ -8,7 +8,6 @@
 #include <string>
 #include <utility>
 
-
 // Base class for packet type identification
 class BasePacket {
 public:
@@ -54,7 +53,8 @@ public:
     std::pair<int, int> coordinates;
     int classNode;
     double batteryLevel;
-    positionPacket(int id=0, int classNode =0,std::pair<int, int> coordinates = { 0, 0 }, double batteryLevel=0.0);
+    int hopCount;
+    positionPacket(int id=0, int classNode =0,std::pair<int, int> coordinates = { 0, 0 }, double batteryLevel=0.0, int hopCount = 0);
     friend sf::Packet& operator<<(sf::Packet& packet, const positionPacket& pp);
     friend sf::Packet& operator>>(sf::Packet& packet, positionPacket& pp);
 };

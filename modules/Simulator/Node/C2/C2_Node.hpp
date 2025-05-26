@@ -110,10 +110,7 @@ protected:
 
     bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
 
-    // Visualiser (aka GUI) display
-    void receptionStateDisplay(uint16_t senderId, std::string state);
-    void dropAnimationDisplay();
-    void nodeStateDisplay(std::string state);
+
 #if COMMUNICATION_PERIOD == RRC_DOWNLINK
 
     bool shouldSendBeacon = false;
@@ -142,10 +139,12 @@ protected:
 
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
+
+
     // visualiser---------------------------------------------------------------------------------------
     void displayRouting(); // we cannot put this in the constructor as we need to wait for the visualiser to receive all the nodes
+                           //it's quite specific to the C2_Node, so we put it here
     bool routingDisplayed = false;
-    void adressedPacketTransmissionDisplay(uint16_t receiverId);
 
     // Reception---------------------------------------------------------------------------------------
     bool canNodeReceiveMessage();
@@ -170,8 +169,8 @@ protected:
     C2RccUplinkSlotManager slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)
     void handleAckSlotPhase();
     void handleDataSlotPhase();
-uint8_t currentDataSlotCategory = 0;
-uint8_t fixedSlotCategory;
+    uint8_t currentDataSlotCategory = 0;
+    uint8_t fixedSlotCategory;
     // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
     using SenderID = uint16_t;
     using PacketID = uint16_t;

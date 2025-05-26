@@ -7,7 +7,7 @@ std::string C3_Node::initMessage() const{
     std::string finalMsg= msg+ "Class: "+std::to_string(getClassId())+ " started to run";
     
     sf::Packet positionPacketReceiver;
-    positionPacket positionPacket(nodeId,3,coordinates);
+    positionPacket positionPacket(nodeId,3,coordinates,0,0);
     positionPacketReceiver<<positionPacket;
     logger.sendTcpPacket(positionPacketReceiver);
 
@@ -257,7 +257,7 @@ std::string C3_Node::initMessage() const{
 
 bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir){
 
-
+//todo: could be refactored
         //Node must listen/communicate and not ransmit  to receive a message
         if(!canNodeReceiveMessage()){
              Log notlisteninglog("Node "+std::to_string(nodeId)+" not listening, dropped msg"/*+detailedBytesToString( message)*/, true);
@@ -289,6 +289,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         //not a data packet, we don't care
         Log wrongTypeLog("Node "+std::to_string(nodeId)+" received Incorrecty packet type, dropping", true);
         logger.logMessage(wrongTypeLog);
+        dropAnimationDisplay();
         return false;
     }
 
@@ -298,6 +299,8 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         //not for us, we don't care
         Log wrongReceiverLog("Node "+std::to_string(nodeId)+" received a packet not for him, dropping", true);
         logger.logMessage(wrongReceiverLog);
+        dropAnimationDisplay();
+
         return false;
     }
     //we received a packet for us, we should send an ack no matter what happened before (ack can be lost)
@@ -307,7 +310,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
      lastSenderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
      lastLocalIDPacket=extractBytesFromField(message,"localIDPacket",common::dataFieldMap);
     
-    
+    receptionStateDisplay(lastSenderId,"received");
     //We don't really care about the payload and the hash function at this stage of development
     //uint32_t payload=extractBytesFromField(message,"payload",common::dataFieldMap);
     //uint32_t hashFunction=extractBytesFromField(message,"hashFunction",common::dataFieldMap);
@@ -359,6 +362,8 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
     bool C3_Node::canTransmitFromSleeping(){
         
         currentState=NodeState::Transmitting;
+
+        //Todo: this should be encapsulated in a method from the Clock Home class.
         sf::Packet statePacketReceiver;
         stateNodePacket statePacket(nodeId, "Transmit");
         statePacketReceiver<<statePacket;
@@ -392,10 +397,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
                 addMessageToTransmit(ackPacket,std::chrono::milliseconds(common::timeOnAirAckPacket));
                 shouldReplyACK=false;    
 
-                sf::Packet  transmitPacketReceiver;
-                transmitMessagePacket transmitPacket(nodeId,lastSenderId);
-                transmitPacketReceiver<<transmitPacket;
-                logger.sendTcpPacket(transmitPacketReceiver);
+            adressedPacketTransmissionDisplay(lastSenderId,true);
         }
         return true;
         }

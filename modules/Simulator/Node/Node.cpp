@@ -1,5 +1,5 @@
 #include "Node.hpp"
-
+#include "../Connectivity/TCP/packets.hpp"
 
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger& logger, std::pair<int,int> coordinates, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex,double batteryLevel)
@@ -59,6 +59,39 @@ void Node::initializeTransitionMap(){
         stateTransitions[{WindowNodeState::CanCommunicate, NodeState::Communicating}] = [this]() { return canCommunicateFromCommunicating(); };
 }
 
+void Node::adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const
+{
+    sf::Packet transmitPacketReceiver;
+    transmitMessagePacket transmitPacket(nodeId, receiverId, isAck);
+    transmitPacketReceiver << transmitPacket;
+    logger.sendTcpPacket(transmitPacketReceiver);
+
+}
+void Node::receptionStateDisplay(uint16_t senderId, std::string state)
+{
+    // TODO: put a common enum for the possible states
+
+    sf::Packet receptionStatePacketReceiver;
+    receiveMessagePacket receptionState(senderId, nodeId, state);
+    receptionStatePacketReceiver << receptionState;
+    logger.sendTcpPacket(receptionStatePacketReceiver);
+}
+
+void Node::dropAnimationDisplay()
+{
+    dropAnimationPacket dropPacket(nodeId);
+    sf::Packet dropPacketReceiver;
+    dropPacketReceiver << dropPacket;
+    logger.sendTcpPacket(dropPacketReceiver);
+}
+
+void Node::nodeStateDisplay(std::string state)
+{
+    sf::Packet statePacketReceiver;
+    stateNodePacket statePacket(nodeId, state);
+    statePacketReceiver << statePacket;
+    logger.sendTcpPacket(statePacketReceiver);
+}
 
 NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state) {
         switch (state) {

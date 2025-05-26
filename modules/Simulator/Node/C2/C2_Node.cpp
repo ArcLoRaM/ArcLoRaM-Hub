@@ -7,7 +7,7 @@ std::string C2_Node::initMessage() const
     std::string finalMsg = msg + "Class: " + std::to_string(getClassId()) + " started to run";
 
     sf::Packet positionPacketReceiver;
-    positionPacket positionPacket(nodeId, 2, coordinates, batteryLevel);
+    positionPacket positionPacket(nodeId, 2, coordinates, batteryLevel, infoFromBeaconPhase.getHopCount());
     positionPacketReceiver << positionPacket;
     logger.sendTcpPacket(positionPacketReceiver);
 
@@ -29,33 +29,6 @@ std::string C2_Node::initMessage() const
     return finalMsg;
 }
 
-// Display------------------------------------------------------------------------------------------------------
-void C2_Node::receptionStateDisplay(uint16_t senderId, std::string state)
-{
-    // TODO: put a common enum for the possible states
-
-    sf::Packet receptionStatePacketReceiver;
-    receiveMessagePacket receptionState(senderId, nodeId, state);
-    receptionStatePacketReceiver << receptionState;
-    logger.sendTcpPacket(receptionStatePacketReceiver);
-}
-
-void C2_Node::dropAnimationDisplay()
-{
-    dropAnimationPacket dropPacket(nodeId);
-    sf::Packet dropPacketReceiver;
-    dropPacketReceiver << dropPacket;
-    logger.sendTcpPacket(dropPacketReceiver);
-}
-
-void C2_Node::nodeStateDisplay(std::string state)
-{
-    sf::Packet statePacketReceiver;
-    stateNodePacket statePacket(nodeId, state);
-    statePacketReceiver << statePacket;
-    logger.sendTcpPacket(statePacketReceiver);
-}
-// END - Display------------------------------------------------------------------------------------------------------
 
 #if COMMUNICATION_PERIOD == RRC_BEACON
 
@@ -594,13 +567,7 @@ bool C2_Node::canSleepFromSleeping() { return false; }
 
 // Display------------------------------------------------------------------------------------------------------
 
-void C2_Node::adressedPacketTransmissionDisplay(uint16_t receiverId)
-{
-    sf::Packet transmitPacketReceiver;
-    transmitMessagePacket transmitPacket(nodeId, receiverId, false);
-    transmitPacketReceiver << transmitPacket;
-    logger.sendTcpPacket(transmitPacketReceiver);
-}
+
 
 void C2_Node::displayRouting()
 {
@@ -687,7 +654,7 @@ void C2_Node::buildAndTransmitAckPacket()
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
     addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
 
-    adressedPacketTransmissionDisplay(ackInformationIds.first);
+    adressedPacketTransmissionDisplay(ackInformationIds.first,true);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
 }
@@ -901,7 +868,7 @@ void C2_Node::handleDataSlotPhase()
             buildAndTransmitDataPacket();
             retransmissionCounterHelper.setIsExpectingAck(true);
 
-            adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath());
+            adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(),false);
         }
          slotManager.decrementAllSlots();
     }

@@ -163,4 +163,16 @@ protected:
    
     void initializeTransitionMap();
 
+
+
+
+
+    // Display methods
+    //Todo: put the other display methods (broadcast, routing, init etc.) for every mode for every class !
+    //Todo: the reception state should be a struct, not raw strings
+    void adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const; // Display the transmission of a packet to a specific receiver
+    // Visualiser (aka GUI) display
+    void receptionStateDisplay(uint16_t senderId, std::string state);
+    void dropAnimationDisplay();
+    void nodeStateDisplay(std::string state);
 };
