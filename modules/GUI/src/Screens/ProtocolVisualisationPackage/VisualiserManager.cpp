@@ -392,9 +392,6 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
                         if (device2->getNodeId() == connectedDevice)
                         {
                             end = device2->getCenteredPosition();
-                            // // center the end position
-                            // end.x += config::radiusIcon;
-                            // end.y += config::radiusIcon;
                             foundPos = true;
                         }
                     }

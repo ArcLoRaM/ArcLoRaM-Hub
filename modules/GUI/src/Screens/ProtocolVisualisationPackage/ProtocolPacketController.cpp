@@ -82,8 +82,8 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
     state.energyExp += 20;
     state.totalPacketsSent++;
 
-    if(tmp.isACK) {
-        // manager.(tmp.senderId);
+    if(!tmp.isACK) {
+        manager.incrementPacketSent(tmp.senderId);
     }
 }
 
@@ -110,7 +110,7 @@ void ProtocolPacketController::handleStateNodePacket(sf::Packet& packet,Protocol
 
 void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     positionPacket pp;
-    packet >> pp.nodeId >> pp.classNode >> pp.coordinates.first >> pp.coordinates.second >> pp.batteryLevel;
+    packet >> pp.nodeId >> pp.classNode >> pp.coordinates.first >> pp.coordinates.second >> pp.batteryLevel>> pp.hopCount;
 
     pp.coordinates.first += config::horizontalOffset;
     pp.coordinates.second += config::verticalOffset;
@@ -129,7 +129,7 @@ void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolV
     }
 
     sf::Vector2f position(static_cast<float>(pp.coordinates.first), static_cast<float>(pp.coordinates.second));
-        auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position, pp.batteryLevel);
+        auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position,pp.hopCount, pp.batteryLevel);
         manager.addDevice(std::move(device));
         manager.addDeviceId(pp.nodeId);
     

@@ -4,8 +4,8 @@
 #include <iostream>
 #include <magic_enum.hpp>
 
-Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel)
-    : nodeId(nodeId), classNode(classNode), centeredPosition(centeredPosition), batteryLevel(batteryLevel) {
+Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel)
+    : nodeId(nodeId), classNode(classNode), centeredPosition(centeredPosition),hopCount(hopCount), batteryLevel(batteryLevel) {
 
     shape = sf::CircleShape(config::radiusIcon);
 

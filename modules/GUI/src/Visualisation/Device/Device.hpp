@@ -104,7 +104,7 @@ private:
     DeviceClass classNode ;
     double batteryLevel = 0;
     DeviceState state = DeviceState::Sleep;
-    unsigned int hopCount = 0;
+    int hopCount = 0;
     std::string getTextureKey(DeviceClass cls, DeviceState state);
 
 
@@ -113,7 +113,7 @@ private:
 
 public:
 
-    Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel = 0);
+    Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel = 0);
 
     void updateCoordinatesString();
 
