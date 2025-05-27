@@ -24,11 +24,13 @@ enum class DeviceClass {
 
 struct DeviceMetrics {
 public:
+    //something to have in mind: the energy expenditure for one slot listening can actually be very small if we trust our synchronization enough to consider there is no one transmitting 
+    
     // Energy slot counters
     void incrementListeningData()         { ++slotListeningData; }
-    void incrementTransmittingData()      { ++slotTransmittingData; }
+    void incrementTransmittingData()      { --slotListeningData; ++slotTransmittingData; }
     void incrementListeningAck()          { ++slotListeningAck; }
-    void incrementTransmittingAck()       { ++slotTransmittingAck; }
+    void incrementTransmittingAck()       { --slotListeningAck; ++slotTransmittingAck; }
 
     // Transmission stats
     void incrementRetransmission()        { ++nbRetransmissions; }

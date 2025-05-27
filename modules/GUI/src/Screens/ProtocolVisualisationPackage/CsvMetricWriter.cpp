@@ -24,7 +24,7 @@ void CsvMetricWriter::writeNetworkMetricsToCsv(const std::string& filename,
     out << "Number of Nodes," << devices.size() << '\n';
     out << "Energy Expenditure," << state.energyExp << '\n';
     out << "Retransmissions," << state.retransmissions << '\n';
-    out << "Total Data Packets Sent," << state.totalDataPacketsSent << '\n\n';
+    out << "Total Data Packets Sent," << state.totalDataPacketsSent << "\n\n";
 
     out << "ID,Class,HopCount,"
     << "Packets Sent,Retransmissions,PDR,"
@@ -32,7 +32,7 @@ void CsvMetricWriter::writeNetworkMetricsToCsv(const std::string& filename,
 
 
     std::scoped_lock lock(manager.getDevicesMutex());
-    for (const auto& devicePtr : devices) {
+    for (const auto& [id, devicePtr]  : devices) {
         const Device& dev = *devicePtr;
         const auto& metrics = dev.metrics;
 

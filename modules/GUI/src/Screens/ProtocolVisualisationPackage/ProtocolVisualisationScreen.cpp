@@ -25,6 +25,9 @@ ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, S
         "Arial",
         false
     );
+
+    //Todo: terminate the current process gracefully, right now there is memory problem which causes a crash
+    //maybe you will want to have an "unfocused" state for the screen where packets are still received but not processed
     backButton->setOnClick(backAction);
 }
 

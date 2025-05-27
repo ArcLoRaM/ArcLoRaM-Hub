@@ -33,9 +33,14 @@ private:
     std::optional<sf::Text> pdrText;
     std::string pdrString = "PDR: ";
 
+
+
+
+
+    //TODO: put rooting and Devices in the state, manager should only handle interface specific to the feature ( not like redirection between pages) and animations (transmission etc..)
+
     //Routing
     //to do: use the same data structure as in the TopologyEditorManager for the Id and the ptdr to the devices, all in one ! fantastic
-    std::unordered_set<int> devicesId; // Stores unique devices ID
     std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
     bool routingDisplayEnabled = false; // Flag to control routing display
     void drawRootings(sf::RenderWindow& window);
@@ -43,7 +48,12 @@ private:
     std::vector<std::unique_ptr<Button>> buttons; // List of buttons
     mutable std::mutex buttonsMutex;
 
-    std::vector<std::unique_ptr<Device>> devices; 
+
+
+    
+    // std::unordered_set<int> devicesId; // Stores unique devices ID
+    // std::vector<std::unique_ptr<Device>> devices; 
+    std::unordered_map<int, std::unique_ptr<Device>> devices;
     mutable std::mutex devicesMutex;  // Protects 'devices' for all access (including reads and writes)
 
     std::vector<std::unique_ptr<Arrow>> arrows; // List of arrows
@@ -59,7 +69,7 @@ private:
 
     public:
     VisualiserManager(ProtocolVisualisationState& state);
-    const std::vector<std::unique_ptr<Device>>& getDevices() const { return devices; }
+    const std::unordered_map<int, std::unique_ptr<Device>>& getDevices() const { return devices; }
     std::mutex& getDevicesMutex() const { return devicesMutex; }
     void update(InputManager & inputManager);
     void draw(sf::RenderWindow& window, sf::View& networkView, ProtocolVisualisationState& state);
@@ -78,7 +88,6 @@ private:
     void startBroadcast(const sf::Vector2f& startPosition, float duration);
 
     //Routing:
-    void addDeviceId(int id);
     void addRouting(int id1, int id2);
     void removeRouting(int id1, int id2);
 
@@ -86,6 +95,11 @@ private:
     //metrics
     void addRetransmission(int nodeId);
     void incrementPacketSent(int nodeId);
+
+    void incrementListeningData(int nodeId);
+    void incrementTransmittingData(int nodeId);
+    void incrementListeningAck(int nodeId);
+    void incrementTransmittingAck(int nodeId);
 
 };
 

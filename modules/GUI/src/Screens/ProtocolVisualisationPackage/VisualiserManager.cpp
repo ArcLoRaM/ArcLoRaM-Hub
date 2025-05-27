@@ -94,7 +94,22 @@ void VisualiserManager::addButton(std::unique_ptr<Button> button)
 void VisualiserManager::addDevice(std::unique_ptr<Device> device)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    devices.push_back(std::move(device));
+
+    if(!device)
+    {
+        throw std::runtime_error("Error: Attempted to add a null device.");
+    }
+        int nodeId = device->getNodeId();
+
+    if (devices.contains(nodeId))
+    {
+        std::cerr << "Error: Device with ID " << device->getNodeId() << " already exists." << std::endl;
+        return; // Device already exists, do not add
+    }
+
+    devices[nodeId] = std::move(device);
+
+
 }
 
 void VisualiserManager::addArrow(std::unique_ptr<Arrow> arrow)
@@ -137,25 +152,13 @@ void VisualiserManager::startBroadcast(const sf::Vector2f &startPosition, float 
     broadcastAnimations.push_back(std::make_unique<BroadcastAnimation>(startPosition, duration));
 }
 
-void VisualiserManager::addDeviceId(int id)
-{
-    std::lock_guard<std::mutex> lock(devicesMutex);
 
-    if (devicesId.emplace(id).second)
-    {
-        routings[id] = {};
-    }
-    else
-    {
-        std::cout << "********Device " << id << " already exists********.\n";
-    }
-}
 
 void VisualiserManager::addRouting(int id1, int id2)
 {
     // ID1 ---> ID2 , path towards ID2
     std::lock_guard<std::mutex> lock(devicesMutex);
-    if (devicesId.count(id1) && devicesId.count(id2))
+    if (devices.contains(id1) && devices.contains(id2))
     {
         routings[id1].insert(id2); // Only store id2 in id1's adjacency list
     }
@@ -163,12 +166,13 @@ void VisualiserManager::addRouting(int id1, int id2)
     {
         std::cout << "********One or both devices do not exist.********\n";
     }
+
 }
 
 void VisualiserManager::removeRouting(int id1, int id2)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    if (devicesId.count(id1) && devicesId.count(id2))
+    if (devices.contains(id1) && devices.contains(id2))
     {
         routings[id1].erase(id2);
     }
@@ -181,27 +185,72 @@ void VisualiserManager::removeRouting(int id1, int id2)
 void VisualiserManager::addRetransmission(int nodeId)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    for (auto &device : devices)
+    if (!devices.contains(nodeId))
     {
-        if (device->getNodeId() == nodeId)
-        {
-            device->metrics.incrementRetransmission();
-            break;
-        }
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to add retransmission." << std::endl;
+        return; // Device does not exist, do not increment retransmission
     }
+    devices[nodeId]->metrics.incrementRetransmission();
+
+
 }
 
 void VisualiserManager::incrementPacketSent(int nodeId)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    for (auto &device : devices)
+    if (!devices.contains(nodeId))
     {
-        if (device->getNodeId() == nodeId)
-        {
-            device->metrics.incrementPacketSent();
-            break;
-        }
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to add PacketSent." << std::endl;
+        return; // Device does not exist, do not increment retransmission
     }
+
+     devices[nodeId]->metrics.incrementPacketSent();
+
+}
+
+void VisualiserManager::incrementListeningData(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    if (!devices.contains(nodeId))
+    {
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to increment Listening Data." << std::endl;
+        return; // Device does not exist, do not increment
+    }
+    devices[nodeId]->metrics.incrementListeningData();
+
+}
+
+void VisualiserManager::incrementTransmittingData(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    if (!devices.contains(nodeId))
+    {
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to increment Transmitting Data." << std::endl;
+        return; // Device does not exist, do not increment
+    }
+    devices[nodeId]->metrics.incrementTransmittingData();
+}
+
+void VisualiserManager::incrementListeningAck(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    if (!devices.contains(nodeId))
+    {
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to increment Listening Ack." << std::endl;
+        return; // Device does not exist, do not increment
+    }
+    devices[nodeId]->metrics.incrementListeningAck();
+}
+
+void VisualiserManager::incrementTransmittingAck(int nodeId)
+{
+    std::lock_guard<std::mutex> lock(devicesMutex);
+    if (!devices.contains(nodeId))
+    {
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to increment Transmitting Ack." << std::endl;
+        return; // Device does not exist, do not increment
+    }
+    devices[nodeId]->metrics.incrementTransmittingAck();
 }
 
 void VisualiserManager::update(InputManager &inputManager)
@@ -254,8 +303,9 @@ void VisualiserManager::update(InputManager &inputManager)
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-        for (auto &device : devices)
-            device->update(inputManager);
+for (auto& [id, device] : devices) {
+    device->update(inputManager);
+}
     }
 }
 
@@ -314,9 +364,10 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-        for (auto &device : devices)
-            device->draw(window);
-    }
+for (auto& [id, device] : devices) {
+    device->draw(window);
+}
+}
 
     {
         std::lock_guard<std::mutex> lock(arrowsMutex);
@@ -341,31 +392,32 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
         for (auto &animation : dropAnimations)
             animation->draw(window);
     }
+
 }
 
 void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    for (auto &device : devices)
+    if (!devices.contains(nodeId))
     {
-        if (device->getNodeId() == nodeId)
-        {
-            device->setState(state);
-        }
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to update its state." << std::endl;
+        return; // Device does not exist, do not increment retransmission
     }
+
+    devices[nodeId]->setState(state);
+
 }
 
 std::pair<sf::Vector2f, bool> VisualiserManager::findDeviceCoordinates(int nodeId)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-    for (const auto &device : devices)
+        if (!devices.contains(nodeId))
     {
-        if (device->getNodeId() == nodeId)
-        {
-            return {device->getCenteredPosition(), true};
-        }
+        std::cerr << "Error: Device with ID " << nodeId << " does not exist to find device coordinate." << std::endl;
+        return {{}, false};
     }
-    return {{}, false};
+
+    return {devices[nodeId]->getCenteredPosition(), true};
 }
 
 void VisualiserManager::drawRootings(sf::RenderWindow &window)
@@ -380,22 +432,13 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
             sf::Vector2f end;
             bool foundPos = false;
 
-            for (auto &device1 : devices)
-            {
-                if (device1->getNodeId() == device)
-                {
-                    start = device1->getCenteredPosition();
+            auto it1 = devices.find(device);
+            auto it2 = devices.find(connectedDevice);
 
-                    // get end position
-                    for (auto &device2 : devices)
-                    {
-                        if (device2->getNodeId() == connectedDevice)
-                        {
-                            end = device2->getCenteredPosition();
-                            foundPos = true;
-                        }
-                    }
-                }
+            if (it1 != devices.end() && it2 != devices.end()) {
+                start = it1->second->getCenteredPosition();
+                end = it2->second->getCenteredPosition();
+                foundPos = true;
             }
 
             if (foundPos)

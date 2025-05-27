@@ -82,13 +82,18 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
 
 
     //Metrics
+
+    //useles?
     state.energyExp += 20;
 
 
     if(!tmp.isACK) {
-        state.totalDataPacketsSent++;
+        state.totalDataPacketsSent++;//we only count the data packets sent, not the ACKs for the PDR (retransmissions are only for the data packets)
         manager.incrementPacketSent(tmp.senderId);
+        manager.incrementTransmittingData(tmp.senderId);
     }
+    else{
+        manager.incrementTransmittingAck(tmp.senderId);    }
 
 }
 
@@ -120,14 +125,12 @@ void ProtocolPacketController::handleStateNodePacket(
         {
             if (snp.isCommunicatingAck.value())
             {
-                // Optional is set and true
-                std::cout << "Communicating with ACK for nodeId: " << snp.nodeId << std::endl;
-                
+                //listening for ACK duration and Data duration doesn't cost the same energy
+                manager.incrementListeningAck(snp.nodeId);
             }
             else
             {
-                std::cout << "Communicating with DATA for nodeId: " << snp.nodeId << std::endl;
-
+                manager.incrementListeningData(snp.nodeId);
             }
         }
         else
@@ -160,7 +163,6 @@ void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolV
     sf::Vector2f position(static_cast<float>(pp.coordinates.first), static_cast<float>(pp.coordinates.second));
         auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position,pp.hopCount, pp.batteryLevel);
         manager.addDevice(std::move(device));
-        manager.addDeviceId(pp.nodeId);
     
 
     std::string message = "Received positionPacket: nodeId=" + std::to_string(pp.nodeId) + ", coordinates=(" + std::to_string(pp.coordinates.first) + ", " + std::to_string(pp.coordinates.second) + ")";
