@@ -10,7 +10,6 @@ struct ProtocolVisualisationState {
     //Todo: do we need to protec the states with mutexes? all of them?
     int tickNumber = 0;
     float distanceThreshold = 0.f;
-    int retransmissions = 0;
     int energyExp = 0;
     //the logs will overflow because you erased: 
 
@@ -20,8 +19,7 @@ struct ProtocolVisualisationState {
     mutable std::mutex logMutex; // Mutex for thread-safe access to log messages
 
 
-    
-    int totalPacketsSent = 0; // Total packets sent
-    int totalPacketsReceived = 0; // Total packets received
+    int totalDataPacketsSent = 0; // Total packets sent
+    int retransmissions = 0;
 
 };

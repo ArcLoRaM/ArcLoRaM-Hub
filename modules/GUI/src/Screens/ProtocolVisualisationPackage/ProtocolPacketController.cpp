@@ -7,8 +7,10 @@
 
 void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualisationState &state, VisualiserManager &manager)
 {
-    int packetType;
-    packet >> packetType; // Read the type first
+    //IMPORTANT: We never deserialize the type of the packet using the operator << later in the code since we do it here.
+    //This is why the operator >> and << are not symetrical in the packet definition.
+    int packetType = -1; // Default to an invalid type
+    packet >> packetType;
 
     switch (packetType) {
     case 0: handleSystemPacket(packet, state,manager); break;
@@ -43,18 +45,19 @@ void ProtocolPacketController::handleSystemPacket(sf::Packet& packet,ProtocolVis
     // {
     //     std::lock_guard<std::mutex> lock(logMutex);
     //     logMessages.push_back(message);
-    // }
+   // }
 }
 
 void ProtocolPacketController::handleTickPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     tickPacket tp;
-    packet >> tp.tickNb;
+    packet >> tp;
     state.tickNumber = tp.tickNb;
 }
 
 void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
+    
     transmitMessagePacket tmp;
-    packet >> tmp.senderId >> tmp.receiverId >> tmp.isACK;
+    packet >> tmp;
 
     sf::Vector2f senderCoordinates, receiverCoordinates;
     bool foundSender = false, foundReceiver = false;
@@ -80,45 +83,71 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
 
     //Metrics
     state.energyExp += 20;
-    state.totalPacketsSent++;
+
 
     if(!tmp.isACK) {
+        state.totalDataPacketsSent++;
         manager.incrementPacketSent(tmp.senderId);
     }
+
 }
 
-
-
-void ProtocolPacketController::handleStateNodePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
+void ProtocolPacketController::handleStateNodePacket(
+    sf::Packet &packet,
+    ProtocolVisualisationState &state,
+    VisualiserManager &manager)
+{
     stateNodePacket snp;
-    packet >> snp.nodeId >> snp.state;
+
+    packet >>snp;
 
     std::optional<DeviceState> maybeState = magic_enum::enum_cast<DeviceState>(snp.state);
+                // std::cout << "State Proposed: " << snp.state << std::endl;
 
-    if (maybeState) {
-        manager.updateDevicesState(snp.nodeId,*maybeState);
-    } else {
+    if (maybeState)
+    {
+        manager.updateDevicesState(snp.nodeId, *maybeState);
+    }
+    else
+    {
         std::cerr << "Invalid state string in Protocol Packet Controller" << std::endl;
     }
 
+    // Only increment energyExp if the optional isCommunicatingAck is true
+    if (snp.state == "Communicate")
+    {  
+        if (snp.isCommunicatingAck.has_value())
+        {
+            if (snp.isCommunicatingAck.value())
+            {
+                // Optional is set and true
+                std::cout << "Communicating with ACK for nodeId: " << snp.nodeId << std::endl;
+                
+            }
+            else
+            {
+                std::cout << "Communicating with DATA for nodeId: " << snp.nodeId << std::endl;
 
-
-    if (snp.state == "Communicate") {
-        state.energyExp++;
+            }
+        }
+        else
+        {
+            // Optional is not set
+            // (Maybe log a warning or fallback behavior)
+        }
     }
 }
 
 void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     positionPacket pp;
-    packet >> pp.nodeId >> pp.classNode >> pp.coordinates.first >> pp.coordinates.second >> pp.batteryLevel>> pp.hopCount;
+    packet >> pp;
 
     pp.coordinates.first += config::horizontalOffset;
     pp.coordinates.second += config::verticalOffset;
     pp.coordinates.first *= config::distanceDivider;
     pp.coordinates.second *= config::distanceDivider;
 
-    //Todo: change the packet definition to use a sf::Vector2f instead of a pair
-    //and what about the classNode ? should we use an enum class instead of an int ?
+
     DeviceClass deviceClass ;
     if(pp.classNode==1) deviceClass = DeviceClass::C1;
     else if(pp.classNode==2) deviceClass = DeviceClass::C2;
@@ -143,7 +172,7 @@ void ProtocolPacketController::handlePositionPacket(sf::Packet& packet,ProtocolV
 
 void ProtocolPacketController::handleReceiveMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     receiveMessagePacket rmp;
-    packet >> rmp.senderId >> rmp.receiverId >> rmp.state;
+    packet >> rmp;
 
     sf::Vector2f senderCoordinates, receiverCoordinates;
     bool foundSender = false, foundReceiver = false;
@@ -160,7 +189,6 @@ void ProtocolPacketController::handleReceiveMessagePacket(sf::Packet& packet,Pro
         manager.addReceptionIcon(std::move(icon));
         if(rmp.state == "received") {
             // If the state is "received", we can assume the packet was successfully received
-            state.totalPacketsReceived++;
         }
     }
 
@@ -174,7 +202,7 @@ void ProtocolPacketController::handleReceiveMessagePacket(sf::Packet& packet,Pro
 
 void ProtocolPacketController::handleRoutingDecisionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     routingDecisionPacket rp;
-    packet >> rp.receiverId >> rp.senderId >> rp.newRoute;
+    packet >> rp;
 
     {
         if (rp.newRoute) {
@@ -193,7 +221,7 @@ void ProtocolPacketController::handleRoutingDecisionPacket(sf::Packet& packet,Pr
 
 void ProtocolPacketController::handleBroadcastMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     broadcastMessagePacket bmp;
-    packet >> bmp.nodeId;
+    packet >> bmp;
 
     sf::Vector2f senderCoordinates;
     bool foundSender = false;
@@ -212,7 +240,7 @@ void ProtocolPacketController::handleBroadcastMessagePacket(sf::Packet& packet,P
 
 void ProtocolPacketController::handleDropAnimationPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
     dropAnimationPacket dap;
-    packet >> dap.nodeId;
+    packet >> dap;
 
     sf::Vector2f senderCoordinates;
     bool foundSender = false;
@@ -232,7 +260,7 @@ void ProtocolPacketController::handleRetransmissionPacket(sf::Packet& packet,Pro
     //FOr now, we only count the retransmission
 
     retransmissionPacket rp;
-    packet >> rp.nodeId;
+    packet >> rp;
 
     manager.addRetransmission(rp.nodeId);
 

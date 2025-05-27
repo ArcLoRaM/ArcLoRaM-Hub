@@ -526,6 +526,7 @@ sf::RectangleShape TopologyEditorManager::convertRectangleToTopologyView(
     return worldRect;
 }
 
+
 bool TopologyEditorManager::isBoundsFullyInsideRect(
     const sf::Vector2f &position, // top-left corner
     const sf::Vector2f &size,

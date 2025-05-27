@@ -1,7 +1,3 @@
 topologyMode= RRC_Uplink
-NODE 6 C2 396 639 nextHop=1 hopCount=3
-NODE 5 C2 1128 395 nextHop=3 hopCount=1
-NODE 4 C2 818 326 nextHop=2 hopCount=2
-NODE 3 C3 1215 583
-NODE 2 C2 857 524 nextHop=3 hopCount=1
-NODE 1 C2 409 382 nextHop=2 hopCount=2
+NODE 7 C3 556 548
+NODE 2 C2 1206 576 nextHop=7 hopCount=1

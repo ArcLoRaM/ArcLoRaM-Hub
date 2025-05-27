@@ -8,11 +8,11 @@ Arrow::Arrow(const sf::Vector2f& start, const sf::Vector2f& end,  int senderId, 
     // Initialize line (shaft of the arrow)
 
     line.setSize(sf::Vector2f(0, 7)); // Initially, the line length is 0, thickness = 7
-    line.setFillColor(sf::Color::Red);
+    line.setFillColor(color);
 
     // Initialize arrowhead (a triangle)
     arrowhead.setPointCount(3);
-    arrowhead.setFillColor(sf::Color::Red);
+    arrowhead.setFillColor(color);
 
     receptionState = "received"; // Default reception state
     interferenceTexture = &ResourceManager::getInstance().getTexture("Reception_Interference");

@@ -24,8 +24,7 @@ void CsvMetricWriter::writeNetworkMetricsToCsv(const std::string& filename,
     out << "Number of Nodes," << devices.size() << '\n';
     out << "Energy Expenditure," << state.energyExp << '\n';
     out << "Retransmissions," << state.retransmissions << '\n';
-    out << "Total Packets Sent," << state.totalPacketsSent << '\n';
-    out << "Total Packets Received," << state.totalPacketsReceived << "\n\n";
+    out << "Total Data Packets Sent," << state.totalDataPacketsSent << '\n\n';
 
     out << "ID,Class,HopCount,"
     << "Packets Sent,Retransmissions,PDR,"

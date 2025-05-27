@@ -276,7 +276,7 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
     nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
     window.draw(*nbRetransmission);
 
-    pdrText->setString(pdrString + std::to_string(state.totalPacketsReceived) + "/" + std::to_string(state.totalPacketsSent) + "=" + std::to_string(state.totalPacketsSent > 0 ? static_cast<float>(state.totalPacketsReceived) / state.totalPacketsSent * 100 : 0) + "%");
+    pdrText->setString(pdrString +  std::to_string(state.totalDataPacketsSent > 0 ? static_cast<float>(state.totalDataPacketsSent -state.retransmissions) / state.totalDataPacketsSent * 100 : 0) + "%");
     window.draw(*pdrText);
     {
         std::lock_guard<std::mutex> lock(buttonsMutex);

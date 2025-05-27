@@ -39,6 +39,7 @@ public:
         slotTransmittingData = 0;
         slotListeningAck = 0;
         slotTransmittingAck = 0;
+        
         nbRetransmissions = 0;
         nbPacketsSent = 0;
     }
