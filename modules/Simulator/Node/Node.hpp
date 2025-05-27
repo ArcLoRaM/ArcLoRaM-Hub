@@ -174,5 +174,5 @@ protected:
     // Visualiser (aka GUI) display
     void receptionStateDisplay(uint16_t senderId, std::string state);
     void dropAnimationDisplay();
-    void nodeStateDisplay(std::string state);
+void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
 };

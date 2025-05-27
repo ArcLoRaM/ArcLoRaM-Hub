@@ -228,8 +228,10 @@ constexpr Topology getCurrentTopology() {
     constexpr  const unsigned int durationSleepWindowSecondary = 800; //ms
     constexpr  const unsigned int durationACKWindow = 500; //ms
     constexpr  const bool readConfigFromFile = true;
+    
     //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr const int totalNumberOfSlots=15; //Each node will dispose of 15 slots to transmit
+    constexpr const int totalNumberOfSlotsPerModuloNode=15;//Each node will dispose of 15 slots to transmit
+    constexpr const int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
     constexpr const int maxNodeSlots=6;  //It will choose a limited number of them, randomly
     constexpr const int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
     // constexpr const int typePacket=0x03;
@@ -258,6 +260,7 @@ constexpr Topology getCurrentTopology() {
             {"payload", {7, payloadSizeBytesSize}},              // "payloadSize" starts at index 7, 4 bytes long
             {"hashFunction", {11, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
         };
+    
     
     inline const std::unordered_map<std::string, std::pair<size_t, size_t>> ackFieldMap = {
             {"type", {0, typeBytesSize}},             // "type" starts at index 0, 1 byte long

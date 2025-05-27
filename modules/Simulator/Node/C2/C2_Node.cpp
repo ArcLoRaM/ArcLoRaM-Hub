@@ -780,23 +780,34 @@ bool C2_Node::canCommunicateFromSleeping()
         }
     }
 
-    // Change of state is alwasy allowed
+    isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
+   
+    if(!isACKSlot)     //Advance the global data slot category (mod 3) (part of the protocol) for the next iteration
+    currentDataSlotCategory = (currentDataSlotCategory + 1) % 3;
+
+    // Change of state is only allowed if the current DataSlotCategory is corresponding to the HopCountmodulo (the node might transmit info) 
+    //or the HopCOuntmodulo+1 (the node might receive ACK)
+    if( currentDataSlotCategory != fixedSlotCategory&&currentDataSlotCategory != (fixedSlotCategory+1)%3)
+    {
+
+        return false;
+    }
+
+    // we can communicate
     currentState = NodeState::Communicating;
 
-    // This is a physical layer property that is updated in the network layer, not good !!!
+    // This is a physical layer property that is updated in the network layer, not good !!! todo
     isTransmittingWhileCommunicating = false; // used to detect when node cannot physically receive messages because they transmit
 
-    nodeStateDisplay("Communicate");
-
-    isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
     if (!isACKSlot)
     {
-       
 
+        nodeStateDisplay("Communicate", false);
         handleDataSlotPhase();
     }
     else
     {
+        nodeStateDisplay("Communicate", true);
         handleAckSlotPhase();
     }
 
@@ -818,9 +829,13 @@ bool C2_Node::canSleepFromCommunicating()
     }
 
     currentState = NodeState::Sleeping;
-    nodeStateDisplay("Sleep");
+    nodeStateDisplay("Sleep",std::nullopt);
     return true;
 }
+
+//A node can refuse to change to communicate state if it is not in the right slot category
+bool C2_Node::canSleepFromSleeping() { return true; }
+
 
 // Unauthorized transition in this mode.
 bool C2_Node::canCommunicateFromTransmitting() { return false; }
@@ -836,7 +851,6 @@ bool C2_Node::canListenFromListening() { return false; }
 bool C2_Node::canListenFromCommunicating() { return false; }
 bool C2_Node::canSleepFromTransmitting() { return false; }
 bool C2_Node::canSleepFromListening() { return false; }
-bool C2_Node::canSleepFromSleeping() { return false; }
 
 // End - State Transitions ---------------------------------------------------------------------------------
 
@@ -850,8 +864,7 @@ void C2_Node::handleAckSlotPhase()
         buildAndTransmitAckPacket();
     }
 
-     // Advance the global data slot category (mod 3) (part of the protocol) for the next iteration
-        currentDataSlotCategory = (currentDataSlotCategory + 1) % 3;
+
 }
 
 void C2_Node::handleDataSlotPhase()

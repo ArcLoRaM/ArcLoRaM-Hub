@@ -49,12 +49,8 @@ int main() {
  
 
     Seed seed(std::string(common::communicationMode), std::string(common::topology),logger,manager.dispatchCv,manager.dispatchCvMutex,baseTime);
-    
     auto nodes = seed.transferOwnership(); //the seed object memory is released safely
     manager.takeOwnership(std::move(nodes));
-
-
-
 
     //TODO: have a getter for the nodes list, or create a function, you should not allot the nodes to be accessible in public
     //MAKE THIS FUNCTION in the manager class? maybe not
@@ -104,8 +100,6 @@ int main() {
                 logger.logMessage(stoppingLog);
             }
         }
-       
-
     }
 
 //---------------------------------End---------------------------------

@@ -85,12 +85,18 @@ void Node::dropAnimationDisplay()
     logger.sendTcpPacket(dropPacketReceiver);
 }
 
-void Node::nodeStateDisplay(std::string state)
+void Node::nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck)
 {
     sf::Packet statePacketReceiver;
     stateNodePacket statePacket(nodeId, state);
+
+    if (isCommunicatingAck.has_value()) {
+        statePacket.isCommunicatingAck = isCommunicatingAck;
+    }
+
     statePacketReceiver << statePacket;
     logger.sendTcpPacket(statePacketReceiver);
+
 }
 
 NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state) {
@@ -123,23 +129,11 @@ void Node::onTimeChange(WindowNodeState proposedState) {
         // Check if there is a registered transition function for the proposed and current state
         auto it = stateTransitions.find(key);
         if (it != stateTransitions.end()) {
+
             // Call the transition function (condition function)
             if (it->second()) {
-                // Transition is valid, so update the current state
-                try {
-                    //we cannot do this, we need to change the currentstate before performing the operation related to the proposed state that is valid
-                    //currentState = convertWindowNodeStateToNodeState(proposedState);
-
-                    //Log Msg is in the callback function bc we might provide additional info.
-
-                }catch(const std::invalid_argument& e){
-                    Log invalidArg("Node "+std::to_string(nodeId)+"cannot convert proposed window state to Node State: current Node Sate."+e.what(), true);
-                    logger.logMessage(invalidArg);
-                    }
-                //we put this in the stae transition function to make the logs chronological
-                //we let the others logs in this function to not overload the state transition function with same logs
-                //  Log transitionLog("Node "+std::to_string(nodeId)+" transitioned to "+stateToString(currentState), true);
-                //     logger.logMessage(transitionLog);   
+                
+                
              } else {
                 Log failedTransitionLog("Node "+std::to_string(nodeId)+" transition from "+stateToString(currentState)+" to "+stateToString(proposedState)+ " failed", true);
                 logger.logMessage(failedTransitionLog);
@@ -152,6 +146,8 @@ void Node::onTimeChange(WindowNodeState proposedState) {
 
 }
 
+
+//todo: wiht Magic Enum, you dont need this anymore
  std::string Node::stateToString(NodeState state) {
         switch (state) {
             case NodeState::Communicating: return " Communicating";

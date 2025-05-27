@@ -4,9 +4,10 @@
 #ifndef PACKETS_HPP
 #define PACKETS_HPP
 
-#include <SFML/Network.hpp>
 #include <string>
-#include <utility>
+#include <optional>
+#include <SFML/Network/Packet.hpp>
+
 
 // Base class for packet type identification
 class BasePacket {
@@ -35,15 +36,22 @@ public:
     friend sf::Packet& operator>>(sf::Packet& packet, tickPacket& tp);
 };
 
+
+
 class stateNodePacket : public BasePacket {
 public:
     int nodeId;
     std::string state;
+    std::optional<bool> isCommunicatingAck; // used for energy expenditure calculation 
+
 
     stateNodePacket(int nodeId = 0, std::string state = "error");
     friend sf::Packet& operator<<(sf::Packet& packet, const stateNodePacket& snp);
     friend sf::Packet& operator>>(sf::Packet& packet, stateNodePacket& snp);
 };
+sf::Packet& operator>>(sf::Packet& packet, stateNodePacket& snp);
+sf::Packet& operator<<(sf::Packet& packet, const stateNodePacket& snp);
+
 
 
 //should be renamed initialNodePacket

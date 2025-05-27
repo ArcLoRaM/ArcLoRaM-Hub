@@ -230,6 +230,15 @@ protected:
             return *hopCount;
         }
 
+        uint8_t getModulatedHopCount() const 
+        {   if (!hopCount.has_value())
+            {
+                throw std::runtime_error("Hop count is not set");
+            }
+            // Modulate the hop count to fit in the range of 0-2
+            return *hopCount % 3 ;
+        }
+
         // Checkers
         [[nodiscard]] bool hasNextNodeIdInPath() const noexcept
         {
