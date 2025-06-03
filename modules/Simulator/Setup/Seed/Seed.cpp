@@ -2,7 +2,7 @@
 #include "../Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.hpp"
 #include "../Factories/FactorySelector/FactorySelector.hpp"
 #include "../DeploymentManager/DeploymentManager.hpp"
-
+#include <filesystem>
 // we don't adopt the real time windows for the moment, as it is really impractical (a few dowens of ms every minutes...)
 
 std::vector<std::shared_ptr<Node>> Seed::transferOwnership()
@@ -338,9 +338,19 @@ void Seed::initialize_RRC_Uplink_Mesh_FromFile()
 {
     DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex, baseTime);
 
-    // Load from the deployment file
-    auto nodes = deploymentManager.loadDeploymentFromFile("Setup/config/deployment_mesh.simcfg");
+    
+    std::string filePath="";
+    for (const auto& entry : std::filesystem::directory_iterator("Setup/config/")) {
+        if (entry.is_regular_file() && entry.path().extension() == ".simcfg") {
+            filePath= entry.path().string(); // full path
+        }
+    }
 
+    if(filePath == "") {
+        throw std::runtime_error(std::string("No .simcfg file found in Setup/config/"));
+    }
+    // Load from the deployment file
+    auto nodes = deploymentManager.loadDeploymentFromFile(filePath);
     // Take ownership of the nodes
     listNode = std::move(nodes);
     Log fileReadingLog("Deployment loaded from file: deployment_mesh.simcfg", true);

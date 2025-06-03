@@ -13,7 +13,7 @@
 
 
 /*
-*  Define General Parameters for the Simulation 
+*  Define General Parameters for the Simulation
 *   Define the Topology Desired and the Communication Period Mode in the two preprocessor Macros
 *   Some parameters specific to the communication mode and the topology are defined in the corresponding sections
 */
@@ -38,12 +38,12 @@ Use cases Description:
 
             -Communication Window:
                 -RRC_Beacon
-                -RRC_Downlink 
-                -RRC_Uplink    
+                -RRC_Downlink
+                -RRC_Uplink
     For ENC:
             -Topologies:
-                -Star 
-            
+                -Star
+
             -Communication Window:
                 -ENC_Beacon
                 -ENC_Downlink
@@ -51,7 +51,7 @@ Use cases Description:
 
 If time allows, we will consider an hybrid use case that will combine the two protocols
 
-*/  
+*/
 
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
@@ -69,9 +69,9 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 //-----------------------------------------COMMUNICATION MODE-----------------------------------------
 #define COMMUNICATION_PERIOD 3
 
-#define RRC_BEACON 1  
+#define RRC_BEACON 1
 #define RRC_DOWNLINK 2
-#define RRC_UPLINK 3    
+#define RRC_UPLINK 3
 #define ENC_BEACON 11   //not implemented
 #define ENC_DOWNLINK 12 //not implemented
 #define ENC_UPLINK 13   //not implemented
@@ -79,7 +79,7 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 
 //-----------------------------------------TOPOLOGY-----------------------------------------
 
-#define TOPOLOGY 1
+#define TOPOLOGY 3
 #define LINE 1
 #define STAR 2 //not implemented
 #define MESH 3
@@ -137,7 +137,7 @@ constexpr Topology getCurrentTopology() {
     constexpr const int minimumNbBeaconPackets=2;
     constexpr const int maximumNbBeaconPackets=4;
     constexpr const int nbSlotsPossibleForOneBeacon=10;
-    constexpr const int guardTime=50; 
+    constexpr const int guardTime=50;
     constexpr const int typePacket=0x02;
     constexpr const int timeOnAirFlood=70;
 
@@ -163,7 +163,7 @@ constexpr Topology getCurrentTopology() {
         {"receiverGlobalId", {3, receiverGlobalIdBytesSize}},    // "receiverGlobalId" starts at index 3, 2 bytes long
         {"globalIDPacket", {5, globalIDPacketBytesSize}},        // "globalIDPacket" starts at index 5, 2 bytes long
         {"payload", {7, payloadSizeBytesSize}},              // "payloadSize" starts at index 7, 4 bytes long
-        {"hashFunction", {11, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long    
+        {"hashFunction", {11, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
     };
 
     //static fields for this mode
@@ -178,10 +178,10 @@ constexpr Topology getCurrentTopology() {
     constexpr const int minimumNbBeaconPackets=2;
     constexpr const int maximumNbBeaconPackets=4;
     constexpr const int nbSlotsPossibleForOneBeacon=10;
-    constexpr const int guardTime=50; 
+    constexpr const int guardTime=50;
     constexpr const int typePacket=0x01;
     constexpr const int timeOnAirBeacon=70;
-    
+
     //For the Time Division Multiple Access Scheme in Seed
     constexpr  const unsigned int lengthTransmissionWindow = 1000;
     constexpr  const  unsigned int lengthSleepingWindow = 1500;
@@ -203,7 +203,7 @@ constexpr Topology getCurrentTopology() {
     constexpr const int globalIDPacketBytesSize=2;
     constexpr const int senderGlobalIdBytesSize=2;
     constexpr const int hashFunctionBytesSize=4;
- 
+
 
     // Format: { "field_name", {start_index, size_in_bytes} }
     inline const std::unordered_map<std::string, std::pair<size_t, size_t>> fieldMap = {
@@ -222,21 +222,26 @@ constexpr Topology getCurrentTopology() {
 
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
-    constexpr const char* communicationMode = "RRC_Uplink";
-    constexpr  const  unsigned int durationSleepWindowMain = 2000;      //ms 
-    constexpr  const unsigned int durationDataWindow = 1500; //ms
-    constexpr  const unsigned int durationSleepWindowSecondary = 800; //ms
-    constexpr  const unsigned int durationACKWindow = 600; //ms
-    constexpr  const bool readConfigFromFile = true;
-    
-    //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr const int totalNumberOfSlotsPerModuloNode=20;//Each node will dispose of 15 slots to transmit
-    constexpr const int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
-    constexpr const int maxNodeSlots=8;  //It will choose a limited number of them, randomly
-    constexpr const int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
+    constexpr  char* communicationMode = "RRC_Uplink";
+    constexpr    unsigned int durationSleepWindowMain = 2000;      //ms
+    constexpr   unsigned int durationDataWindow = 1500; //ms
+    constexpr   unsigned int durationSleepWindowSecondary = 800; //ms
+    constexpr   unsigned int durationACKWindow = 600; //ms
+    constexpr   bool readConfigFromFile = true;
+
+
+
+    constexpr  int totalNumberOfSlotsPerModuloNode=250;//Each node will dispose of these slots to potentially transmit
+    constexpr  int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
+    //in all the possible slots for transmission, we will choose a percentage of them to transmit
+    inline constexpr float transmissionPercentage = 0.47f;
+    inline constexpr  int maxNodeSlots=static_cast<int>(totalNumberOfSlotsPerModuloNode * transmissionPercentage);
+
+    //these variables are adapted for clarity. If we were adopting the ones that duty cycle entails us to take, would be different
+    constexpr  int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
     // constexpr const int typePacket=0x03;
-    constexpr const int timeOnAirDataPacket=100; //ms
-    constexpr const int timeOnAirAckPacket=60; //ms
+    constexpr  int timeOnAirDataPacket=100; //ms
+    constexpr  int timeOnAirAckPacket=60; //ms
 
 
     //TODO: change the index so it's a variable in the map
@@ -260,8 +265,8 @@ constexpr Topology getCurrentTopology() {
             {"payload", {7, payloadSizeBytesSize}},              // "payloadSize" starts at index 7, 4 bytes long
             {"hashFunction", {11, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
         };
-    
-    
+
+
     inline const std::unordered_map<std::string, std::pair<size_t, size_t>> ackFieldMap = {
             {"type", {0, typeBytesSize}},             // "type" starts at index 0, 1 byte long
             {"senderGlobalId", {1, senderGlobalIdBytesSize}},       // "senderGlobalId" starts at index 1, 2 bytes long
@@ -269,8 +274,8 @@ constexpr Topology getCurrentTopology() {
             {"localIDPacket", {5, localIDPacketBytesSize}},        // "localIDPacket" starts at index 5, 2 bytes long
             {"hashFunction", {7, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
         };
-    
-    
+
+
 
 
 
