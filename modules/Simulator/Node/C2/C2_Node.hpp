@@ -50,8 +50,8 @@ public:
         //     displayRouting();
         // }
 
-        // decide which slots among the DATA communicating slots will actually be used to transmit information
-        slotManager.initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlots);
+        // decide which slots among the  speci will actually be possible DATA and modulo slots actually used to transmit information
+        slotManager.initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlotsPerModuloNode);
 
         // Build the message string showing the selected slots
         std::string slotsLogMsg = "Node " + std::to_string(nodeId) + " selected transmission slots: [";
@@ -163,7 +163,6 @@ protected:
 
 
     // Slot Strategy ---------------------------------------------------------------------------------------
-    // bool isOddSlot = false;
     bool isACKSlot = true;
     // std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
     C2RccUplinkSlotManager slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)

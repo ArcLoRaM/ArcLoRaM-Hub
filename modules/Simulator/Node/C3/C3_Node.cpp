@@ -257,7 +257,7 @@ std::string C3_Node::initMessage() const{
 
 bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir){
 
-//todo: could be refactored
+        //todo: could be refactored
         //Node must listen/communicate and not ransmit  to receive a message
         if(!canNodeReceiveMessage()){
              Log notlisteninglog("Node "+std::to_string(nodeId)+" not listening, dropped msg"/*+detailedBytesToString( message)*/, true);
@@ -318,7 +318,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 
     return true;
 }
-    bool C3_Node::canNodeReceiveMessage() {
+bool C3_Node::canNodeReceiveMessage() {
         // State Condition: node must be listening to receive a message
         if(currentState!=NodeState::Listening){
             return false;
@@ -403,13 +403,19 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         }
 
     //Unauthorized transition in this mode.
-    bool C3_Node::canTransmitFromTransmitting() { return false; }
+    bool C3_Node::canTransmitFromTransmitting() { 
+        return false; }
     bool C3_Node::canTransmitFromCommunicating(){return false;}
     bool C3_Node::canTransmitFromListening() { return false; }
     bool C3_Node::canListenFromTransmitting() { return false; }
-    bool C3_Node::canListenFromListening() { return false; }
+    bool C3_Node::canListenFromListening() { 
+        
+        return false; }
+
     bool C3_Node::canListenFromCommunicating(){return false;}
-    bool C3_Node::canSleepFromSleeping() { return false; }
+    bool C3_Node::canSleepFromSleeping() { 
+        
+        return false; }
     bool C3_Node::canSleepFromCommunicating(){return false;}
     bool C3_Node::canCommunicateFromTransmitting(){return false;}
     bool C3_Node::canCommunicateFromListening(){return false;}

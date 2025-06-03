@@ -26,15 +26,14 @@ public:
     std::vector<std::shared_ptr<Node>> getReachableNodesForNode(const std::shared_ptr<Node>& node);
 
     // Function to get reachable nodes for all nodes
-    std::vector<std::vector<std::shared_ptr<Node>>> getReachableNodesForAllNodes();
+    std::unordered_map<int,std::vector<std::shared_ptr<Node>>> getReachableNodesForAllNodes();
     std::condition_variable dispatchCv; // Condition variable for event-based triggering
     std::mutex dispatchCvMutex;         // Mutex associated with the condition variable
     std::vector<std::shared_ptr<Node>> nodes;//heterogeneous container of nodes (C1, C2...)
 private:
     void registerNode(std::shared_ptr<Node> node);
 
-    std::vector<std::vector<std::shared_ptr<Node>>> reachableNodesPerNode;//stores the reachable nodes for each node
-  
+    std::unordered_map<int, std::vector<std::shared_ptr<Node>>> reachableNodesPerNode; // Map for quick access to reachable nodes by node ID
     bool checkForMessages();
     double distanceThreshold;
     // Helper function to calculate Euclidean distance between two nodes

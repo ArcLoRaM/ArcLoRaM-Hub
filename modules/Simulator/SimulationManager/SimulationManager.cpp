@@ -75,15 +75,18 @@ std::vector<std::shared_ptr<Node>> SimulationManager::getReachableNodesForNode(c
 }
 
 // Function to get reachable nodes for all nodes
-std::vector<std::vector<std::shared_ptr<Node>>> SimulationManager::getReachableNodesForAllNodes() {
-    std::vector<std::vector<std::shared_ptr<Node>>> allReachableNodes;
+std::unordered_map<int,std::vector<std::shared_ptr<Node>>> SimulationManager::getReachableNodesForAllNodes() {
+    std::unordered_map<int,std::vector<std::shared_ptr<Node>>> allReachableNodes;
     for (const auto& node : nodes) {
-        allReachableNodes.push_back(getReachableNodesForNode(node));
+        if(allReachableNodes.find(node->getId()) != allReachableNodes.end()){
+            throw std::runtime_error("Node ID " + std::to_string(node->getId()) + " already exists in the reachable nodes map.");
+        }   
+        allReachableNodes[node->getId()]= (getReachableNodesForNode(node));
     }
     logger.logMessage(Log("All reachable nodes calculated:", true));
-    for (size_t i = 0; i < allReachableNodes.size(); i++) {
-        std::string msg = "Node " + std::to_string(i) + " can reach: ";
-        for (const auto& reachableNode : allReachableNodes[i]) {
+    for (const auto& [key, value] : allReachableNodes) {
+        std::string msg = "Node " + std::to_string(key) + " can reach: ";
+        for (const auto& reachableNode : value) {
             msg += std::to_string(reachableNode->getId()) + " ";
         }
         logger.logMessage(Log(msg, true));
@@ -147,14 +150,12 @@ void SimulationManager::ProcessMessages(){
             if (message.has_value()) {
                 // Log hasValue("Node "+std::to_string(node->getId())+" msg is processed", true);
                 //  logger.logMessage(hasValue);
-                for ( auto& reachableNode : reachableNodesPerNode[node->getId()]) {
 
+                for ( auto& reachableNode : reachableNodesPerNode[node->getId()]) {
                     // Launch a thread in detached mode
                     std::thread([reachableNode,message]() {
                         reachableNode->receiveMessage(message->first,message->second);
                     }).detach();
-
-
                 }
             }
         }

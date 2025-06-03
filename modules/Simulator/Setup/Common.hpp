@@ -224,15 +224,15 @@ constexpr Topology getCurrentTopology() {
 
     constexpr const char* communicationMode = "RRC_Uplink";
     constexpr  const  unsigned int durationSleepWindowMain = 2000;      //ms 
-    constexpr  const unsigned int durationDataWindow = 900; //ms
+    constexpr  const unsigned int durationDataWindow = 1500; //ms
     constexpr  const unsigned int durationSleepWindowSecondary = 800; //ms
-    constexpr  const unsigned int durationACKWindow = 500; //ms
+    constexpr  const unsigned int durationACKWindow = 300; //ms
     constexpr  const bool readConfigFromFile = true;
     
     //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr const int totalNumberOfSlotsPerModuloNode=15;//Each node will dispose of 15 slots to transmit
+    constexpr const int totalNumberOfSlotsPerModuloNode=20;//Each node will dispose of 15 slots to transmit
     constexpr const int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
-    constexpr const int maxNodeSlots=6;  //It will choose a limited number of them, randomly
+    constexpr const int maxNodeSlots=8;  //It will choose a limited number of them, randomly
     constexpr const int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
     // constexpr const int typePacket=0x03;
     constexpr const int timeOnAirDataPacket=100; //ms

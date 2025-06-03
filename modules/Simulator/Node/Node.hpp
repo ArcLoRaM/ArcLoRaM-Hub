@@ -112,6 +112,9 @@ protected:
     std::mutex receiveMutex;
     std::mutex transmitMutex;
 
+    //mutex to protect the activation schedule
+    std::mutex currentStateMutex;
+
     // Condition variable to notify the simulation manager of new messages
     std::condition_variable& dispatchCv;
     std::mutex& dispatchCvMutex;
@@ -131,8 +134,14 @@ protected:
         currentState = initialState;
     }
     NodeState convertWindowNodeStateToNodeState(WindowNodeState state);
-
-   
+NodeState getCurrentState() {
+    std::lock_guard<std::mutex> lock(currentStateMutex);
+    return currentState;
+}
+   void setCurrentState(NodeState newState) {
+    std::lock_guard<std::mutex> lock(currentStateMutex);
+    currentState = newState;
+}
     static std::string stateToString(NodeState state);
     static std::string stateToString(WindowNodeState state);
 
