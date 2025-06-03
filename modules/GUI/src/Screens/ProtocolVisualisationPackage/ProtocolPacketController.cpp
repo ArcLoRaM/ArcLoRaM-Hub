@@ -84,7 +84,7 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
     //Metrics
 
     //useles?
-    state.energyExp += 20;
+    // state.energyExp += 20;
 
 
     if(!tmp.isACK) {

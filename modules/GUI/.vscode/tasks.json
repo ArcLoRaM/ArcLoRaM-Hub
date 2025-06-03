@@ -14,7 +14,8 @@
 
                 //UI
                 "${workspaceFolder}\\src\\Ui\\Button\\Button.cpp",
-
+                "${workspaceFolder}\\src\\Ui\\TypeableInput\\TypeableInput.cpp",
+                
                 //Shared
                 "${workspaceFolder}\\src\\Shared\\RessourceManager\\RessourceManager.cpp",
                 "${workspaceFolder}\\src\\Shared\\InputManager\\InputManager.cpp",

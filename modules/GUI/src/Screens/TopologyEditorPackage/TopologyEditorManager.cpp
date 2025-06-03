@@ -10,6 +10,9 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
     :  selectedNodeId(std::nullopt),
       modeDropdown(180.f, 30.f), state(state)
 {
+    typeableInput =std::make_unique<TypeableInput>();
+        
+
     coordText.emplace(ResourceManager::getInstance().getFont("Arial"));
     coordText->setCharacterSize(26);
     coordText->setFillColor(sf::Color::White);
@@ -46,8 +49,8 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
         "Arial",
         false);
     saveButton->setOnClick([this,&state]()
-                           {
-                            TopologyConfigIO::write("topology_config.txt", state.getNodes(), state.getRoutings(), state.getTopologyMode());
+                           {std::string filename = typeableInput->getText()+".simcfg";
+                            TopologyConfigIO::write(filename, state.getNodes(), state.getRoutings(), state.getTopologyMode());
                            });
 
     posY += buttonHeight + spacingY;
@@ -236,7 +239,7 @@ TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state)
         );
 }
 
-void TopologyEditorManager::handleInput(const InputManager &input)
+void TopologyEditorManager::handleInput( InputManager &input)
 {
 
     sf::Vector2f mouseWorld = input.getMouseWorldPosition();
@@ -379,6 +382,8 @@ void TopologyEditorManager::handleInput(const InputManager &input)
     if (moveNodeButton)
         moveNodeButton->update(input);
 
+    if(typeableInput)
+        typeableInput->update(input);
 
     //broadcast animations
 
@@ -421,6 +426,8 @@ void  TopologyEditorManager::drawRootings(sf::RenderWindow &window)
 }
 
 
+
+//delta time is useless, get rid of it todo
 void TopologyEditorManager::update(float deltaTime)
 {
 for (auto &animation : broadcastAnimations)
@@ -482,7 +489,8 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
         cutLinkButton->draw(window);
     if (moveNodeButton)
         moveNodeButton->draw(window);
-
+    if (typeableInput)
+        typeableInput->draw(window);
 
     window.setView(editorView);
     sf::RectangleShape worldRect = convertRectangleToTopologyView(window, editorView, topologyBounds);

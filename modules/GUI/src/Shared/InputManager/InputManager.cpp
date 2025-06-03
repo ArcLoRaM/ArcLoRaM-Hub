@@ -48,10 +48,26 @@ void InputManager::handleEvent(const std::optional<sf::Event> &event)
         pressedMouseButtons.erase(mouseReleased->button);
     }
     else if (const auto *wheelScrolled = event->getIf<sf::Event::MouseWheelScrolled>())
+
     {
         if (wheelScrolled->wheel == sf::Mouse::Wheel::Vertical)
         {
             accumulatedMouseWheelDelta += wheelScrolled->delta;
+        }
+    }
+
+    else if (const auto *textEntered = event->getIf<sf::Event::TextEntered>())
+    {
+        char32_t unicode = textEntered->unicode;
+        // Accept ASCII range + control characters like backspace and enter
+        if (unicode < 128)
+        {
+            textBuffer += unicode;
+        }
+        else if (unicode == 8)
+        { // backspace
+            if (!textBuffer.empty())
+                textBuffer.pop_back();
         }
     }
 }
@@ -72,7 +88,6 @@ void InputManager::postUpdate(const sf::RenderWindow &window)
     accumulatedMouseWheelDelta = 0.f;
 
     doubleClickedMouseButtons.clear();
-
 }
 
 sf::Vector2i InputManager::getMouseScreenPosition() const
@@ -116,4 +131,14 @@ bool InputManager::isRightMouseJustPressed() const
 bool InputManager::isLeftMouseJustPressed() const
 {
     return justPressedMouseButtons.contains(sf::Mouse::Button::Left);
+}
+
+const std::u32string &InputManager::getTextBuffer() const
+{
+    return textBuffer;
+}
+
+void InputManager::clearTextBuffer()
+{
+    textBuffer.clear();
 }

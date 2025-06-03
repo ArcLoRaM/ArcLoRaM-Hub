@@ -62,11 +62,7 @@ public:
             : 0.0;
     }
 
-    // Simplified energy estimate (can be refined)
-    int getTotalEnergySlots() const {
-        return slotListeningData + slotTransmittingData +
-               slotListeningAck + slotTransmittingAck;
-    }
+
 
 private:
     // Energy expenditure slots

@@ -1,14 +1,11 @@
 Communication Mode,None
-Number of Nodes,7
-Energy Expenditure,320
-Retransmissions,6
-Total Data Packets Sent,11
+Number of Nodes,4
+Energy Expenditure,480
+Retransmissions,0
+Total Data Packets Sent,12
 
 ID,Class,HopCount,Packets Sent,Retransmissions,PDR,ListenData,TransmitData,ListenAck,TransmitAck,TotalEnergy
-6,C2,3,1,1,0,-31,31,30,0,30
-5,C2,3,1,1,0,-31,31,30,0,30
-4,C2,2,2,1,0.5,-33,33,30,0,30
-3,C2,2,3,1,0.666667,-34,34,30,0,30
-2,C2,1,2,1,0.5,-33,33,30,0,30
-1,C2,1,2,1,0.5,-33,33,27,3,30
-0,C3,0,0,0,0,0,0,-2,2,0
+3,C2,3,2,0,1,20,2,2,0,24
+2,C2,2,4,0,1,20,4,4,2,30
+1,C2,1,6,0,1,20,6,6,4,36
+0,C3,0,0,0,0,0,0,-6,6,0

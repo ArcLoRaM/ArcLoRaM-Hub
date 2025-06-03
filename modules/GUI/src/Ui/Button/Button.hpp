@@ -13,7 +13,8 @@ class Button {
     const sf::Font* font = nullptr;
     std::function<void()> onClickAction;
     bool isHovered = false;
-        bool pushable = false;
+        
+    bool pushable = false;
     bool pushed = false;
 
 public:

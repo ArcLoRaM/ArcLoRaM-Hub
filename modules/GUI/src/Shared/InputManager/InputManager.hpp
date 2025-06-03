@@ -28,7 +28,8 @@ public:
     bool isMouseDoubleClicked(sf::Mouse::Button button) const {
     return doubleClickedMouseButtons.contains(button);
 }
-
+    const std::u32string& getTextBuffer() const;
+    void clearTextBuffer();
 private:
 //you should have only two mouse positin? Check
     sf::Vector2i mouseScreenPosition{};
@@ -41,6 +42,8 @@ private:
 
     float accumulatedMouseWheelDelta = 0.f;
 
+
+    std::u32string textBuffer;
 
     //double click
     std::unordered_map<sf::Mouse::Button, std::chrono::steady_clock::time_point> lastClickTime;

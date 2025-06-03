@@ -97,7 +97,6 @@ void Button::update(const InputManager& input) {
 
         if (pushable) {
             pushed = !pushed; // Toggle state
-
         }
         if (onClickAction) {
             onClickAction(); // Execute the assigned action
