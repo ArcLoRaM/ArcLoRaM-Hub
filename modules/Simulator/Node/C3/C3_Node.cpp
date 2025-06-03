@@ -320,7 +320,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 }
 bool C3_Node::canNodeReceiveMessage() {
         // State Condition: node must be listening to receive a message
-        if(currentState!=NodeState::Listening){
+        if(getCurrentState()!=NodeState::Listening){
             return false;
         }
         return true;
@@ -328,7 +328,7 @@ bool C3_Node::canNodeReceiveMessage() {
 
     bool C3_Node::canListenFromSleeping() { 
 
-        currentState=NodeState::Listening;
+        setCurrentState( NodeState::Listening);
         sf::Packet statePacketReceiver;
         stateNodePacket statePacket(nodeId, "Listen");
         statePacketReceiver<<statePacket;
@@ -341,7 +341,7 @@ bool C3_Node::canNodeReceiveMessage() {
 
     bool C3_Node::canSleepFromListening() { 
 
-        currentState=NodeState::Sleeping;
+        setCurrentState( NodeState::Sleeping);
         sf::Packet statePacketReceiver;
         stateNodePacket statePacket(nodeId, "Sleep");
         statePacketReceiver<<statePacket;
@@ -350,7 +350,8 @@ bool C3_Node::canNodeReceiveMessage() {
         }
 
     bool C3_Node::canSleepFromTransmitting() { 
-        currentState=NodeState::Sleeping;
+        
+        setCurrentState( NodeState::Sleeping);
 
         sf::Packet statePacketReceiver;
         stateNodePacket statePacket(nodeId, "Sleep");
@@ -361,7 +362,7 @@ bool C3_Node::canNodeReceiveMessage() {
 
     bool C3_Node::canTransmitFromSleeping(){
         
-        currentState=NodeState::Transmitting;
+        setCurrentState( NodeState::Transmitting);
 
         //Todo: this should be encapsulated in a method from the Clock Home class.
         sf::Packet statePacketReceiver;

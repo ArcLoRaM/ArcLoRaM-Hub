@@ -224,6 +224,7 @@ bool C2_Node::canSleepFromCommunicating()
     stateNodePacket statePacket(nodeId, "Sleep");
     statePacketReceiver << statePacket;
     logger.sendTcpPacket(statePacketReceiver);
+    //Todo: Protect with mutexes.
 
     currentState = NodeState::Sleeping;
     // Log transitionLog("Node "+std::to_string(nodeId)+" sleeps", true);
@@ -240,6 +241,8 @@ bool C2_Node::canCommunicateFromSleeping()
     logger.sendTcpPacket(statePacketReceiver);
 
     isTransmittingWhileCommunicating = false;
+        //Todo: Protect with mutexes.
+
     currentState = NodeState::Communicating;
     if (shouldSendBeacon && beaconSlots.size() == 0)
     {
@@ -331,6 +334,8 @@ bool C2_Node::canSleepFromSleeping() { return false; }
 
 bool C2_Node::canNodeReceiveMessage()
 {
+        //Todo: Protect with mutexes.
+
     // State Condition: node must be listening to receive a message
     if (currentState != NodeState::Listening && currentState != NodeState::Communicating)
     {
@@ -457,6 +462,8 @@ bool C2_Node::canCommunicateFromSleeping()
     logger.sendTcpPacket(statePacketReceiver);
 
     isTransmittingWhileCommunicating = false;
+        //Todo: Protect with mutexes.
+
     currentState = NodeState::Communicating;
     if (shouldSendBeacon && beaconSlots.size() == 0)
     {
@@ -542,6 +549,7 @@ bool C2_Node::canSleepFromCommunicating()
     statePacketReceiver << statePacket;
     logger.sendTcpPacket(statePacketReceiver);
 
+    //Todo: Protect with mutexes.
     currentState = NodeState::Sleeping;
     // Log transitionLog("Node "+std::to_string(nodeId)+" sleeps", true);
     // logger.logMessage(transitionLog);
@@ -662,18 +670,20 @@ void C2_Node::buildAndTransmitAckPacket()
 // Receive------------------------------------------------------------------------------------------------------
 bool C2_Node::canNodeReceiveMessage()
 {
+    NodeState currentStatelocal = getCurrentState();
     // State Condition: node must be listening to receive a message
-    if (currentState != NodeState::Listening && currentState != NodeState::Communicating)
+    if (currentStatelocal != NodeState::Listening && currentStatelocal != NodeState::Communicating)
     {
         return false;
     }
     // They also need to NOT be actively transmitting
-    else if (currentState == NodeState::Communicating)
+    else if (currentStatelocal == NodeState::Communicating)
     {
         return !isTransmittingWhileCommunicating;
     }
     return true;
 }
+
 
 void C2_Node::handleDataPacketReception(const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId)
 {
@@ -797,12 +807,12 @@ bool C2_Node::canCommunicateFromSleeping()
         //TODO
         // showDisplay = false; //garbage code bc there is a bug I cannot solve when returning false here
                              //we do that to avoid counting Energy Expenditure when nodes should be sleeping instead of listening.
-   return true;
+   return false;
     }
 
 
 
-
+    
     if (!isACKSlot)
     {
 
@@ -821,7 +831,7 @@ bool C2_Node::canCommunicateFromSleeping()
     //     return false;
     // }
     // we can communicate
-    currentState = NodeState::Communicating;
+    setCurrentState(NodeState::Communicating);
     return true;
 }
 
@@ -839,7 +849,7 @@ bool C2_Node::canSleepFromCommunicating()
         retransmissionCounterHelper.setIsExpectingAck(false);
     }
 
-    currentState = NodeState::Sleeping;
+    setCurrentState( NodeState::Sleeping);
     nodeStateDisplay("Sleep",std::nullopt);
     return true;
 }
