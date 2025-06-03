@@ -69,7 +69,7 @@ void TopologyConfigIO::write(const std::string& path,
         return;
     }
 
-    outFile << "topologyMode= " << std::string(magic_enum::enum_name(mode)) << "\n";
+    outFile << "MODE " << std::string(magic_enum::enum_name(mode)) << "\n";
 
     for (const auto& [id, device] : nodes) {
         const auto cls = device->getClass();

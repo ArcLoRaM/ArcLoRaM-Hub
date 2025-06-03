@@ -1,6 +1,7 @@
 #include "TypeableInput.hpp"
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include <cctype>
+#include <iostream>
 
 TypeableInput::TypeableInput() {
     displayText.emplace(ResourceManager::getInstance().getFont("Arial"), "", 24);
@@ -24,8 +25,9 @@ void TypeableInput::setSelected(bool selected) {
     }
 }
 
-void TypeableInput::update( InputManager& inputManager) {
-    sf::Vector2f mousePos = inputManager.getMouseWorldPosition();  
+void TypeableInput::update(InputManager& inputManager) {
+    sf::Vector2f mousePos = inputManager.getMouseUIScreenPosition();  
+    std::cout << "Typed Updated"<<std::endl;
     bool wasHovered = isHovered;
     isHovered = shape.getGlobalBounds().contains(mousePos);    
    if (isHovered && !wasHovered) {
@@ -35,6 +37,7 @@ void TypeableInput::update( InputManager& inputManager) {
     }
     if (isHovered && inputManager.isMouseJustPressed()){
         setSelected(true);
+         std::cout << "Typed Selected"<<std::endl;
     } else if (!isHovered && inputManager.isMouseJustPressed()) {
         setSelected(false);
     }

@@ -1,3 +1,0 @@
-topologyMode= RRC_Uplink
-NODE 2 C2 525 409 nextHop=1 hopCount=1
-NODE 1 C3 791 442
