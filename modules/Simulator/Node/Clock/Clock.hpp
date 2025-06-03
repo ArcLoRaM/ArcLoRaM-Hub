@@ -11,6 +11,28 @@
 #include "../../Connectivity/Logger/Logger.hpp"
 #include <string>
 #include "../../Connectivity/TCP/packets.hpp"
+
+
+
+class ThreadPool {
+public:
+    explicit ThreadPool(int numThreads);
+    ~ThreadPool();
+
+    void enqueue(std::function<void()> task);
+
+private:
+    std::vector<std::thread> workers;
+    std::queue<std::function<void()>> tasks;
+
+    std::mutex queueMutex;
+    std::condition_variable condition;
+    std::atomic<bool> stop;
+
+    void worker();
+};
+
+
 class Clock {
 
 
@@ -33,10 +55,12 @@ private:
     void tick();
     unsigned int compteurTick;
 
+    ThreadPool threadPool;
+
 
 public:
-    Clock( Logger& logger,int baseUnitMilliseconds = 10) 
-        : running(false), tickInterval(baseUnitMilliseconds), lastProcessedTime(0),logger(logger) {
+    Clock( Logger& logger,int baseUnitMilliseconds,int poolSize) 
+        : running(false), tickInterval(baseUnitMilliseconds), lastProcessedTime(0),logger(logger), threadPool(poolSize) {
             compteurTick=0;
         }
 
@@ -46,3 +70,4 @@ public:
 
     void scheduleCallback(int64_t activationTime, CallbackType callback) ;
 };
+

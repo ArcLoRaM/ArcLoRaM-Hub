@@ -55,7 +55,7 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
-constexpr const int tickIntervalForClock_ms=150; // The tick interval should not be too low
+constexpr const int tickIntervalForClock_ms=100; // The tick interval should not be too low
 constexpr const int baseTimeOffset=1000; //the base time offset allows the system to initialize before the TDMA begins
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
 constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
@@ -79,7 +79,7 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 
 //-----------------------------------------TOPOLOGY-----------------------------------------
 
-#define TOPOLOGY 3
+#define TOPOLOGY 1
 #define LINE 1
 #define STAR 2 //not implemented
 #define MESH 3
@@ -226,7 +226,7 @@ constexpr Topology getCurrentTopology() {
     constexpr  const  unsigned int durationSleepWindowMain = 2000;      //ms 
     constexpr  const unsigned int durationDataWindow = 1500; //ms
     constexpr  const unsigned int durationSleepWindowSecondary = 800; //ms
-    constexpr  const unsigned int durationACKWindow = 300; //ms
+    constexpr  const unsigned int durationACKWindow = 600; //ms
     constexpr  const bool readConfigFromFile = true;
     
     //these variables are adapted for representativity. If we were adopting the ones that duty cycle entails us to take, would be different

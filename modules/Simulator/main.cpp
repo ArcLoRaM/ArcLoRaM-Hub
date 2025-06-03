@@ -33,24 +33,25 @@ int main() {
     sysPacketReceiver<<sysPacket;
     logger.sendTcpPacket(sysPacketReceiver);
 
-    //Clock
 
-    Clock clock(logger,common::tickIntervalForClock_ms);//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
-    //convert base time to milliseconds
-    int64_t  baseTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() ;
-    baseTime+=common::baseTimeOffset; //allow the system to initialize before the TDMA begins
-
-    
     SimulationManager manager(common::distanceThreshold,logger);
 
 //--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
     
- 
+     //convert base time to milliseconds
+    int64_t  baseTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() ;
+    baseTime+=common::baseTimeOffset; //allow the system to initialize before the TDMA begins
+
+    
 
     Seed seed(std::string(common::communicationMode), std::string(common::topology),logger,manager.dispatchCv,manager.dispatchCvMutex,baseTime);
-    auto nodes = seed.transferOwnership(); //the seed object memory is released safely
-    manager.takeOwnership(std::move(nodes));
+    manager.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
+
+
+    //Clock
+
+    Clock clock(logger,common::tickIntervalForClock_ms,manager.nodes.size());//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
 
     //TODO: have a getter for the nodes list, or create a function, you should not allot the nodes to be accessible in public
     //MAKE THIS FUNCTION in the manager class? maybe not

@@ -708,6 +708,7 @@ void C2_Node::handleAckPacketReception(uint16_t senderId, uint32_t packetId)
         nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
         localIDPacketCounter++; // increasing the counter to indicate we send a "new" packet
         retransmissionCounterHelper.setIsExpectingAck(false);
+        logger.logMessage(Log("Node " + std::to_string(nodeId) + " reset expect ACK", true));
         receptionStateDisplay(senderId, "received");
     }
     else
@@ -812,25 +813,37 @@ bool C2_Node::canCommunicateFromSleeping()
 
 
 
-    
+
     if (!isACKSlot)
     {
 
-        if(showDisplay) nodeStateDisplay("Communicate", false);
-        handleDataSlotPhase();
+        //improvement when you fixed the bug 
+        if(handleDataSlotPhase()) 
+        nodeStateDisplay("Communicate", false);
+        else
+        {
+            // if the node decides to not transmit data and can not receive data (according its hop count), it will not wake up.
+            return false;
+        }
+
+        // handleDataSlotPhase();
+        // nodeStateDisplay("Communicate", false);
     }
     else
     {
 
-        if(showDisplay) nodeStateDisplay("Communicate", true);
-        handleAckSlotPhase();
+        if(handleAckSlotPhase()) 
+        nodeStateDisplay("Communicate", true);
+        else
+        {
+            //if the node do not need to transmit/receive an ACK, it will not wake up to not waste energy
+            return false;
+        }      
+
+        // handleAckSlotPhase();
+        // nodeStateDisplay("Communicate", true);
     }
 
-    // if(!showDisplay) //if we are not in the right slot category, we do not change the state
-    // {
-    //     return false;
-    // }
-    // we can communicate
     setCurrentState(NodeState::Communicating);
     return true;
 }
@@ -847,6 +860,7 @@ bool C2_Node::canSleepFromCommunicating()
         retransmissionPacketReceiver << retransmissionPacket;
         logger.sendTcpPacket(retransmissionPacketReceiver);
         retransmissionCounterHelper.setIsExpectingAck(false);
+        logger.logMessage(Log("Node " + std::to_string(nodeId) + " reset expected ack", true));
     }
 
     setCurrentState( NodeState::Sleeping);
@@ -855,7 +869,10 @@ bool C2_Node::canSleepFromCommunicating()
 }
 
 //A node can refuse to change to communicate state if it is not in the right slot category
-bool C2_Node::canSleepFromSleeping() { return true; }
+bool C2_Node::canSleepFromSleeping() { 
+
+     retransmissionCounterHelper.toggleSecondSleepWindow();
+    return true; }
 
 
 // Unauthorized transition in this mode.
@@ -876,39 +893,60 @@ bool C2_Node::canSleepFromListening() { return false; }
 // End - State Transitions ---------------------------------------------------------------------------------
 
 // Slot Strategy ----------------------------------------------------------------------------------
-void C2_Node::handleAckSlotPhase()
-{
+bool C2_Node::handleAckSlotPhase()
+ {   //logger.logMessage(Log("Node " + std::to_string(nodeId) + "enter HandleAck()", true));
+    //return true if the node will wake up to transmit an ACK, false otheriwse
+    bool output = false;
     if (ackInformation.shouldReplyAck())
     {
-        if(nodeId==9){
-            int a=3;
-        }
+        
         // we have an ACK to send
         isTransmittingWhileCommunicating = true;
         buildAndTransmitAckPacket();
+        output = true;
+    }
+    else if (retransmissionCounterHelper.getIsExpectingAck()){
+        //the node is expecting an ACK, so it will wake up to listen
+        logger.logMessage(Log("Node " + std::to_string(nodeId) + " is expecting an ACK, will wake up to listen", true));
+        output=true;
     }
 
 
+    return output;
 }
 
-void C2_Node::handleDataSlotPhase()
+bool C2_Node::handleDataSlotPhase()
 {
+    //return true if the node will transmit data, false otheriwse
+    bool output = false;
+
     // Node can only act when its fixed category matches the current simulation slot category
     if (fixedSlotCategory == currentDataSlotCategory)
     {
-
+        //the node has the opportunity to transmit data
         if (slotManager.canTransmitNow() && nbPayloadLeft > 0)
         {
+            //it decides to transmit data
             isTransmittingWhileCommunicating = true;
             slotManager.consumeSlot();
 
             buildAndTransmitDataPacket();
             retransmissionCounterHelper.setIsExpectingAck(true);
-
+            logger.logMessage(Log("Node " + std::to_string(nodeId) + " transmit data", true));
             adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(),false);
+           //we allow the state transition as the node will be sending data
+            output = true;
         }
-         slotManager.decrementAllSlots();
+        slotManager.decrementAllSlots();
     }
+    else
+    {
+        // the node might receive a Data Packet. It must be listening
+        output = true;
+    }
+
+    
+    return output;
 }
 
 // End - Slot Strategy -------------------------------------------------------------------------------

@@ -44,6 +44,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-std=gnu++20",
                 //maybe different in an OS other than Windows ( with the backslash)
                 "${workspaceFolder}\\main.cpp",
                 "${workspaceFolder}\\Node\\Clock\\Clock.cpp",

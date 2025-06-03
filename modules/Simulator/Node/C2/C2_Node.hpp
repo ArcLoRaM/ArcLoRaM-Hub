@@ -166,8 +166,8 @@ protected:
     bool isACKSlot = true;
     // std::vector<int> transmissionSlots; // the slots where the node WILL transmit (unless if no data to send, in that case nothing happens), it's computed at the beginning of the simulation
     C2RccUplinkSlotManager slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)
-    void handleAckSlotPhase();
-    void handleDataSlotPhase();
+    bool handleAckSlotPhase();
+    bool handleDataSlotPhase();
     uint8_t currentDataSlotCategory = 0;
     uint8_t fixedSlotCategory;
     // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
