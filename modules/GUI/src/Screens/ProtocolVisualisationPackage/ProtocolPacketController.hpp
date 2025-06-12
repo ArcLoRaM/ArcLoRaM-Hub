@@ -26,7 +26,7 @@ class ProtocolPacketController : public IPacketController {
     void handleBroadcastMessagePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleDropAnimationPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleRetransmissionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
-    
+    void handleStopSimulationPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
 
 public:
     void handlePacket(sf::Packet& packet, ProtocolVisualisationState& state, VisualiserManager& manager) override;

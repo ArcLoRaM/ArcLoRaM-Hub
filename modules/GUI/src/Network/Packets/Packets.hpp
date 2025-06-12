@@ -127,4 +127,12 @@ class retransmissionPacket : public BasePacket {
     friend sf::Packet& operator>>(sf::Packet& packet, retransmissionPacket& rp);
 };
 
+class stopSimulationPacket : public BasePacket {
+    public:
+    int nodeId;
+    stopSimulationPacket(int nodeId = 0);
+    friend sf::Packet& operator<<(sf::Packet& packet, const stopSimulationPacket& sp);
+    friend sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp);
+};
+
 #endif // PACKETS_HPP

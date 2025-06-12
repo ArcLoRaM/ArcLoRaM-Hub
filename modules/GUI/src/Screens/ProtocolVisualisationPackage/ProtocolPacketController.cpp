@@ -4,6 +4,7 @@
 #include <iostream>
 #include <magic_enum.hpp>
 #include "../../Visualisation/Device/Device.hpp"
+#include "CsvMetricWriter.hpp"
 
 void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualisationState &state, VisualiserManager &manager)
 {
@@ -23,6 +24,7 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
     case 7: handleBroadcastMessagePacket(packet, state,manager); break;
     case 8: handleDropAnimationPacket(packet, state,manager); break;
     case 9: handleRetransmissionPacket(packet, state,manager); break;
+    case 10: handleStopSimulationPacket(packet, state,manager); break;
     default:
         std::cerr << "Unknown packet type: " << packetType << std::endl;
         break;
@@ -35,17 +37,12 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
 
 void ProtocolPacketController::handleSystemPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
 
-    //will do a proper config system later
 
-    // systemPacket sp;
-    // packet >> sp.distanceThreshold >> sp.mode;
-    // DISTANCE_THRESHOLD = sp.distanceThreshold * distanceDivider;
-    // COMMUNICATION_MODE = sp.mode;
-    // std::string message = "Received systemPacket: distanceThreshold=" + std::to_string(sp.distanceThreshold) + ", mode=" + sp.mode;
-    // {
-    //     std::lock_guard<std::mutex> lock(logMutex);
-    //     logMessages.push_back(message);
-   // }
+    systemPacket sp;
+    packet >> sp.distanceThreshold >> sp.mode;
+    //missing the distance threshold. For the moment it's manually set
+   state.communicationMode = sp.mode;
+
 }
 
 void ProtocolPacketController::handleTickPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
@@ -268,4 +265,22 @@ void ProtocolPacketController::handleRetransmissionPacket(sf::Packet& packet,Pro
 
     state.retransmissions++;
 
+}
+
+
+void ProtocolPacketController::handleStopSimulationPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
+    stopSimulationPacket sp;
+    packet >> sp;
+
+    
+    std::lock_guard<std::mutex> lock(state.logMutex);
+    state.logMessages.push_back("Simulation stopped by node: " + std::to_string(sp.nodeId));
+
+    try {
+        CsvMetricWriter writer;
+        writer.writeNetworkMetricsToCsv("network_state.csv", manager, state);
+        std::cout << "Network state saved to network_state.csv\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Error writing CSV: " << e.what() << '\n';
+    }
 }
