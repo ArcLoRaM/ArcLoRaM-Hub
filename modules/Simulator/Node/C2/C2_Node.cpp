@@ -594,8 +594,8 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload = {})
 {
 
     // receiving window are greater than transmitting window, so we make the transmitting node waiting the guard time
-    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-
+auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
+std::this_thread::sleep_until(wake_time);
     // create the data packet
     std::vector<uint8_t> dataPacket;
 
@@ -629,13 +629,11 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload = {})
     addMessageToTransmit(dataPacket, std::chrono::milliseconds(common::timeOnAirDataPacket));
 
     // same logic, even though it is not necessary in the simualator
-    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+    // std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
 }
 
 void C2_Node::buildAndTransmitAckPacket()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-
     std::vector<uint8_t> ackPacket;
 
     // preallocate the space for optimization
@@ -659,12 +657,12 @@ void C2_Node::buildAndTransmitAckPacket()
     appendVector(ackPacket, receiverGlobalIdPacket);
     appendVector(ackPacket, localIDPacket);
     appendVector(ackPacket, hashFunction);
-    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
-    addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
+
+auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
+std::this_thread::sleep_until(wake_time);    addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
 
     adressedPacketTransmissionDisplay(ackInformationIds.first,true);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
 }
 
 // Receive------------------------------------------------------------------------------------------------------
@@ -719,7 +717,7 @@ void C2_Node::handleAckPacketReception(uint16_t senderId, uint32_t packetId)
 
 bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
 {
-
+    logger.logMessage(Log("Node " + std::to_string(nodeId) + " enter receive()", true));
     // Node must listen/communicate and not transmit  to receive a message
     if (!canNodeReceiveMessage())
     {
@@ -779,7 +777,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 // State Transitions ---------------------------------------------------------------------------------
 bool C2_Node::canCommunicateFromSleeping()
 {
-
+    logger.logMessage(Log("Node " + std::to_string(nodeId) + " enter canCommunicateFromSleeping()", true));
     // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
     //  the first state transition, we display rooting in the visualiser if applicable
     if (common::visualiserConnected)

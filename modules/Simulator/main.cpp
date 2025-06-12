@@ -79,6 +79,8 @@ int main() {
         manager.startSimulation();
         // Background thread that runs the simulation
         clock.start();
+
+        //are these two lines necessary? --> I think there is already a for lopp in start
         while (running) {
             //TODO: verify it's not destroying the performance, add a delay?
             std::this_thread::sleep_for(std::chrono::milliseconds(300)); // Avoid busy-waiting

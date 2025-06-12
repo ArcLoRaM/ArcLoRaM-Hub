@@ -159,7 +159,7 @@ protected:
 
     //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
     uint8_t nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
-    uint8_t initialnbPaylaod = 255; // initial number of payload
+    uint8_t initialnbPaylaod = 2; // initial number of payload
 
 
     // Slot Strategy ---------------------------------------------------------------------------------------

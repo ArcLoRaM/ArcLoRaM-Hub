@@ -257,7 +257,7 @@ std::string C3_Node::initMessage() const{
 
 bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir){
 
-        //todo: could be refactored
+        //todo: could be refactored using the display functions from base ndoe class.
         //Node must listen/communicate and not ransmit  to receive a message
         if(!canNodeReceiveMessage()){
              Log notlisteninglog("Node "+std::to_string(nodeId)+" not listening, dropped msg"/*+detailedBytesToString( message)*/, true);
@@ -295,26 +295,46 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 
     //We received a data packet, if it's relevant for us, we should send an ack
     uint16_t receiverId=extractBytesFromField(message,"receiverGlobalId",common::dataFieldMap);
+
     if(receiverId!=nodeId){
         //not for us, we don't care
         Log wrongReceiverLog("Node "+std::to_string(nodeId)+" received a packet not for him, dropping", true);
         logger.logMessage(wrongReceiverLog);
         dropAnimationDisplay();
-
         return false;
     }
+
     //we received a packet for us, we should send an ack no matter what happened before (ack can be lost)
     shouldReplyACK=true;
     
-    //we should store the packets id in lists, but for C3 it doesn't make sense (unless for advanced monitoring features)
-     lastSenderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
-     lastLocalIDPacket=extractBytesFromField(message,"localIDPacket",common::dataFieldMap);
+    //we keep a memory of the packets received with their sender ID and local ID packet (specific to a link).
+    lastSenderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
+    lastLocalIDPacket=extractBytesFromField(message,"localIDPacket",common::dataFieldMap);
+    receivedPacketsId[lastSenderId].insert(lastLocalIDPacket);//duplicates are automatically ignored
+
+    int totalCount = 0;
     
+    for (const auto& pair : receivedPacketsId) {
+        totalCount += pair.second.size();
+    }
+
+    //we have only one C3 node, so we can stop the simulation if we received enough packets
+    //if multiple C3, a static variable for Class C3 node should be used to count the total packets received
+    if(totalCount>=common::numberPacketsReceivedByC3ToStopSimulation){
+        Log stopSimulationLog("Node "+std::to_string(nodeId)+" received enough packets, stopping simulation", true);
+        logger.logMessage(stopSimulationLog);
+        sf::Packet stopPacketReceiver;
+        stopSimulationPacket stopPacket(nodeId);
+        stopPacketReceiver<<stopPacket;
+        logger.sendTcpPacket(stopPacketReceiver);
+
+    }
+
     receptionStateDisplay(lastSenderId,"received");
+
     //We don't really care about the payload and the hash function at this stage of development
     //uint32_t payload=extractBytesFromField(message,"payload",common::dataFieldMap);
     //uint32_t hashFunction=extractBytesFromField(message,"hashFunction",common::dataFieldMap);
-
 
     return true;
 }
@@ -371,7 +391,8 @@ bool C3_Node::canNodeReceiveMessage() {
         logger.sendTcpPacket(statePacketReceiver);
 
         if(shouldReplyACK){
-            std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+            auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
+            std::this_thread::sleep_until(wake_time);
 
             std::vector<uint8_t> ackPacket;
 

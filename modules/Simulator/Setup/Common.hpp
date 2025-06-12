@@ -55,8 +55,8 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
-constexpr const int tickIntervalForClock_ms=100; // The tick interval should not be too low
-constexpr const int baseTimeOffset=1000; //the base time offset allows the system to initialize before the TDMA begins
+constexpr const int tickIntervalForClock_ms=170; // The tick interval should not be too low
+constexpr const int baseTimeOffset=3000; //the base time offset allows the system to initialize before the TDMA begins
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
 constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
 
@@ -222,24 +222,26 @@ constexpr Topology getCurrentTopology() {
 
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
+
+        //if you decrease too much the duration of the Data ack window, nodes are not able to receive the messages (they start sleeping too early...)
     constexpr  char* communicationMode = "RRC_Uplink";
-    constexpr    unsigned int durationSleepWindowMain = 2000;      //ms
-    constexpr   unsigned int durationDataWindow = 1500; //ms
-    constexpr   unsigned int durationSleepWindowSecondary = 800; //ms
+    constexpr    unsigned int durationSleepWindowMain = 500;      //ms
+    constexpr   unsigned int durationDataWindow = 900; //ms
+    constexpr   unsigned int durationSleepWindowSecondary = 500; //ms
     constexpr   unsigned int durationACKWindow = 600; //ms
     constexpr   bool readConfigFromFile = true;
 
-
+    constexpr int numberPacketsReceivedByC3ToStopSimulation =24;
 
     constexpr  int totalNumberOfSlotsPerModuloNode=250;//Each node will dispose of these slots to potentially transmit
     constexpr  int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
     //in all the possible slots for transmission, we will choose a percentage of them to transmit
-    inline constexpr float transmissionPercentage = 0.47f;
+    inline constexpr float transmissionPercentage = 0.1f;
     inline constexpr  int maxNodeSlots=static_cast<int>(totalNumberOfSlotsPerModuloNode * transmissionPercentage);
 
     //these variables are adapted for clarity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr  int guardTime=50; //ms, a sufficient guard time is needed to be sure every nodes are able to receive messages
-    // constexpr const int typePacket=0x03;
+    constexpr  int guardTime=100; //ms, added before sending any message to simulate the guard time of the protocol and also prevent race conditions.
+
     constexpr  int timeOnAirDataPacket=100; //ms
     constexpr  int timeOnAirAckPacket=60; //ms
 
@@ -249,12 +251,12 @@ constexpr Topology getCurrentTopology() {
     //they are used in some function
 
     //DATA PACKET + ACK PACKET
-    constexpr const int typeBytesSize=1;
-    constexpr const int senderGlobalIdBytesSize=2;
-    constexpr const int receiverGlobalIdBytesSize=2;
-    constexpr const int localIDPacketBytesSize=2;
-    constexpr const int payloadSizeBytesSize=4;
-    constexpr const int hashFunctionBytesSize=4;
+    constexpr  int typeBytesSize=1;
+    constexpr  int senderGlobalIdBytesSize=2;
+    constexpr  int receiverGlobalIdBytesSize=2;
+    constexpr  int localIDPacketBytesSize=2;
+    constexpr  int payloadSizeBytesSize=4;
+    constexpr  int hashFunctionBytesSize=4;
 
     // Format: { "field_name", {start_index, size_in_bytes} }
     inline const std::unordered_map<std::string, std::pair<size_t, size_t>> dataFieldMap = {
@@ -266,7 +268,6 @@ constexpr Topology getCurrentTopology() {
             {"hashFunction", {11, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
         };
 
-
     inline const std::unordered_map<std::string, std::pair<size_t, size_t>> ackFieldMap = {
             {"type", {0, typeBytesSize}},             // "type" starts at index 0, 1 byte long
             {"senderGlobalId", {1, senderGlobalIdBytesSize}},       // "senderGlobalId" starts at index 1, 2 bytes long
@@ -274,10 +275,6 @@ constexpr Topology getCurrentTopology() {
             {"localIDPacket", {5, localIDPacketBytesSize}},        // "localIDPacket" starts at index 5, 2 bytes long
             {"hashFunction", {7, hashFunctionBytesSize}}            // "hashFunction" starts at index 11, 4 bytes long
         };
-
-
-
-
 
     //static fields for this mode
     inline  const std::vector<uint8_t> typeData = {0x03}; // Type is 1 byte long in the simulation, 3 bits in real life

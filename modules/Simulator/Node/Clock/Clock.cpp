@@ -122,7 +122,7 @@ void Clock::tick() {
     auto endTime = std::chrono::steady_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
 
-    if (duration > std::chrono::milliseconds(100)) {
+    if (duration > std::chrono::milliseconds(common::tickIntervalForClock_ms)) {
         logger.logMessage(Log("⚠️ Tick " + std::to_string(compteurTick) +
                               " took " + std::to_string(duration.count()) + " ms", true));
     }

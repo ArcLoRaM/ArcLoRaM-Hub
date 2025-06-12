@@ -53,12 +53,17 @@ retransmissionPacket::retransmissionPacket(int nodeId) : nodeId(nodeId) {
     type = 9;
 }
 
+stopSimulationPacket::stopSimulationPacket(int nodeId) : nodeId(nodeId) {
+    type = 10;
+}
+
 // -------------------- Packet Serialization --------------------
 
 
-//IMPORTANT: We never deserialize the type of the packet using the operator <<, as it manually done through the PacketController.
+//IMPORTANT: We never deserialize the field "type" of the packet using the operator >>, as it manually done through the PacketController in the GUI. The same logic would apply on this side if bidirectional communication was implemented.
 //could have been avoided but I'm too lazy to change it now and It works fine if you know it.
 
+//TODO: put const where you can =?
 
 sf::Packet& operator<<(sf::Packet& packet, const systemPacket& sp) {
     return packet << sp.type << sp.distanceThreshold << sp.mode;
@@ -160,5 +165,14 @@ sf::Packet& operator<<(sf::Packet& packet, const retransmissionPacket& rp) {
 
 sf::Packet& operator>>(sf::Packet& packet, retransmissionPacket& rp) {
     return packet >>  rp.nodeId;
+}
+
+
+sf::Packet& operator<<(sf::Packet& packet,const stopSimulationPacket& sp) {
+    return packet << sp.type<<sp.nodeId;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
+    return packet >> sp.nodeId;
 }
 

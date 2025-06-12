@@ -3,6 +3,7 @@
 #include "../../Setup/Common.hpp"
 #include "../Node.hpp"
 #include "../../Connectivity/TCP/packets.hpp"	
+#include <unordered_set>
 class C3_Node : public Node {
 
 public :
@@ -44,6 +45,8 @@ protected:
     bool shouldReplyACK=false;
     uint16_t lastSenderId;
     uint16_t lastLocalIDPacket;
+
+    std::unordered_map<int,std::unordered_set<int>> receivedPacketsId; // Map to store received packets by sender ID
 
 #else
 
