@@ -38,8 +38,8 @@ public:
         setInitialState(NodeState::Sleeping);
     };
 #elif COMMUNICATION_PERIOD == RRC_UPLINK
-    C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, std::condition_variable &dispatchCv, std::mutex &dispatchCvMutex, uint16_t nextNodeIdInPath, uint8_t hopCount)
-        : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex), infoFromBeaconPhase{nextNodeIdInPath, hopCount} 
+    C2_Node(int id, Logger &logger, std::pair<int, int> coordinates,  uint16_t nextNodeIdInPath, uint8_t hopCount)
+        : Node(id, logger, coordinates), infoFromBeaconPhase{nextNodeIdInPath, hopCount} 
     {
 
         initializeTransitionMap();

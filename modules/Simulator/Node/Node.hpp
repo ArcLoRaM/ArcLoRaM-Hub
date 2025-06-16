@@ -42,14 +42,14 @@ enum class WindowNodeState{
 class Node {
 public:
 
-    Node(int id, Logger& logger,std::pair<int, int> coordinates, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex,double batteryLevel=2.0);
+    Node(int id, Logger& logger,std::pair<int, int> coordinates, double batteryLevel=2.0);
     virtual ~Node() {
-        stopReceiving = true; // Ensure any active threads are signaled to stop
+        
     }
 
     //virtual void run()=0; //we shifted to an event driven model
     
-    void stop();
+  
      
 
     virtual std::string initMessage() const;//default message to be logged when the node starts
@@ -57,10 +57,7 @@ public:
     //used by simulation manager
 
     //add a message to the receiving buffer if no interference is detected, additionnal behaviour can be added in child classes
-    virtual bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir);
-    std::optional<std::pair<std::vector<uint8_t>,std::chrono::milliseconds>> getNextTransmittingMessage(); // Method to retrieve a message from the transmitting buffer
-    // std::optional<std::vector<uint8_t>> getNextReceivedMessage();// .... from the receiving buffer
-    bool hasNextTransmittingMessage() ;//this is called by the transmission loop
+    virtual bool receiveMessage(const std::vector<uint8_t> message);
 
     //getters
     int getId() const { return nodeId; }
@@ -93,37 +90,13 @@ protected:
     bool running;
     Logger& logger;
 
-    // Buffers transmitting messages
-    std::queue<std::pair<std::vector<uint8_t>,std::chrono::milliseconds >> transmitBuffer;//MSG + Time On Air (TOA)
- 
-    //to simulate interferences:
-    //would deserve to have a proper struc/class... TODO
-    //old 
-    std::atomic<std::chrono::steady_clock::time_point> timeOnAirEnd; // End of current Time On Air
-    std::atomic<bool> stopReceiving{false};           // Signals the active thread to stop
-    //new
-    std::atomic<bool> isReceiving=false;
-    std::atomic<bool>  hadInterference=false;
-     // Define a time_point with millisecond precision
-    std::atomic<std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds>>endReceivingTimePoint;
-    std::mutex interferenceMutex;
-    std::condition_variable interferenceCv;
 
 
-    // Mutexes to protect the buffers
-    std::mutex receiveMutex;
-    std::mutex transmitMutex;
-
-    //mutex to protect the activation schedule
-    std::mutex currentStateMutex;
-
-    // Condition variable to notify the simulation manager of new messages
-    std::condition_variable& dispatchCv;
-    std::mutex& dispatchCvMutex;
 
     //methods
     //the node adds a message to the transmitting buffer and notifies the simulation manager
-    void addMessageToTransmit(const std::vector<uint8_t> message,const std::chrono::milliseconds timeOnAir);//add a message to the transmitting buffer, this method is private because it is only called by the node itself
+    void addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs);
+
 
 
     //---------------------------------------TDMA-------------------------------------
@@ -137,11 +110,11 @@ protected:
     }
     NodeState convertWindowNodeStateToNodeState(WindowNodeState state);
     NodeState getCurrentState() {
-        std::lock_guard<std::mutex> lock(currentStateMutex);
+        
         return currentState;
     }
    void setCurrentState(NodeState newState) {
-    std::lock_guard<std::mutex> lock(currentStateMutex);
+    
     currentState = newState;
 
     //Todo: put the state switch here for the GUI

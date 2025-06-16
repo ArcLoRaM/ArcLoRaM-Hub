@@ -235,7 +235,7 @@ constexpr Topology getCurrentTopology() {
     constexpr  int totalNumberOfSlotsPerModuloNode=350;//Each node will dispose of these slots to potentially transmit
     constexpr  int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
     //in all the possible slots for transmission, we will choose a percentage of them to transmit
-    inline constexpr float transmissionPercentage = 0.1f;
+    inline constexpr float transmissionPercentage = 0.7f;
     inline constexpr  int maxNodeSlots=static_cast<int>(totalNumberOfSlotsPerModuloNode * transmissionPercentage);
 
     //these variables are adapted for clarity. If we were adopting the ones that duty cycle entails us to take, would be different

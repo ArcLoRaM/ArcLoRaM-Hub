@@ -44,7 +44,6 @@ void Clock::tick() {
     tickPacketReceiver<<tickPacket;
     logger.sendTcpPacket(tickPacketReceiver);
 
-    logger.logMessage(Log("Tick: " + std::to_string(compteurTick) + " at logical time: " + std::to_string(logicalTimeMs), true));
     //State transitions...
     executeCallbacksInRange(stateTransitions, lastProcessedTime, logicalTimeMs);
 
@@ -94,7 +93,6 @@ void Clock::executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, i
     while (it != map.end() && it->first <= end) {
         if (it->first > start) {
             it->second(); //execute the callback
-            logger.logMessage(Log("Executing callback", true));
             it = map.erase(it);
         } else {
             ++it;

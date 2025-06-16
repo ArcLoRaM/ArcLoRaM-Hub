@@ -3,18 +3,15 @@
 #include "../../../Setup/Common.hpp"
 
 
-std::unique_ptr<INodeFactory> FactorySelector::
-
-                                                         getFactory(common::CommunicationMode mode,
-                                                    Logger& logger,
-                                                    std::condition_variable& dispatchCv,
-                                                    std::mutex& dispatchCvMutex
+std::unique_ptr<INodeFactory> FactorySelector::getFactory(common::CommunicationMode mode,
+                                                    Logger& logger
+                                                    
                                                     )
 {
     switch (mode)
     {
     case common::CommunicationMode::RRC_Uplink:
-        return std::make_unique<RrcUplinkNodeFactory>(logger, dispatchCv, dispatchCvMutex);
+        return std::make_unique<RrcUplinkNodeFactory>(logger);
 
     // Later add other factories:
     // case CommunicationMode::RRC_Downlink:

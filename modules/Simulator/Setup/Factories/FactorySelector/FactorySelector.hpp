@@ -15,8 +15,6 @@
 class FactorySelector {
 public:
     static std::unique_ptr<INodeFactory> getFactory(common::CommunicationMode mode,
-                                                    Logger& logger,
-                                                    std::condition_variable& dispatchCv,
-                                                    std::mutex& dispatchCvMutex
+                                                    Logger& logger
                                                     );
 };

@@ -12,17 +12,15 @@
 
 class DeploymentManager {
 public:
-    DeploymentManager(Logger& logger,
-                      std::condition_variable& dispatchCv,
-                      std::mutex& dispatchCvMutex
+    DeploymentManager(Logger& logger
+                      
                       );
 
     std::vector<std::shared_ptr<Node>> loadDeploymentFromFile(const std::string& filename);
 
 private:
     Logger& logger;
-    std::condition_variable& dispatchCv;
-    std::mutex& dispatchCvMutex;
+
    
 
     common::CommunicationMode parseModeLine(const std::string& line);

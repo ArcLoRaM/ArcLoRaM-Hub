@@ -1,6 +1,6 @@
 
 #include <thread>
-#include "SimulationManager/SimulationManager.hpp"
+#include "PhyLayer/PhyLayer.hpp"
 #include "Connectivity/Logger/Logger.hpp"
 #include <atomic>
 #include <list>
@@ -34,7 +34,7 @@ int main() {
     logger.sendTcpPacket(sysPacketReceiver);
 
 
-    SimulationManager manager(common::distanceThreshold,logger);
+    PhyLayer phyLayer(common::distanceThreshold,logger);
 
 //--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
@@ -42,8 +42,8 @@ int main() {
 
 
 
-    Seed seed(std::string(common::communicationMode), std::string(common::topology),logger,manager.dispatchCv,manager.dispatchCvMutex);
-    manager.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
+    Seed seed(std::string(common::communicationMode), std::string(common::topology),logger);
+    phyLayer.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
 
 
     //Clock
@@ -51,18 +51,8 @@ int main() {
     Clock clock(logger);//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
 
 
-    for(auto ptrNode : manager.nodes){
-        // Schedule callbacks for the node's activations
-        //we use the same callback that will call the correct calqlback Associated with the state transition
-        for (const auto& [activationTime, windowNodeState] : ptrNode->getActivationSchedule()) {
-            clock.scheduleStateTransition(activationTime, [ptrNode,windowNodeState]() {
-                ptrNode->onTimeChange(windowNodeState);//onTimeChange will call the callback associated with the proposed state and the currentState stored in the stateTransitions variable
-            });
+    phyLayer.registerAllNodeEvents(clock);
 
-            //here we schedule the handleCommunication() method for each node at the same time as the state transitions
-            clock.scheduleCommunicationStep(activationTime, ptrNode);
-        }
-    } 
 
   
 //---------------------------------Background---------------------------------
@@ -71,11 +61,6 @@ int main() {
 
     Log startingLog("Starting Simulation...", true);
     logger.logMessage(startingLog);
-    
-
-    // PHY Layer virtualization (the name sucks)
-    manager.startSimulation();
-
 
     // The main thread
     clock.start();
@@ -100,10 +85,8 @@ int main() {
     clock.stop();
     Log clockstopLog("Scheduler stopped...", true);
     logger.logMessage(clockstopLog);
-    manager.stopTransmissionLoop();
      Log stoppingLog("transmission loop stopped...", true);
     logger.logMessage(stoppingLog);
-    manager.stopSimulation();
     Log stoppingLog2("Simulation Manager stopped...", true);
     logger.logMessage(stoppingLog2);
     Log stoppedLog("Simulation Stopped... Thank you for using ArcLoRaM Simulator", true);

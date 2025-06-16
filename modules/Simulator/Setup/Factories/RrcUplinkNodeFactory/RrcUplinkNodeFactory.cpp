@@ -4,11 +4,11 @@
 #include "../../../Node/C1/C1_Node.hpp"
 #include <stdexcept>
 
-RrcUplinkNodeFactory::RrcUplinkNodeFactory(Logger& logger, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex)
-    : logger(logger), dispatchCv(dispatchCv), dispatchCvMutex(dispatchCvMutex) {}
+RrcUplinkNodeFactory::RrcUplinkNodeFactory(Logger& logger)
+    : logger(logger) {}
 
 std::shared_ptr<C3_Node> RrcUplinkNodeFactory::createC3Node(int id, std::pair<int, int> coordinates) {
-    auto node = std::make_shared<C3_Node>(id, logger, coordinates, dispatchCv, dispatchCvMutex);
+    auto node = std::make_shared<C3_Node>(id, logger, coordinates);
 
     // TDMA setup for RRC_UPLINK mode 
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {
@@ -22,7 +22,7 @@ std::shared_ptr<C3_Node> RrcUplinkNodeFactory::createC3Node(int id, std::pair<in
 }
 
 std::shared_ptr<C2_Node> RrcUplinkNodeFactory::createC2Node(int id, std::pair<int, int> coordinates, int nextHop, int hopCount) {
-    auto node = std::make_shared<C2_Node>(id, logger, coordinates, dispatchCv, dispatchCvMutex, nextHop, hopCount);
+    auto node = std::make_shared<C2_Node>(id, logger, coordinates, nextHop, hopCount);
 
     // TDMA setup for RRC_UPLINK mode
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {

@@ -21,10 +21,9 @@ struct C2_Node_Mesh_Parameter{
 class Seed {
 
 public:
-    Seed(std::string communicationWindow, std::string topology,Logger& logger,std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex) : 
+    Seed(std::string communicationWindow, std::string topology,Logger& logger) : 
     communicationWindow(communicationWindow), logger(logger), 
-    topology(topology), dispatchCv(dispatchCv), 
-    dispatchCvMutex(dispatchCvMutex) {
+    topology(topology) {
 
         initializeNodes();
         
@@ -38,8 +37,7 @@ private:
     std::string communicationWindow;
     std::string topology;
     std::vector<std::shared_ptr<Node>> listNode;
-    std::condition_variable& dispatchCv;
-    std::mutex& dispatchCvMutex;
+
     int64_t  baseTime;
 
     void initializeNodes();

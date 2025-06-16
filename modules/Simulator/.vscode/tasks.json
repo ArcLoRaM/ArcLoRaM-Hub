@@ -58,7 +58,7 @@
                 "${workspaceFolder}\\Node\\Node.cpp",
                 "${workspaceFolder}\\Miscellaneous\\PacketTool\\PacketTool.cpp",
                 "${workspaceFolder}\\Setup\\Seed\\Seed.cpp",
-                "${workspaceFolder}\\SimulationManager\\SimulationManager.cpp",
+                "${workspaceFolder}\\PhyLayer\\PhyLayer.cpp",
                 "${workspaceFolder}\\Node\\C1\\C1_Node.cpp",
                 "${workspaceFolder}\\Node\\C2\\C2_Node.cpp",
                 "${workspaceFolder}\\Node\\C2\\C2RccUplinkSlotManager.cpp",

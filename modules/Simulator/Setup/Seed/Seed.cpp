@@ -306,7 +306,7 @@ void Seed::initialize_RRC_Uplink_Mesh()
 
 
 
-    auto factory = FactorySelector::getFactory(common::getCurrentCommunicationMode(),logger, dispatchCv, dispatchCvMutex);
+    auto factory = FactorySelector::getFactory(common::getCurrentCommunicationMode(),logger);
 
     // Create the C3 node
     auto c3Node = factory->createC3Node(0, {0, 0});
@@ -336,7 +336,7 @@ void Seed::initialize_RRC_Uplink_Mesh()
 
 void Seed::initialize_RRC_Uplink_Mesh_FromFile()
 {
-    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex);
+    DeploymentManager deploymentManager(logger);
 
     
     std::string filePath="";
@@ -366,7 +366,7 @@ void Seed::initialize_RRC_Uplink_Line()
     */
 
     //should use the factory selector
-RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex);
+RrcUplinkNodeFactory factory(logger);
 
     // Create the C3 node
     auto firstNode = factory.createC3Node(0, {0, 0});
@@ -426,7 +426,7 @@ RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex);
 
 void Seed::initialize_RRC_Uplink_Line_FromFile()
 {
-    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex);
+    DeploymentManager deploymentManager(logger);
 
     // Load from the deployment file
     auto nodes = deploymentManager.loadDeploymentFromFile("Setup/config/deployment_line.simcfg");

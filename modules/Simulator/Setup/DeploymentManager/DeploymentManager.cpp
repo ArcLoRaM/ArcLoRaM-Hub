@@ -6,11 +6,9 @@
 #include <iostream>
 
 
-DeploymentManager::DeploymentManager(Logger& logger,
-                                     std::condition_variable& dispatchCv,
-                                     std::mutex& dispatchCvMutex
+DeploymentManager::DeploymentManager(Logger& logger
                                      )
-    : logger(logger), dispatchCv(dispatchCv), dispatchCvMutex(dispatchCvMutex) {}
+    : logger(logger) {}
 
 std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(const std::string& filename)
 {
@@ -32,7 +30,7 @@ std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(con
 
         if (!modeParsed) {
             mode = parseModeLine(line);
-            factory = FactorySelector::getFactory(mode, logger, dispatchCv, dispatchCvMutex);
+            factory = FactorySelector::getFactory(mode, logger);
             modeParsed = true;
             continue;
         }

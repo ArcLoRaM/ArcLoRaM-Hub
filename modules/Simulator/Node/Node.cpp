@@ -2,12 +2,10 @@
 #include "../Connectivity/TCP/packets.hpp"
 
 // if this becomes too messy, think about creating an object to populate the node
-Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, std::condition_variable &dispatchCv, std::mutex &dispatchCvMutex, double batteryLevel)
-    : nodeId(id), running(true), logger(logger), coordinates(coordinates), dispatchCv(dispatchCv), dispatchCvMutex(dispatchCvMutex), batteryLevel(batteryLevel)
+Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batteryLevel)
+    : nodeId(id), running(true), logger(logger), coordinates(coordinates), batteryLevel(batteryLevel)
 {
-    // Constructor implementation
-    timeOnAirEnd = {std::chrono::steady_clock::now()}; // for interference, this is the new reference point
-}
+   }
 
 std::string Node::initMessage() const
 {
@@ -20,13 +18,7 @@ std::string Node::initMessage() const
     return "Node " + std::to_string(nodeId) + " located at (" + std::to_string(coordinates.first) + "," + std::to_string(coordinates.second) + ")";
 }
 
-void Node::stop()
-{
 
-    // check if it works, like making sure threads are stopped etc.. TODO
-    // running = false; useless since we shifted to event-driven model
-    // the event is the global clock
-}
 
 void Node::initializeTransitionMap()
 {
@@ -196,105 +188,22 @@ std::string Node::stateToString(WindowNodeState state)
     }
 }
 
+//TODO: change std::chrono::milliseconds to int64_t for consistency
 // simulate the reception of a message, including potential interferences
-bool Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
+bool Node::receiveMessage(const std::vector<uint8_t> message)
 {
 
-    if (isReceiving)
-    {
-        // two simultaneous messages are received -> interference
-        hadInterference = true;
-        Log abortLog("Node " + std::to_string(nodeId) + "aborts Msg reception: " /*+packet_to_binary(message)*/ + " due to interference", true);
-        logger.logMessage(abortLog);
-        endReceivingTimePoint = std::max(endReceivingTimePoint.load(), std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()) + timeOnAir);
-        interferenceCv.notify_one(); // notify the thread that simulate the reception of the first message to change the time until it should wait
-        return false;
-    }
-    else
-    { // no interference
-        isReceiving = true;
-        endReceivingTimePoint = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
-        endReceivingTimePoint = endReceivingTimePoint.load() + timeOnAir;
-
-        std::future<bool> resultFuture = std::async(std::launch::async, [this, message]()
-                                                    {
-
-        std::unique_lock<std::mutex> lock(interferenceMutex);
-                while( std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now())< endReceivingTimePoint.load()){
-                    interferenceCv.wait_until(lock, endReceivingTimePoint.load());
-                }
-                if(hadInterference){
-                    Log abortLog("Node "+std::to_string(nodeId)+"aborts initial Msg reception: "/*+detailedBytesToString(message)*/+" due to interference", true);
-                    logger.logMessage(abortLog);
-                    hadInterference=false;//we drop the initial message
-                    isReceiving=false;
-                    return false;
-                }
-                else{
-                //THE BUFFER IS DEPRECATED, WE DON'T NEED IT ANYMORE TODO
-                    std::lock_guard<std::mutex> lock(receiveMutex);
-// receiveBuffer.push(message);
-#if COMMUNICATION_PERIOD == RRC_BEACON || COMMUNICATION_PERIOD == RRC_DOWNLINK
-                    Log receivedLog("Node "+std::to_string(nodeId)+" received "+detailedBytesToString(message,common::fieldMap), true);
-                    logger.logMessage(receivedLog);
-#elif COMMUNICATION_PERIOD == RRC_UPLINK
-                    if(message[0]==common::typeData[0]){//data Packet
-                    Log receivedLog("Node "+std::to_string(nodeId)+" received "+detailedBytesToString(message,common::dataFieldMap), true);
-                    logger.logMessage(receivedLog);
-
-                    } 
-                    else if(message[0]==common::typeACK[0]){
-                    Log receivedLog("Node "+std::to_string(nodeId)+" received "+detailedBytesToString(message,common::ackFieldMap), true);
-                    logger.logMessage(receivedLog);
-
-                    }
-
-#endif
-                    
-                    isReceiving=false;
-                    return true;
-                } });
-        return resultFuture.get();
-    }
+    return false;
 }
 
-void Node::addMessageToTransmit(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
+void addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs)
 {
-    { // we add the msg to the buffer, but we need to lock the buffer before
-        std::lock_guard<std::mutex> lock(transmitMutex);
-        transmitBuffer.push(std::make_pair(message, timeOnAir));
+    if (phyLayer == nullptr) {
+        logger.logMessage(Log("Error: PhyLayer not set for Node " + std::to_string(id), true));
+        return;
     }
-
-    {
-#if COMMUNICATION_PERIOD == RRC_BEACON || COMMUNICATION_PERIOD == RRC_DOWNLINK
-        Log queuedLog("Node " + std::to_string(nodeId) + " queued " + detailedBytesToString(message, common::fieldMap), true);
-        logger.logMessage(queuedLog);
-#endif
-        // std::lock_guard<std::mutex> lockNode(dispatchCvMutex); // Lock the shared mutex for condition variable signaling
-        //  Notify that a new message is ready
-        dispatchCv.notify_one(); // notify the simulation manager that a message is ready
-    }
+    phyLayer->processTransmission(shared_from_this(), message, airtimeMs);
 }
 
-std::optional<std::pair<std::vector<uint8_t>, std::chrono::milliseconds>> Node::getNextTransmittingMessage()
-{ // this is called by the transmission loop
-    std::lock_guard<std::mutex> lock(transmitMutex);
-    if (transmitBuffer.empty())
-    {
-        return std::nullopt;
-    }
-    std::pair<std::vector<uint8_t>, std::chrono::milliseconds> message_TOA = transmitBuffer.front();
 
-    transmitBuffer.pop();
-    return message_TOA;
-}
 
-bool Node::hasNextTransmittingMessage()
-{ // this is called by the transmission loop
-    std::lock_guard<std::mutex> lock(transmitMutex);
-    if (transmitBuffer.empty())
-    {
-        return false;
-    }
-    return true;
-}

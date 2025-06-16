@@ -45,7 +45,7 @@ void C3_Node::handleCommunication()
                 appendVector(ackPacket, localIDPacket);
                 appendVector(ackPacket, hashFunction);
     
-                addMessageToTransmit(ackPacket,std::chrono::milliseconds(common::timeOnAirAckPacket));
+                addMessageToTransmit(ackPacket,common::timeOnAirAckPacket);
                 shouldReplyACK=false;    
 
             adressedPacketTransmissionDisplay(lastSenderId,true);
@@ -293,7 +293,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 
 #elif COMMUNICATION_PERIOD== RRC_UPLINK
 
-bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir){
+bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
 
         //todo: could be refactored using the display functions from base ndoe class.
         //Node must listen/communicate and not ransmit  to receive a message
@@ -310,7 +310,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
             return false;
         }
         //there should be no interference
-        else if(!Node::receiveMessage(message, timeOnAir)){
+        else if(!Node::receiveMessage(message)){
             //an interference happened, we don't treat the message
             
             sf::Packet receptionStatePacketReceiver;

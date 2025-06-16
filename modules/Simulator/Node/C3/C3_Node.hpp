@@ -7,8 +7,8 @@
 class C3_Node : public Node {
 
 public :
-    C3_Node(int id, Logger& logger,std::pair<int, int> coordinates, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex)
-    : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex) {
+    C3_Node(int id, Logger& logger,std::pair<int, int> coordinates)
+    : Node(id, logger, coordinates) {
 
             initializeTransitionMap();                 
             setInitialState(NodeState::Sleeping);
@@ -76,6 +76,6 @@ protected:
     bool canCommunicateFromCommunicating();
 
         void handleCommunication() ;
-    bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
+    bool receiveMessage(const std::vector<uint8_t> message) override;
 
 };

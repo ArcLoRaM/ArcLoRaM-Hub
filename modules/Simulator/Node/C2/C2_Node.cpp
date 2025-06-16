@@ -33,11 +33,12 @@ void C2_Node::handleCommunication()
 
 #if COMMUNICATION_PERIOD == RRC_UPLINK
 
-    logger.logMessage(Log("Node " + std::to_string(nodeId) + " handleCommunication", true));
     if (currentState == NodeState::Communicating)//if we are communicating it means we have something to transmit
     {
-        if (!isACKSlot)
+        if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory)
         {
+
+                //TODO: needs to implement mechanism to refuse receive while communicating
                 isTransmittingWhileCommunicating = true;
 
                 //for the moment, we are in debug mode
@@ -817,7 +818,6 @@ bool C2_Node::canCommunicateFromSleeping()
 
     bool output = false;
 
-    logger.logMessage(Log("Node " + std::to_string(nodeId) + " enter canCommunicateFromSleeping()", true));
     // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
     //  the first state transition, we display rooting in the visualiser if applicable
     if (common::visualiserConnected)
@@ -859,6 +859,7 @@ bool C2_Node::canCommunicateFromSleeping()
         {
             setCurrentState(NodeState::Communicating);
             nodeStateDisplay("Communicate", true);
+            logger.logMessage(Log("Node " + std::to_string(nodeId) + " should reply ack", true));
 
             return true;
         }
@@ -867,6 +868,7 @@ bool C2_Node::canCommunicateFromSleeping()
 
             setCurrentState(NodeState::Communicating);
             nodeStateDisplay("Communicate", true);
+            logger.logMessage(Log("Node " + std::to_string(nodeId) + "is expecting ack", true));
 
             // the node is expecting an ACK, so it will wake up to listen
             // logger.logMessage(Log("Node " + std::to_string(nodeId) + " is expecting an ACK, will wake up to listen", true));
@@ -887,6 +889,8 @@ bool C2_Node::canCommunicateFromSleeping()
                 setCurrentState(NodeState::Communicating);
                 nodeStateDisplay("Communicate", false);
                 slotManager.decrementAllSlots();
+                logger.logMessage(Log("Node " + std::to_string(nodeId) + " will transmit DATA ", true));
+
                 return true;
             }
             slotManager.decrementAllSlots();
@@ -898,6 +902,8 @@ bool C2_Node::canCommunicateFromSleeping()
             //but this require to change the scheduling during provisionning...
             setCurrentState(NodeState::Communicating);
             nodeStateDisplay("Communicate", false);
+            logger.logMessage(Log("Node " + std::to_string(nodeId) + " listen for DATA", true));
+
             return true;
 
         }
@@ -917,7 +923,7 @@ bool C2_Node::canSleepFromCommunicating()
         retransmissionPacketReceiver << retransmissionPacket;
         logger.sendTcpPacket(retransmissionPacketReceiver);
         retransmissionCounterHelper.setIsExpectingAck(false);
-        logger.logMessage(Log("Node " + std::to_string(nodeId) + " reset expected ack", true));
+        logger.logMessage(Log("Node " + std::to_string(nodeId) + "DIDNT RECEIVE ACK", true));
     }
 
     setCurrentState(NodeState::Sleeping);
@@ -977,30 +983,30 @@ bool C2_Node::handleDataSlotPhase()
     // return true if the node will transmit data, false otheriwse
     bool output = false;
 
-    // Node can only act when its fixed category matches the current simulation slot category
-    if (fixedSlotCategory == currentDataSlotCategory)
-    {
-        // the node has the opportunity to transmit data
-        if (slotManager.canTransmitNow() && nbPayloadLeft > 0)
-        {
-            // it decides to transmit data
-            isTransmittingWhileCommunicating = true;
-            slotManager.consumeSlot();
+    // // Node can only act when its fixed category matches the current simulation slot category
+    // if (fixedSlotCategory == currentDataSlotCategory)
+    // {
+    //     // the node has the opportunity to transmit data
+    //     if (slotManager.canTransmitNow() && nbPayloadLeft > 0)
+    //     {
+    //         // it decides to transmit data
+    //         isTransmittingWhileCommunicating = true;
+    //         slotManager.consumeSlot();
 
-            buildAndTransmitDataPacket();
-            retransmissionCounterHelper.setIsExpectingAck(true);
-            logger.logMessage(Log("Node " + std::to_string(nodeId) + " transmit data", true));
-            adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
-            // we allow the state transition as the node will be sending data
-            output = true;
-        }
-        slotManager.decrementAllSlots();
-    }
-    else
-    {
-        // the node might receive a Data Packet. It must be listening
-        output = true;
-    }
+    //         buildAndTransmitDataPacket();
+    //         retransmissionCounterHelper.setIsExpectingAck(true);
+    //         logger.logMessage(Log("Node " + std::to_string(nodeId) + " will transmit data", true));
+    //         adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
+    //         // we allow the state transition as the node will be sending data
+    //         output = true;
+    //     }
+    //     slotManager.decrementAllSlots();
+    // }
+    // else
+    // {
+    //     // the node might receive a Data Packet. It must be listening
+    //     output = true;
+    // }
 
     return output;
 }
