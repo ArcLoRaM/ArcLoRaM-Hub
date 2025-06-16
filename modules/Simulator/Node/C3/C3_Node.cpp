@@ -14,17 +14,55 @@ std::string C3_Node::initMessage() const{
     return finalMsg;
 }
 
+void C3_Node::handleCommunication()
+{
 
+    #if COMMUNICATION_PERIOD == RRC_UPLINK
+    if (currentState == NodeState::Transmitting)//if we are communicating it means we have something to transmit
+        if(shouldReplyACK){
+            auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
+            std::this_thread::sleep_until(wake_time);
+
+            std::vector<uint8_t> ackPacket;
+
+            //preallocate the space for optimization
+            ackPacket.reserve(common::typeACK.size() + 
+                            common::senderGlobalIdBytesSize+
+                            common::receiverGlobalIdBytesSize+
+                            common::localIDPacketBytesSize+
+                            common::hashFunctionBytesSize);
+
+           //prepare the fields:
+               std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId,common::senderGlobalIdBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+                std::vector<uint8_t> receiverGlobalId = decimalToBytes(lastSenderId,common::receiverGlobalIdBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+                std::vector<uint8_t> localIDPacket = decimalToBytes(lastLocalIDPacket,common::localIDPacketBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
+                std::vector<uint8_t> hashFunction = {0x00,0x00,0x00,0x00}; //Hash Function is 4 byte long in the simulation AND in real life
+    
+                // Append all fields
+                appendVector(ackPacket, common::typeACK);
+                appendVector(ackPacket, senderGlobalId);
+                appendVector(ackPacket, receiverGlobalId);
+                appendVector(ackPacket, localIDPacket);
+                appendVector(ackPacket, hashFunction);
+    
+                addMessageToTransmit(ackPacket,std::chrono::milliseconds(common::timeOnAirAckPacket));
+                shouldReplyACK=false;    
+
+            adressedPacketTransmissionDisplay(lastSenderId,true);
+        }
+    #endif
+}
 
 #if COMMUNICATION_PERIOD == RRC_BEACON
 
 
-    bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir){
-            Log notlisteninglog("Node "+std::to_string(nodeId)+" not listening, dropped msg "/*+detailedBytesToString( message)*/, true);
-             logger.logMessage(notlisteninglog);
-            return false;
-    }
 
+bool C3_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
+{
+    Log notlisteninglog("Node " + std::to_string(nodeId) + " not listening, dropped msg " /*+detailedBytesToString( message)*/, true);
+    logger.logMessage(notlisteninglog);
+    return false;
+}
 
     //---------------------------state Transition--------------------
     bool C3_Node::canTransmitFromSleeping() { 
@@ -347,6 +385,7 @@ bool C3_Node::canNodeReceiveMessage() {
     }
 
     bool C3_Node::canListenFromSleeping() { 
+        logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canListenFromSleeping()", true));
 
         setCurrentState( NodeState::Listening);
         sf::Packet statePacketReceiver;
@@ -381,46 +420,15 @@ bool C3_Node::canNodeReceiveMessage() {
         }
 
     bool C3_Node::canTransmitFromSleeping(){
-        
+        logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canTransmitFromSleeping()", true));
         setCurrentState( NodeState::Transmitting);
 
-        //Todo: this should be encapsulated in a method from the Clock Home class.
-        sf::Packet statePacketReceiver;
-        stateNodePacket statePacket(nodeId, "Transmit");
-        statePacketReceiver<<statePacket;
-        logger.sendTcpPacket(statePacketReceiver);
+        // sf::Packet statePacketReceiver;
+        // stateNodePacket statePacket(nodeId, "Transmit");
+        // statePacketReceiver<<statePacket;
+        // logger.sendTcpPacket(statePacketReceiver);
 
-        if(shouldReplyACK){
-            auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
-            std::this_thread::sleep_until(wake_time);
-
-            std::vector<uint8_t> ackPacket;
-
-            //preallocate the space for optimization
-            ackPacket.reserve(common::typeACK.size() + 
-                            common::senderGlobalIdBytesSize+
-                            common::receiverGlobalIdBytesSize+
-                            common::localIDPacketBytesSize+
-                            common::hashFunctionBytesSize);
-
-           //prepare the fields:
-               std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId,common::senderGlobalIdBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-                std::vector<uint8_t> receiverGlobalId = decimalToBytes(lastSenderId,common::receiverGlobalIdBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-                std::vector<uint8_t> localIDPacket = decimalToBytes(lastLocalIDPacket,common::localIDPacketBytesSize); //Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-                std::vector<uint8_t> hashFunction = {0x00,0x00,0x00,0x00}; //Hash Function is 4 byte long in the simulation AND in real life
-    
-                // Append all fields
-                appendVector(ackPacket, common::typeACK);
-                appendVector(ackPacket, senderGlobalId);
-                appendVector(ackPacket, receiverGlobalId);
-                appendVector(ackPacket, localIDPacket);
-                appendVector(ackPacket, hashFunction);
-    
-                addMessageToTransmit(ackPacket,std::chrono::milliseconds(common::timeOnAirAckPacket));
-                shouldReplyACK=false;    
-
-            adressedPacketTransmissionDisplay(lastSenderId,true);
-        }
+        nodeStateDisplay("Transmit",std::nullopt);
         return true;
         }
 

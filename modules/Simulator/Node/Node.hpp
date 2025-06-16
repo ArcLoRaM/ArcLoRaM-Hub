@@ -80,7 +80,9 @@ public:
 
     void onTimeChange(WindowNodeState proposedState);
      virtual  int getClassId() const =0;
-
+    //for the moment, no parameters, later we need to add the time_ms
+    virtual void handleCommunication()=0;//we separate state transition from the communication logic, this function is called after each state transition
+ 
 protected:
 
 
@@ -134,13 +136,15 @@ protected:
         currentState = initialState;
     }
     NodeState convertWindowNodeStateToNodeState(WindowNodeState state);
-NodeState getCurrentState() {
-    std::lock_guard<std::mutex> lock(currentStateMutex);
-    return currentState;
-}
+    NodeState getCurrentState() {
+        std::lock_guard<std::mutex> lock(currentStateMutex);
+        return currentState;
+    }
    void setCurrentState(NodeState newState) {
     std::lock_guard<std::mutex> lock(currentStateMutex);
     currentState = newState;
+
+    //Todo: put the state switch here for the GUI
 }
     static std::string stateToString(NodeState state);
     static std::string stateToString(WindowNodeState state);
@@ -169,7 +173,8 @@ NodeState getCurrentState() {
     virtual bool canCommunicateFromListening()=0;
     virtual bool canCommunicateFromSleeping()=0;
     virtual bool canCommunicateFromCommunicating()=0;
-   
+
+  
     void initializeTransitionMap();
 
 
@@ -183,5 +188,5 @@ NodeState getCurrentState() {
     // Visualiser (aka GUI) display
     void receptionStateDisplay(uint16_t senderId, std::string state);
     void dropAnimationDisplay();
-void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
+    void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
 };

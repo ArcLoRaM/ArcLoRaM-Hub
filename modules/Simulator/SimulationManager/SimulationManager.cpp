@@ -16,14 +16,7 @@ void SimulationManager::startSimulation() {
    reachableNodesPerNode = getReachableNodesForAllNodes();
 
     for(std::shared_ptr<Node> node : nodes){
-        
-        /*We shifted to an event driven model, nodes are no longer threads running independently
-          They wait for an event ( scheduler proposes a state transition) 
-          and eventually send a message on their transmission buffer that will be collected by the transmission loop
-
-          std::thread t(&Node::run, node);
-           t.detach();
-        */ 
+    
         Log initialNodeLog(node->initMessage(), true);
         logger.logMessage(initialNodeLog);
     }

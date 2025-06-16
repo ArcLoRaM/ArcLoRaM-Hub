@@ -95,9 +95,9 @@ void Seed::initialize_RRC_Beacon_Mesh()
 
     for (size_t i = 0; i < common::nbComWindows; i++)
     {
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
 
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
     }
     listNode.push_back(firstNode);
 
@@ -121,9 +121,9 @@ void Seed::initialize_RRC_Beacon_Mesh()
 
         for (size_t i = 0; i < common::nbComWindows; i++)
         {
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
+            node->addActivation((i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
 
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+            node->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
         }
         listNode.push_back(node);
     }
@@ -158,9 +158,9 @@ void Seed::initialize_RRC_Beacon_Mesh_Self_Healing()
 
     for (size_t i = 0; i < common::nbComWindows; i++)
     {
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
 
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
     }
     listNode.push_back(firstNode);
 
@@ -197,9 +197,9 @@ void Seed::initialize_RRC_Beacon_Mesh_Self_Healing()
             }
             for (size_t i = 0; i < common::nbComWindows; i++)
             {
-                node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
+                node->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
 
-                node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+                node->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
             }
         }
 
@@ -222,9 +222,9 @@ void Seed::initialize_RRC_Beacon_Line()
 
     for (size_t i = 0; i < common::nbComWindows; i++)
     {
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
 
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
     }
 
     listNode.push_back(firstNode);
@@ -237,9 +237,9 @@ void Seed::initialize_RRC_Beacon_Line()
 
         for (size_t i = 0; i < common::nbComWindows; i++)
         {
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
+            node->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
 
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+            node->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
         }
         listNode.push_back(node);
     }
@@ -260,8 +260,8 @@ void Seed::initialize_RRC_Downlink_Line()
 
     for (size_t i = 0; i < common::nbComWindows; i++)
     {
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
-        firstNode->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanTransmit); // the C3 is only transmitting in this mode
+        firstNode->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
     }
 
     listNode.push_back(firstNode);
@@ -274,8 +274,8 @@ void Seed::initialize_RRC_Downlink_Line()
 
         for (size_t i = 0; i < common::nbComWindows; i++)
         {
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
-            node->addActivation(baseTime + (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
+            node->addActivation( (i + 1) * common::lengthSleepingWindow + i * common::lengthTransmissionWindow, WindowNodeState::CanCommunicate); // the C3 is only transmitting in this mode
+            node->addActivation( (i + 1) * common::lengthSleepingWindow + (i + 1) * common::lengthTransmissionWindow, WindowNodeState::CanSleep);
         }
         listNode.push_back(node);
     }
@@ -306,7 +306,7 @@ void Seed::initialize_RRC_Uplink_Mesh()
 
 
 
-    auto factory = FactorySelector::getFactory(common::getCurrentCommunicationMode(),logger, dispatchCv, dispatchCvMutex, baseTime);
+    auto factory = FactorySelector::getFactory(common::getCurrentCommunicationMode(),logger, dispatchCv, dispatchCvMutex);
 
     // Create the C3 node
     auto c3Node = factory->createC3Node(0, {0, 0});
@@ -336,7 +336,7 @@ void Seed::initialize_RRC_Uplink_Mesh()
 
 void Seed::initialize_RRC_Uplink_Mesh_FromFile()
 {
-    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex, baseTime);
+    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex);
 
     
     std::string filePath="";
@@ -366,7 +366,7 @@ void Seed::initialize_RRC_Uplink_Line()
     */
 
     //should use the factory selector
-RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex, baseTime);
+RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex);
 
     // Create the C3 node
     auto firstNode = factory.createC3Node(0, {0, 0});
@@ -426,7 +426,7 @@ RrcUplinkNodeFactory factory(logger, dispatchCv, dispatchCvMutex, baseTime);
 
 void Seed::initialize_RRC_Uplink_Line_FromFile()
 {
-    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex, baseTime);
+    DeploymentManager deploymentManager(logger, dispatchCv, dispatchCvMutex);
 
     // Load from the deployment file
     auto nodes = deploymentManager.loadDeploymentFromFile("Setup/config/deployment_line.simcfg");

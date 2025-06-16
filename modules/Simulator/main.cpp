@@ -17,9 +17,9 @@
 
 int main() {
 
+    //todo erase this ?
     sf::TcpListener listener;
 
-// sf::TcpSocket socket;
 
 //---------------------------------System Initialization---------------------------------
     //Logger
@@ -39,29 +39,28 @@ int main() {
 //--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
     
-     //convert base time to milliseconds
-    int64_t  baseTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() ;
-    baseTime+=common::baseTimeOffset; //allow the system to initialize before the TDMA begins
 
-    
 
-    Seed seed(std::string(common::communicationMode), std::string(common::topology),logger,manager.dispatchCv,manager.dispatchCvMutex,baseTime);
+
+    Seed seed(std::string(common::communicationMode), std::string(common::topology),logger,manager.dispatchCv,manager.dispatchCvMutex);
     manager.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
 
 
     //Clock
 
-    Clock clock(logger,common::tickIntervalForClock_ms,manager.nodes.size());//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
+    Clock clock(logger);//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
 
-    //TODO: have a getter for the nodes list, or create a function, you should not allot the nodes to be accessible in public
-    //MAKE THIS FUNCTION in the manager class? maybe not
+
     for(auto ptrNode : manager.nodes){
         // Schedule callbacks for the node's activations
         //we use the same callback that will call the correct calqlback Associated with the state transition
         for (const auto& [activationTime, windowNodeState] : ptrNode->getActivationSchedule()) {
-            clock.scheduleCallback(activationTime, [ptrNode,windowNodeState]() {
+            clock.scheduleStateTransition(activationTime, [ptrNode,windowNodeState]() {
                 ptrNode->onTimeChange(windowNodeState);//onTimeChange will call the callback associated with the proposed state and the currentState stored in the stateTransitions variable
             });
+
+            //here we schedule the handleCommunication() method for each node at the same time as the state transitions
+            clock.scheduleCommunicationStep(activationTime, ptrNode);
         }
     } 
 
@@ -73,22 +72,14 @@ int main() {
     Log startingLog("Starting Simulation...", true);
     logger.logMessage(startingLog);
     
+
+    // PHY Layer virtualization (the name sucks)
+    manager.startSimulation();
+
+
+    // The main thread
+    clock.start();
     
-    std::thread worker([&running, &manager,&clock]() {
-        // Start simulation
-        manager.startSimulation();
-        // Background thread that runs the simulation
-        clock.start();
-
-        //are these two lines necessary? --> I think there is already a for lopp in start
-        while (running) {
-            //TODO: verify it's not destroying the performance, add a delay?
-            std::this_thread::sleep_for(std::chrono::milliseconds(300)); // Avoid busy-waiting
-        }
-      }
-    );
-
-
 
 //---------------------------------Main---------------------------------
 
@@ -115,8 +106,6 @@ int main() {
     manager.stopSimulation();
     Log stoppingLog2("Simulation Manager stopped...", true);
     logger.logMessage(stoppingLog2);
-    // Wait for worker thread to finish
-    worker.join();
     Log stoppedLog("Simulation Stopped... Thank you for using ArcLoRaM Simulator", true);
     logger.logMessage(stoppedLog);
     logger.stop();//logger must outlive other objects since it's passed as a reference, otherwise unpredictable behavior

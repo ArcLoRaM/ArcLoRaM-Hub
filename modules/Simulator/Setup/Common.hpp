@@ -55,8 +55,7 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
-constexpr const int tickIntervalForClock_ms=170; // The tick interval should not be too low
-constexpr const int baseTimeOffset=3000; //the base time offset allows the system to initialize before the TDMA begins
+constexpr const int tickIntervalForClock_ms=20; // The tick interval should not be too low
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
 constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
 
@@ -226,21 +225,21 @@ constexpr Topology getCurrentTopology() {
         //if you decrease too much the duration of the Data ack window, nodes are not able to receive the messages (they start sleeping too early...)
     constexpr  char* communicationMode = "RRC_Uplink";
     constexpr    unsigned int durationSleepWindowMain = 500;      //ms
-    constexpr   unsigned int durationDataWindow = 900; //ms
+    constexpr   unsigned int durationDataWindow = 1100; //ms
     constexpr   unsigned int durationSleepWindowSecondary = 500; //ms
-    constexpr   unsigned int durationACKWindow = 600; //ms
+    constexpr   unsigned int durationACKWindow = 1100; //ms
     constexpr   bool readConfigFromFile = true;
 
     constexpr int numberPacketsReceivedByC3ToStopSimulation =24;
 
-    constexpr  int totalNumberOfSlotsPerModuloNode=250;//Each node will dispose of these slots to potentially transmit
+    constexpr  int totalNumberOfSlotsPerModuloNode=350;//Each node will dispose of these slots to potentially transmit
     constexpr  int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
     //in all the possible slots for transmission, we will choose a percentage of them to transmit
     inline constexpr float transmissionPercentage = 0.1f;
     inline constexpr  int maxNodeSlots=static_cast<int>(totalNumberOfSlotsPerModuloNode * transmissionPercentage);
 
     //these variables are adapted for clarity. If we were adopting the ones that duty cycle entails us to take, would be different
-    constexpr  int guardTime=100; //ms, added before sending any message to simulate the guard time of the protocol and also prevent race conditions.
+    constexpr  int guardTime=80; //ms, added before sending any message to simulate the guard time of the protocol and also prevent race conditions.
 
     constexpr  int timeOnAirDataPacket=100; //ms
     constexpr  int timeOnAirAckPacket=60; //ms

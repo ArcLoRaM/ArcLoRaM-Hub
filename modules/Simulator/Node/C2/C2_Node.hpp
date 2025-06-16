@@ -110,7 +110,7 @@ protected:
 
     bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
 
-
+    void handleCommunication() ;
 #if COMMUNICATION_PERIOD == RRC_DOWNLINK
 
     bool shouldSendBeacon = false;
@@ -153,7 +153,7 @@ protected:
     bool isTransmittingWhileCommunicating = false;
 
     // Transmission------------------------------------------------------------------------------------
-    void buildAndTransmitDataPacket(std::vector<uint8_t> payload);
+    void buildAndTransmitDataPacket(std::vector<uint8_t> payload={});
     void buildAndTransmitAckPacket();
     unsigned int localIDPacketCounter = 0; //the local Id of the packet we send. Uniquely identify packets in a link.
 

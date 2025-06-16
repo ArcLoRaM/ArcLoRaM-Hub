@@ -17,6 +17,6 @@ public:
     static std::unique_ptr<INodeFactory> getFactory(common::CommunicationMode mode,
                                                     Logger& logger,
                                                     std::condition_variable& dispatchCv,
-                                                    std::mutex& dispatchCvMutex,
-                                                    uint64_t baseTime);
+                                                    std::mutex& dispatchCvMutex
+                                                    );
 };

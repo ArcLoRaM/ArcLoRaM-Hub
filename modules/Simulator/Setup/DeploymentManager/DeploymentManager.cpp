@@ -8,9 +8,9 @@
 
 DeploymentManager::DeploymentManager(Logger& logger,
                                      std::condition_variable& dispatchCv,
-                                     std::mutex& dispatchCvMutex,
-                                     uint64_t baseTime)
-    : logger(logger), dispatchCv(dispatchCv), dispatchCvMutex(dispatchCvMutex), baseTime(baseTime) {}
+                                     std::mutex& dispatchCvMutex
+                                     )
+    : logger(logger), dispatchCv(dispatchCv), dispatchCvMutex(dispatchCvMutex) {}
 
 std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(const std::string& filename)
 {
@@ -32,7 +32,7 @@ std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(con
 
         if (!modeParsed) {
             mode = parseModeLine(line);
-            factory = FactorySelector::getFactory(mode, logger, dispatchCv, dispatchCvMutex, baseTime);
+            factory = FactorySelector::getFactory(mode, logger, dispatchCv, dispatchCvMutex);
             modeParsed = true;
             continue;
         }

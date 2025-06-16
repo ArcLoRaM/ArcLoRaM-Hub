@@ -19,7 +19,6 @@ public :
     }
     std::string initMessage() const override;
 
-    bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
 
 
 
@@ -75,5 +74,8 @@ protected:
     bool canCommunicateFromListening();
     bool canCommunicateFromSleeping();
     bool canCommunicateFromCommunicating();
+
+        void handleCommunication() ;
+    bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
 
 };

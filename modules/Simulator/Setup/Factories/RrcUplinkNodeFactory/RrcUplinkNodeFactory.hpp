@@ -7,7 +7,7 @@
 
 class RrcUplinkNodeFactory : public INodeFactory {
 public:
-    RrcUplinkNodeFactory(Logger& logger, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex, uint64_t baseTime);
+    RrcUplinkNodeFactory(Logger& logger, std::condition_variable& dispatchCv, std::mutex& dispatchCvMutex);
 
     std::shared_ptr<C3_Node> createC3Node(int id, std::pair<int, int> coordinates) override;
     std::shared_ptr<C2_Node> createC2Node(int id, std::pair<int, int> coordinates, int nextHop, int hopCount) override;
@@ -17,5 +17,5 @@ private:
     Logger& logger;
     std::condition_variable& dispatchCv;
     std::mutex& dispatchCvMutex;
-    uint64_t baseTime;
+   
 };

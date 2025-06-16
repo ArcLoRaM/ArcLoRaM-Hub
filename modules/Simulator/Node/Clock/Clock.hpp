@@ -11,26 +11,11 @@
 #include "../../Connectivity/Logger/Logger.hpp"
 #include <string>
 #include "../../Connectivity/TCP/packets.hpp"
+#include "../Node.hpp"
 
 
+using CallbackType = std::function<void()>;
 
-class ThreadPool {
-public:
-    explicit ThreadPool(int numThreads);
-    ~ThreadPool();
-
-    void enqueue(std::function<void()> task);
-
-private:
-    std::vector<std::thread> workers;
-    std::queue<std::function<void()>> tasks;
-
-    std::mutex queueMutex;
-    std::condition_variable condition;
-    std::atomic<bool> stop;
-
-    void worker();
-};
 
 
 class Clock {
@@ -38,36 +23,47 @@ class Clock {
 
 private:
     std::atomic<bool> running;
-    std::chrono::milliseconds tickInterval; // Configurable tick interval: decrease for more frequent ticks -> closer to a continuous simulation
-                                            //default it 10ms
-    using CallbackType = std::function<void()>;
-    std::multimap<int64_t, CallbackType> scheduledCallbacks; //stores the calls of onTimeChange() for each node at the activation times
-                                                             //onTimeChange() will call the appropriate stateTransitionFunction
-                                                             
 
-    // Current time in milliseconds
-    int64_t currentTimeInMilliseconds() ;
-    std::mutex callbackMutex;
+
+    //use distinct multimap for every kind of events (battery depletion etc..)
+    std::multimap<int64_t, CallbackType> stateTransitions; //stores the calls of onTimeChange() for each node at the activation times
+                                                             //onTimeChange() will call the appropriate stateTransitionFunction
+std::multimap<int64_t, std::shared_ptr<Node>> communicationSteps;
+      //consists of the HandleCommunication() for each node, is provisionned at the same schedule than the stateTransitions multimap
+    
+    //not sure if we will use multimaps for dispatching packets, interference etc..
+    std::multimap<int64_t, CallbackType> transmissionStarts;
+    std::multimap<int64_t, CallbackType> receiveEvents;
+    std::multimap<int64_t, CallbackType> transmissionEnds;
+    std::multimap<int64_t, CallbackType> interferenceResolutions;      
+    
+    
+    int64_t logicalTimeMs = 0;  // Start at 0
+    const int64_t tickDurationMs = common::tickIntervalForClock_ms;                                                            
+    int64_t lastProcessedTime = 0;
+
+
     std::thread clockThread;
     Logger& logger;
     
-    int64_t lastProcessedTime;
     void tick();
-    unsigned int compteurTick;
+    unsigned int compteurTick=0;
 
-    ThreadPool threadPool;
+    void executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, int64_t start, int64_t end);
+    void executeCommunicationInRange(std::multimap<int64_t,std::shared_ptr<Node>>& map, int64_t start, int64_t end);
 
 
 public:
-    Clock( Logger& logger,int baseUnitMilliseconds,int poolSize) 
-        : running(false), tickInterval(baseUnitMilliseconds), lastProcessedTime(0),logger(logger), threadPool(poolSize) {
-            compteurTick=0;
+    Clock( Logger& logger) 
+        : running(false),logger(logger) {
         }
 
     void start() ;
 
     void stop();
-
-    void scheduleCallback(int64_t activationTime, CallbackType callback) ;
+    // Current time in milliseconds
+    int64_t currentTimeInMilliseconds() ;
+    void scheduleStateTransition(int64_t activationTime, CallbackType callback) ;
+    void scheduleCommunicationStep(int64_t time, std::shared_ptr<Node> node);
 };
 
