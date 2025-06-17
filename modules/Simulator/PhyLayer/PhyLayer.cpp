@@ -20,6 +20,8 @@ void PhyLayer::takeOwnership(std::vector<std::shared_ptr<Node>> nodes)
     
         Log initialNodeLog(node->initMessage(), true);
         logger.logMessage(initialNodeLog);
+
+        node->setPhyLayer(this); // Set the PhyLayer for each node
     }
 
 
@@ -85,19 +87,6 @@ std::unordered_map<int,std::vector<std::shared_ptr<Node>>> PhyLayer::getReachabl
 
 
 
-bool PhyLayer::checkForMessages(){
-
-// Check if there is at least one node with a message to transmit
-            for (const auto& node : nodes) {
-                if (node->hasNextTransmittingMessage()) {
-                    return true;//there is at least one, we exit the loop and process the messages
-                }
-            }
-            return false;//no message to transmit
-}
-
-
-
 
 void PhyLayer::addTransmissionWindow(int senderId, int64_t start, int64_t end) {
     activeTransmissions.push_back({senderId, start, end});
@@ -133,7 +122,8 @@ bool PhyLayer::isReceivingClean(const std::shared_ptr<Node>& receiver, int64_t c
     return count == 1;
 }
 
-void PhyLayer::processTransmission(std::shared_ptr<Node> sender, const std::vector<uint8_t>& message, int64_t airtimeMs) {
+void PhyLayer::processTransmission(Node* sender, const std::vector<uint8_t>& message, int64_t airtimeMs) {
+   
     if (!clock) throw std::runtime_error("Clock not set in PhyLayer.");
 
     int64_t start = clock->currentTimeInMilliseconds();
@@ -161,4 +151,5 @@ void PhyLayer::processTransmission(std::shared_ptr<Node> sender, const std::vect
         logger.logMessage(Log("Transmission ended by Node " + std::to_string(senderId), true));
         removeTransmissionWindow(senderId);
     });
+    
 }

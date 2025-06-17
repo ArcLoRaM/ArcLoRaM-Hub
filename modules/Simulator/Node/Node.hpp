@@ -39,6 +39,10 @@ enum class WindowNodeState{
     CanCommunicate //mixed state of CanTransmit and CanListen
 };
 
+
+class PhyLayer; // Forward declaration of PhyLayer class to avoid circular dependency
+
+
 class Node {
 public:
 
@@ -68,6 +72,11 @@ public:
         return coordinates.second;
     }
 
+
+    void setPhyLayer(PhyLayer* phy){
+        phyLayer = phy;
+    }
+    
      //add TDMA
      void addActivation( int64_t activationTime, WindowNodeState activationState);
              
@@ -90,7 +99,7 @@ protected:
     bool running;
     Logger& logger;
 
-
+    PhyLayer* phyLayer = nullptr; // Pointer to the PhyLayer instance, can be set later
 
 
     //methods

@@ -17,7 +17,7 @@ public:
 
     int getNbNodes() const { return nodes.size(); };
 
-    void processTransmission(std::shared_ptr<Node> sender, const std::vector<uint8_t>& message, int64_t airtimeMs);
+    void processTransmission(Node* sender, const std::vector<uint8_t>& message, int64_t airtimeMs);
 
 
     // Function to get reachable nodes for a specific node
@@ -40,7 +40,6 @@ private:
     void registerNode(std::shared_ptr<Node> node);
 
     std::unordered_map<int, std::vector<std::shared_ptr<Node>>> reachableNodesPerNode; // Map for quick access to reachable nodes by node ID
-    bool checkForMessages();
     double distanceThreshold;
     // Helper function to calculate Euclidean distance between two nodes
     double calculateDistance(const std::shared_ptr<Node>& a, const std::shared_ptr<Node>& b);

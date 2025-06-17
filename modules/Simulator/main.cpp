@@ -45,6 +45,7 @@ int main() {
     Seed seed(std::string(common::communicationMode), std::string(common::topology),logger);
     phyLayer.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
 
+    
 
     //Clock
 
@@ -85,10 +86,7 @@ int main() {
     clock.stop();
     Log clockstopLog("Scheduler stopped...", true);
     logger.logMessage(clockstopLog);
-     Log stoppingLog("transmission loop stopped...", true);
-    logger.logMessage(stoppingLog);
-    Log stoppingLog2("Simulation Manager stopped...", true);
-    logger.logMessage(stoppingLog2);
+
     Log stoppedLog("Simulation Stopped... Thank you for using ArcLoRaM Simulator", true);
     logger.logMessage(stoppedLog);
     logger.stop();//logger must outlive other objects since it's passed as a reference, otherwise unpredictable behavior

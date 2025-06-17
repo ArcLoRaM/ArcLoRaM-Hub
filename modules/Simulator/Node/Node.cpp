@@ -1,6 +1,6 @@
 #include "Node.hpp"
 #include "../Connectivity/TCP/packets.hpp"
-
+#include "../PhyLayer/PhyLayer.hpp"
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batteryLevel)
     : nodeId(id), running(true), logger(logger), coordinates(coordinates), batteryLevel(batteryLevel)
@@ -196,13 +196,13 @@ bool Node::receiveMessage(const std::vector<uint8_t> message)
     return false;
 }
 
-void addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs)
+void Node::addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs)
 {
     if (phyLayer == nullptr) {
-        logger.logMessage(Log("Error: PhyLayer not set for Node " + std::to_string(id), true));
+        logger.logMessage(Log("Error: PhyLayer not set for Node " + std::to_string(nodeId), true));
         return;
     }
-    phyLayer->processTransmission(shared_from_this(), message, airtimeMs);
+    phyLayer->processTransmission(this, message, airtimeMs);
 }
 
 
