@@ -199,8 +199,7 @@ bool Node::receiveMessage(const std::vector<uint8_t> message)
 void Node::addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs)
 {
     if (phyLayer == nullptr) {
-        logger.logMessage(Log("Error: PhyLayer not set for Node " + std::to_string(nodeId), true));
-        return;
+        throw std::runtime_error("PhyLayer not set for Node " + std::to_string(nodeId));
     }
     phyLayer->processTransmission(this, message, airtimeMs);
 }

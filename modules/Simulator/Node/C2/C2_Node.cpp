@@ -33,16 +33,15 @@ void C2_Node::handleCommunication()
 
 #if COMMUNICATION_PERIOD == RRC_UPLINK
 
-    if (currentState == NodeState::Communicating)//if we are communicating it means we have something to transmit
+    if (currentState == NodeState::Communicating)//if we are communicating it means we have something to transmit in this case
     {
         if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory)
         {
 
-                //TODO: needs to implement mechanism to refuse receive while communicating
                 isTransmittingWhileCommunicating = true;
 
                 //for the moment, we are in debug mode
-                //buildAndTransmitDataPacket();
+                buildAndTransmitDataPacket();
                 retransmissionCounterHelper.setIsExpectingAck(true);
                 logger.logMessage(Log("Node " + std::to_string(nodeId) + " transmit data", true));
                 adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
@@ -52,7 +51,7 @@ void C2_Node::handleCommunication()
             if (ackInformation.shouldReplyAck())//need to double check here because the node can also expect an ACK !
             {
                 isTransmittingWhileCommunicating = true;
-                //buildAndTransmitAckPacket();
+                buildAndTransmitAckPacket();
             }
 
         }
@@ -622,9 +621,7 @@ void C2_Node::displayRouting()
 void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload)
 {
 
-    // receiving window are greater than transmitting window, so we make the transmitting node waiting the guard time
-    auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
-    std::this_thread::sleep_until(wake_time);
+    
     // create the data packet
     std::vector<uint8_t> dataPacket;
 
@@ -656,10 +653,9 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload)
 
     logger.logMessage(Log("Node " + std::to_string(nodeId) + " is sending Data Packet to Node: " + std::to_string(infoFromBeaconPhase.getNextNodeIdInPath()), true));
     // virtualization of the Transmit() from Physical Layer
-    addMessageToTransmit(dataPacket, std::chrono::milliseconds(common::timeOnAirDataPacket));
+    addMessageToTransmit(dataPacket, common::timeOnAirDataPacket);
 
-    // same logic, even though it is not necessary in the simualator
-    // std::this_thread::sleep_for(std::chrono::milliseconds(common::guardTime));
+ 
 }
 
 void C2_Node::buildAndTransmitAckPacket()
@@ -688,13 +684,11 @@ void C2_Node::buildAndTransmitAckPacket()
     appendVector(ackPacket, localIDPacket);
     appendVector(ackPacket, hashFunction);
 
-    auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
-    std::this_thread::sleep_until(wake_time);
     logger.logMessage(Log("Node " + std::to_string(nodeId) + " is sending ACK to Node: " + std::to_string(ackInformationIds.first), true));
 
     // virtualization of the Transmit() from Physical Layer
     // we add the message to the transmission queue, so it will be sent at the next transmission slot
-    addMessageToTransmit(ackPacket, std::chrono::milliseconds(common::timeOnAirAckPacket));
+    addMessageToTransmit(ackPacket, common::timeOnAirAckPacket);
 
     adressedPacketTransmissionDisplay(ackInformationIds.first, true);
 }
@@ -751,7 +745,7 @@ void C2_Node::handleAckPacketReception(uint16_t senderId, uint32_t packetId)
     }
 }
 
-bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir)
+bool C2_Node::receiveMessage(const std::vector<uint8_t> message)
 {
     logger.logMessage(Log("Node " + std::to_string(nodeId) + " enter receive()", true));
     // Node must listen/communicate and not transmit  to receive a message
@@ -764,14 +758,16 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
         return false;
     }
 
-    // there should be no interference
-    else if (!Node::receiveMessage(message, timeOnAir))
-    {
-        // an interference happened, we don't treat the message
-        uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
-        receptionStateDisplay(senderId, "interference");
-        return false;
-    }
+    // // there should be no interference
+    // else if (!Node::receiveMessage(message, timeOnAir))
+    // {
+    //     // an interference happened, we don't treat the message
+    //     uint16_t senderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
+    //     receptionStateDisplay(senderId, "interference");
+    //     return false;
+    // }
+
+
     // The packet must be adressed to us to be processed
     // TODO: put the name of the fields in the common file, or in a struct
     uint16_t receiverId = extractBytesFromField(message, "receiverGlobalId", common::dataFieldMap);
@@ -813,11 +809,6 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message, std::chrono::mi
 // State Transitions ---------------------------------------------------------------------------------
 bool C2_Node::canCommunicateFromSleeping()
 {
-
-    
-
-    bool output = false;
-
     // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
     //  the first state transition, we display rooting in the visualiser if applicable
     if (common::visualiserConnected)
@@ -831,7 +822,7 @@ bool C2_Node::canCommunicateFromSleeping()
 
     isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
 
-    // This is a physical layer property that is updated in the network layer, not good !!! todo
+    
     isTransmittingWhileCommunicating = false; // used to detect when node cannot physically receive messages because they transmit
 
     if (!isACKSlot) // Advance the global data slot category (mod 3) (part of the protocol) for the next iteration
@@ -842,7 +833,6 @@ bool C2_Node::canCommunicateFromSleeping()
     bool showDisplay = true;
     if (currentDataSlotCategory != fixedSlotCategory && currentDataSlotCategory != ((fixedSlotCategory + 1) % 3))
     {
-
         return false;
     }
 

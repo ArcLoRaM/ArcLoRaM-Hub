@@ -54,6 +54,9 @@ std::vector<std::shared_ptr<Node>> PhyLayer::getReachableNodesForNode(const std:
 }
 
 void PhyLayer::registerAllNodeEvents(Clock& clk) {
+
+    clock = &clk; // Set the clock for scheduling events
+    
     for (const auto& ptrNode : nodes) {
         for (const auto& [activationTime, windowNodeState] : ptrNode->getActivationSchedule()) {
             clk.scheduleStateTransition(activationTime, [ptrNode, windowNodeState]() {
@@ -109,6 +112,9 @@ bool PhyLayer::isReachable(int senderId, int receiverId) const {
 }
 
 bool PhyLayer::isReceivingClean(const std::shared_ptr<Node>& receiver, int64_t currentTime) {
+
+
+    //count the number of active transmissions that overlap with the current time given in parameter
     int count = 0;
     int receiverId = receiver->getId();
 
@@ -118,38 +124,58 @@ bool PhyLayer::isReceivingClean(const std::shared_ptr<Node>& receiver, int64_t c
             ++count;
         }
     }
-
     return count == 1;
 }
 
+
 void PhyLayer::processTransmission(Node* sender, const std::vector<uint8_t>& message, int64_t airtimeMs) {
-   
     if (!clock) throw std::runtime_error("Clock not set in PhyLayer.");
 
-    int64_t start = clock->currentTimeInMilliseconds();
-    int64_t end = start + airtimeMs;
-    int64_t rxTime = start /*+ common::PROPAGATION_DELAY_MS*/; // Assuming no propagation delay for simplicity
-    int senderId = sender->getId();
+    const int64_t start = clock->currentTimeInMilliseconds();
+    const int64_t end = start + airtimeMs;
+    const int senderId = sender->getId();
 
-    clock->scheduleTransmissionStart(start, [this, senderId, start, end]() {
-        logger.logMessage(Log("Transmission started by Node " + std::to_string(senderId), true));
-        addTransmissionWindow(senderId, start, end);
-    });
+    for (auto& receiver : reachableNodesPerNode[senderId]) {
+        clock->scheduleTransmissionStart(start, [this, receiver, senderId, start, end]() {
+            TransmissionWindow newWindow{senderId, start, end, false};
 
-    for (const auto& receiver : reachableNodesPerNode[senderId]) {
-        clock->scheduleReceiveEvent(rxTime, [this, receiver, message]() {
-            int64_t currentTime = clock->currentTimeInMilliseconds();
-            if (isReceivingClean(receiver, currentTime)) {
-                receiver->receiveMessage(message);
-            } else {
-                receiver->markInterference();
+            // Check for overlap with existing windows
+            auto& windowList = transmissionWindowsPerReceiver[receiver];
+            for (auto& w : windowList) {
+                if (!(w.end <= start || w.start >= end)) {
+                    w.isInterrupted = true;
+                    newWindow.isInterrupted = true;
+                }
+            }
+
+            windowList.push_back(newWindow);
+        });
+
+        clock->scheduleTransmissionEnd(end, [this, receiver, senderId, end, message]() {
+            auto& windowList = transmissionWindowsPerReceiver[receiver];
+
+            // Find and remove the correct window
+            auto it = std::find_if(windowList.begin(), windowList.end(),
+                [senderId, end](const TransmissionWindow& w) {
+                    return w.senderId == senderId && w.end == end;
+                });
+
+            if (it != windowList.end()) {
+                if (it->isInterrupted) {
+                    //The node receives nothing, we just display the interference event in the GUI
+                    //Todo: do a helper class/function/interface for all these display functions
+                    //todo: make an enum for the receive state!
+                        sf::Packet receptionStatePacketReceiver;
+                        receiveMessagePacket receptionState(senderId, receiver->getId(), "interference");
+                        receptionStatePacketReceiver << receptionState;
+                        logger.sendTcpPacket(receptionStatePacketReceiver);
+                } else {
+                    //The node receives the messages, he might not be listening, or not be the intended receiver but display and logic is handled internally
+                    receiver->receiveMessage(message);
+                }
+
+                windowList.erase(it);
             }
         });
     }
-
-    clock->scheduleTransmissionEnd(end, [this, senderId]() {
-        logger.logMessage(Log("Transmission ended by Node " + std::to_string(senderId), true));
-        removeTransmissionWindow(senderId);
-    });
-    
 }

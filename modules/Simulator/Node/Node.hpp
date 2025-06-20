@@ -60,6 +60,7 @@ public:
 
     //used by simulation manager
 
+    //todo: do we need the bool ? why not just a void?
     //add a message to the receiving buffer if no interference is detected, additionnal behaviour can be added in child classes
     virtual bool receiveMessage(const std::vector<uint8_t> message);
 

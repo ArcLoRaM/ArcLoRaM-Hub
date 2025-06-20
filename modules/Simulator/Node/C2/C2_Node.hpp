@@ -108,7 +108,7 @@ protected:
     bool canCommunicateFromSleeping();
     bool canCommunicateFromCommunicating();
 
-    bool receiveMessage(const std::vector<uint8_t> message, std::chrono::milliseconds timeOnAir) override;
+    bool receiveMessage(const std::vector<uint8_t> message) override;
 
     void handleCommunication() ;
 #if COMMUNICATION_PERIOD == RRC_DOWNLINK

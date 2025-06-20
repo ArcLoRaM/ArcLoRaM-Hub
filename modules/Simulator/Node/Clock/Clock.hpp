@@ -28,15 +28,13 @@ private:
     //use distinct multimap for every kind of events (battery depletion etc..)
     std::multimap<int64_t, CallbackType> stateTransitions; //stores the calls of onTimeChange() for each node at the activation times
                                                              //onTimeChange() will call the appropriate stateTransitionFunction
-std::multimap<int64_t, std::shared_ptr<Node>> communicationSteps;
-      //consists of the HandleCommunication() for each node, is provisionned at the same schedule than the stateTransitions multimap
+    std::multimap<int64_t, std::shared_ptr<Node>> communicationSteps;//consists of the HandleCommunication() for each node, is provisionned at the same schedule than the stateTransitions multimap
     
     //not sure if we will use multimaps for dispatching packets, interference etc..
-    std::multimap<int64_t, CallbackType> transmissionStarts;
-    std::multimap<int64_t, CallbackType> receiveEvents;
-    std::multimap<int64_t, CallbackType> transmissionEnds;
-    std::multimap<int64_t, CallbackType> interferenceResolutions;      
+    std::multimap<int64_t, CallbackType> transmissionStartCallbacks;
+    std::multimap<int64_t, CallbackType> transmissionEndCallbacks;      
     
+    //we can add more multimaps for other events, like  special events (sudden node failure etc..)
     
     int64_t logicalTimeMs = 0;  // Start at 0
     const int64_t tickDurationMs = common::tickIntervalForClock_ms;                                                            
@@ -65,5 +63,8 @@ public:
     int64_t currentTimeInMilliseconds() ;
     void scheduleStateTransition(int64_t activationTime, CallbackType callback) ;
     void scheduleCommunicationStep(int64_t time, std::shared_ptr<Node> node);
+    void scheduleTransmissionStart(int64_t time, CallbackType callback);
+    void scheduleTransmissionEnd(int64_t time, CallbackType callback);
+
 };
 

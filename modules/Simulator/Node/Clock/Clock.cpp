@@ -50,8 +50,9 @@ void Clock::tick() {
     //Followed by Actual Communication... (to avoid deadlocks, we execute the communication after the state transitions)
     executeCommunicationInRange(communicationSteps, lastProcessedTime, logicalTimeMs);
 
-    //other events, transmsission starts, ends, interference resolutions etc...
-    //TODO later
+    //Transmission start and end callbacks, for interference handling
+    executeCallbacksInRange(transmissionStartCallbacks, lastProcessedTime, logicalTimeMs);
+    executeCallbacksInRange(transmissionEndCallbacks, lastProcessedTime, logicalTimeMs);
 
 
     lastProcessedTime = logicalTimeMs;
@@ -107,3 +108,10 @@ int64_t Clock::currentTimeInMilliseconds(){
 
 
 
+void Clock::scheduleTransmissionStart(int64_t time, CallbackType callback) {
+    transmissionStartCallbacks.emplace(time, std::move(callback));
+}
+
+void Clock::scheduleTransmissionEnd(int64_t time, CallbackType callback) {
+    transmissionEndCallbacks.emplace(time, std::move(callback));
+}

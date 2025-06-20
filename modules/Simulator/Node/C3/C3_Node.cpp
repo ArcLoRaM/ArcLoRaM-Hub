@@ -18,10 +18,8 @@ void C3_Node::handleCommunication()
 {
 
     #if COMMUNICATION_PERIOD == RRC_UPLINK
-    if (currentState == NodeState::Transmitting)//if we are communicating it means we have something to transmit
+    if (currentState == NodeState::Transmitting)
         if(shouldReplyACK){
-            auto wake_time = std::chrono::steady_clock::now() + std::chrono::milliseconds(common::guardTime);
-            std::this_thread::sleep_until(wake_time);
 
             std::vector<uint8_t> ackPacket;
 
@@ -309,18 +307,18 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
 
             return false;
         }
-        //there should be no interference
-        else if(!Node::receiveMessage(message)){
-            //an interference happened, we don't treat the message
+        //there should be no interference // reference in PhyLayer.cpp now !
+    //     else if(!Node::receiveMessage(message)){
+    //         //an interference happened, we don't treat the message
             
-            sf::Packet receptionStatePacketReceiver;
-            uint16_t senderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
-            receiveMessagePacket receptionState(senderId,nodeId,"interference");
-            receptionStatePacketReceiver<<receptionState;
-            logger.sendTcpPacket(receptionStatePacketReceiver);
+    //         sf::Packet receptionStatePacketReceiver;
+    //         uint16_t senderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
+    //         receiveMessagePacket receptionState(senderId,nodeId,"interference");
+    //         receptionStatePacketReceiver<<receptionState;
+    //         logger.sendTcpPacket(receptionStatePacketReceiver);
 
-            return false;
-       } 
+    //         return false;
+    //    } 
 
     //the node is able to decrypt the packet, but is it a data packet?
     if(message[0]!=common::typeData[0]){

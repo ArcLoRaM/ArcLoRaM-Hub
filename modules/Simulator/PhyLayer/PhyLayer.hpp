@@ -7,7 +7,7 @@
 #include <memory>
 #include <cstdint>
 #include "../Node/Node.hpp" 
-#include "../Clock/Clock.hpp"
+#include "../Node/Clock/Clock.hpp"
 
 class PhyLayer {
 public:
@@ -31,7 +31,11 @@ private:
         int senderId;
         int64_t start;
         int64_t end;
+        bool isInterrupted = false;
+
     };
+
+    std::unordered_map<std::shared_ptr<Node> , std::deque<TransmissionWindow>> transmissionWindowsPerReceiver;
 
     std::vector<TransmissionWindow> activeTransmissions;
 
