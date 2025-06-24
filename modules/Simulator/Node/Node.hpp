@@ -92,7 +92,9 @@ public:
  
 protected:
 
-
+    void logEvent(const std::string& message) {
+        logger.logEvent(nodeId, message);
+    }
     double batteryLevel=3.0;
 
     std::pair<int, int> coordinates ={0,0};//in meters (x,y)

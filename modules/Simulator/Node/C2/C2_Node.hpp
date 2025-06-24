@@ -54,7 +54,7 @@ public:
         slotManager.initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlotsPerModuloNode);
 
         // Build the message string showing the selected slots
-        std::string slotsLogMsg = "Node " + std::to_string(nodeId) + " selected transmission slots: [";
+        std::string slotsLogMsg = "Transmission slots: [";
         const auto &slots = slotManager.getSlots();
 
         for (size_t i = 0; i < slots.size(); ++i)
@@ -67,9 +67,7 @@ public:
         }
         slotsLogMsg += "]";
 
-        // Log the message
-        Log slotLog(slotsLogMsg, true);
-        logger.logMessage(slotLog);
+       //logEvent(slotsLogMsg);
 
         //The node will use the allowed category of slots to transmit
         fixedSlotCategory = infoFromBeaconPhase.getHopCount() % 3;

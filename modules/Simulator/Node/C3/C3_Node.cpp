@@ -45,8 +45,8 @@ void C3_Node::handleCommunication()
     
                 addMessageToTransmit(ackPacket,common::timeOnAirAckPacket);
                 shouldReplyACK=false;    
-
-            adressedPacketTransmissionDisplay(lastSenderId,true);
+                logEvent("SendACK");
+                adressedPacketTransmissionDisplay(lastSenderId,true);
         }
     #endif
 }
@@ -296,8 +296,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
         //todo: could be refactored using the display functions from base ndoe class.
         //Node must listen/communicate and not ransmit  to receive a message
         if(!canNodeReceiveMessage()){
-             Log notlisteninglog("Node "+std::to_string(nodeId)+" not listening, dropped msg"/*+detailedBytesToString( message)*/, true);
-             logger.logMessage(notlisteninglog);
+             
 
             sf::Packet receptionStatePacketReceiver;
             uint16_t senderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
@@ -323,8 +322,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
     //the node is able to decrypt the packet, but is it a data packet?
     if(message[0]!=common::typeData[0]){
         //not a data packet, we don't care
-        Log wrongTypeLog("Node "+std::to_string(nodeId)+" received Incorrecty packet type, dropping", true);
-        logger.logMessage(wrongTypeLog);
+        
         dropAnimationDisplay();
         return false;
     }
@@ -334,15 +332,14 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
 
     if(receiverId!=nodeId){
         //not for us, we don't care
-        Log wrongReceiverLog("Node "+std::to_string(nodeId)+" received a packet not for him, dropping", true);
-        logger.logMessage(wrongReceiverLog);
+       
         dropAnimationDisplay();
         return false;
     }
 
     //we received a packet for us, we should send an ack no matter what happened before (ack can be lost)
     shouldReplyACK=true;
-    
+    logEvent("RcvDATA will ACK");
     //we keep a memory of the packets received with their sender ID and local ID packet (specific to a link).
     lastSenderId=extractBytesFromField(message,"senderGlobalId",common::dataFieldMap);
     lastLocalIDPacket=extractBytesFromField(message,"localIDPacket",common::dataFieldMap);
@@ -357,8 +354,7 @@ bool C3_Node::receiveMessage(const std::vector<uint8_t> message){
     //we have only one C3 node, so we can stop the simulation if we received enough packets
     //if multiple C3, a static variable for Class C3 node should be used to count the total packets received
     if(totalCount>=common::numberPacketsReceivedByC3ToStopSimulation){
-        Log stopSimulationLog("Node "+std::to_string(nodeId)+" received enough packets, stopping simulation", true);
-        logger.logMessage(stopSimulationLog);
+        
         sf::Packet stopPacketReceiver;
         stopSimulationPacket stopPacket(nodeId);
         stopPacketReceiver<<stopPacket;
@@ -383,14 +379,14 @@ bool C3_Node::canNodeReceiveMessage() {
     }
 
     bool C3_Node::canListenFromSleeping() { 
-        logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canListenFromSleeping()", true));
+        // logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canListenFromSleeping()", true));
 
         setCurrentState( NodeState::Listening);
         sf::Packet statePacketReceiver;
         stateNodePacket statePacket(nodeId, "Listen");
         statePacketReceiver<<statePacket;
         logger.sendTcpPacket(statePacketReceiver);
-
+        logEvent("Listen for Data");
 
 
         return true;
@@ -403,8 +399,9 @@ bool C3_Node::canNodeReceiveMessage() {
         stateNodePacket statePacket(nodeId, "Sleep");
         statePacketReceiver<<statePacket;
         logger.sendTcpPacket(statePacketReceiver);
+        logEvent("FallAsleep");
         return true; 
-        }
+    }
 
     bool C3_Node::canSleepFromTransmitting() { 
         
@@ -414,18 +411,20 @@ bool C3_Node::canNodeReceiveMessage() {
         stateNodePacket statePacket(nodeId, "Sleep");
         statePacketReceiver<<statePacket;
         logger.sendTcpPacket(statePacketReceiver);
+        logEvent("FallAsleep");
+
         return true; 
         }
 
     bool C3_Node::canTransmitFromSleeping(){
-        logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canTransmitFromSleeping()", true));
+        // logger.logMessage(Log("C3 "+std::to_string(nodeId)+" enter canTransmitFromSleeping()", true));
         setCurrentState( NodeState::Transmitting);
 
         // sf::Packet statePacketReceiver;
         // stateNodePacket statePacket(nodeId, "Transmit");
         // statePacketReceiver<<statePacket;
         // logger.sendTcpPacket(statePacketReceiver);
-
+        logEvent("WakeUp");
         nodeStateDisplay("Transmit",std::nullopt);
         return true;
         }

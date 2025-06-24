@@ -11,8 +11,6 @@ void Clock::start(){
         logicalTimeMs = 0;
         compteurTick = 0;
         lastProcessedTime = 0;
-        logger.logMessage(Log("Clock started at: " + std::to_string(lastProcessedTime), true));
-
         
         clockThread= std::thread([this]() {
 
@@ -23,6 +21,7 @@ void Clock::start(){
                 
                 //if events are happening too fast, we sleep a bit
                 std::this_thread::sleep_for(std::chrono::milliseconds(tickDurationMs));
+                logger.setCurrentTick(logicalTimeMs);
             }
         });
     }
@@ -91,6 +90,7 @@ void Clock::executeCommunicationInRange(
 
 void Clock::executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, int64_t start, int64_t end) {
     auto it = map.begin();
+    // exclusive of start, inclusive of end
     while (it != map.end() && it->first <= end) {
         if (it->first > start) {
             it->second(); //execute the callback

@@ -18,8 +18,8 @@ void PhyLayer::takeOwnership(std::vector<std::shared_ptr<Node>> nodes)
 
     for(std::shared_ptr<Node> node : nodes){
     
-        Log initialNodeLog(node->initMessage(), true);
-        logger.logMessage(initialNodeLog);
+       
+        logger.logEvent(node->getId(), node->initMessage());
 
         node->setPhyLayer(this); // Set the PhyLayer for each node
     }
@@ -56,7 +56,7 @@ std::vector<std::shared_ptr<Node>> PhyLayer::getReachableNodesForNode(const std:
 void PhyLayer::registerAllNodeEvents(Clock& clk) {
 
     clock = &clk; // Set the clock for scheduling events
-    
+    std::vector<Logger::NodeInfo> nodesInfo;
     for (const auto& ptrNode : nodes) {
         for (const auto& [activationTime, windowNodeState] : ptrNode->getActivationSchedule()) {
             clk.scheduleStateTransition(activationTime, [ptrNode, windowNodeState]() {
@@ -65,7 +65,9 @@ void PhyLayer::registerAllNodeEvents(Clock& clk) {
 
             clk.scheduleCommunicationStep(activationTime, ptrNode);
         }
+        nodesInfo.push_back({ptrNode->getId(), ptrNode->getClassId()});
     }
+    logger.setNodes(nodesInfo); // Set the nodes in the logger
 }
 // Function to get reachable nodes for all nodes
 std::unordered_map<int,std::vector<std::shared_ptr<Node>>> PhyLayer::getReachableNodesForAllNodes() {
@@ -76,13 +78,13 @@ std::unordered_map<int,std::vector<std::shared_ptr<Node>>> PhyLayer::getReachabl
         }   
         allReachableNodes[node->getId()]= (getReachableNodesForNode(node));
     }
-    logger.logMessage(Log("All reachable nodes calculated:", true));
+    logger.logSystem("All reachable nodes calculated:");
     for (const auto& [key, value] : allReachableNodes) {
         std::string msg = "Node " + std::to_string(key) + " can reach: ";
         for (const auto& reachableNode : value) {
             msg += std::to_string(reachableNode->getId()) + " ";
         }
-        logger.logMessage(Log(msg, true));
+        logger.logSystem(msg);
     }
     return allReachableNodes;
 }

@@ -55,9 +55,9 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
-constexpr const int tickIntervalForClock_ms=20; // The tick interval should not be too low
+constexpr const int tickIntervalForClock_ms=5; //the tick interval for the clock, the lower the more realistic but the more CPU intensive the simulation (minimum 1ms)
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
-constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
+constexpr const bool visualiserConnected=false;//set false if you don't want to display the protocol
 
 //-----------------------------------------Communication Mode and  Topology-----------------------------------------
 
@@ -223,7 +223,7 @@ constexpr Topology getCurrentTopology() {
 
 
         //if you decrease too much the duration of the Data ack window, nodes are not able to receive the messages (they start sleeping too early...)
-    constexpr  char* communicationMode = "RRC_Uplink";
+    constexpr  const char* communicationMode = "RRC_Uplink";
     constexpr    unsigned int durationSleepWindowMain = 500;      //ms
     constexpr   unsigned int durationDataWindow = 1100; //ms
     constexpr   unsigned int durationSleepWindowSecondary = 500; //ms

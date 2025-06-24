@@ -353,8 +353,8 @@ void Seed::initialize_RRC_Uplink_Mesh_FromFile()
     auto nodes = deploymentManager.loadDeploymentFromFile(filePath);
     // Take ownership of the nodes
     listNode = std::move(nodes);
-    Log fileReadingLog("Deployment loaded from file: deployment_mesh.simcfg", true);
-    logger.logMessage(fileReadingLog);
+    logger.logSystem("Deployment loaded from file: " + filePath);
+
 }
 
 void Seed::initialize_RRC_Uplink_Line()
@@ -433,7 +433,7 @@ void Seed::initialize_RRC_Uplink_Line_FromFile()
 
     // Take ownership of the nodes
     listNode = std::move(nodes);
-    Log fileReadingLog("Deployment loaded from file: deployment_line.simcfg", true);
-    logger.logMessage(fileReadingLog);
+    logger.logSystem("Deployment loaded from file: Setup/config/deployment_line.simcfg");
+
 }
 #endif

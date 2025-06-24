@@ -143,12 +143,11 @@ void Node::onTimeChange(WindowNodeState proposedState)
                 
                 
              } else {
-                Log failedTransitionLog("Node "+std::to_string(nodeId)+" transition from "+stateToString(currentState)+" to "+stateToString(proposedState)+ " failed", true);
+                logEvent("Failed Transition:"+stateToString(currentState)+" to "+stateToString(proposedState) );
                 //logger.logMessage(failedTransitionLog);
             }
         } else {
-            Log noTransitionLog("Node "+std::to_string(nodeId)+" No valid state transition rule found for proposed state "+std::to_string(static_cast<int>(proposedState))+" and current state "+stateToString(currentState), true);
-            logger.logMessage(noTransitionLog);
+            logEvent("No state transition rule found: from " + stateToString(currentState) + " to " + stateToString(proposedState));
         } })
         .detach(); // Detach the thread to let it run independently
 }

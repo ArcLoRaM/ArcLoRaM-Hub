@@ -1,0 +1,93 @@
+[SYSTEM] Deployment loaded from file: Setup/config/deployment_line.simcfg
+[SYSTEM] All reachable nodes calculated:
+[SYSTEM] Node 3 can reach: 2 
+[SYSTEM] Node 2 can reach: 1 3 
+[SYSTEM] Node 1 can reach: 0 2 
+[SYSTEM] Node 0 can reach: 1 
+[SYSTEM] Simulation started
+[90m[T: 000000][0m | [35mGW 0[0m: Node 0 located at (0,0)Class: 3 started to run | [36mRL 1[0m: Node 1 located at (800,0)Class: 2 started to run | [36mRL 2[0m: Node 2 located at (1600,0)Class: 2 started to run | [36mRL 3[0m: Node 3 located at (2400,0)Class: 2 started to run
+[90m[T: 000495][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Tx Data, SendDATA | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 000595][0m | [35mGW 0[0m: RcvDATA will ACK          | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 001595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 002095][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m: Wakeup to Rx ACK          | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 003195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: NoACKReceived..., FallAsleep | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 003695][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m: Wakeup to Tx Data, SendDATA | [36mRL 3[0m:                          
+[90m[T: 003795][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvData, will ACK        | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 004795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m: FallAsleep, SendDATA      | [36mRL 3[0m:                          
+[90m[T: 005295][0m | [35mGW 0[0m: WakeUp, SendACK           | [36mRL 1[0m: Wakeup to Tx ACK, SendACK | [36mRL 2[0m: Wakeup to Rx ACK          | [36mRL 3[0m:                          
+[90m[T: 005355][0m | [35mGW 0[0m:                           | [36mRL 1[0m:                           | [36mRL 2[0m: RecvACK                   | [36mRL 3[0m:                          
+[90m[T: 006395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m:                          
+[90m[T: 006895][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 007995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: SendDATA, FallAsleep     
+[90m[T: 008495][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 009595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep
+[90m[T: 010095][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 011195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 011695][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 012795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 013295][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m: Wakeup to Tx Data, SendDATA | [36mRL 3[0m:                          
+[90m[T: 013395][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvData, will ACK        | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 014395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m: FallAsleep, SendDATA      | [36mRL 3[0m:                          
+[90m[T: 014895][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m: Wakeup to Tx ACK, SendACK | [36mRL 2[0m: Wakeup to Rx ACK          | [36mRL 3[0m:                          
+[90m[T: 014955][0m | [35mGW 0[0m:                           | [36mRL 1[0m:                           | [36mRL 2[0m: RecvACK                   | [36mRL 3[0m:                          
+[90m[T: 015995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m:                          
+[90m[T: 016495][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 017595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: SendDATA, FallAsleep     
+[90m[T: 018095][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 019195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep
+[90m[T: 019695][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Tx Data, SendDATA | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 019795][0m | [35mGW 0[0m: RcvDATA will ACK          | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 020795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 021295][0m | [35mGW 0[0m: WakeUp, SendACK           | [36mRL 1[0m: Wakeup to Rx ACK          | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 021355][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvACK                   | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 022395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 022895][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 023995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 024495][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 025595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 026095][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 027195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: SendDATA, FallAsleep     
+[90m[T: 027695][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 028795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep
+[90m[T: 029295][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Tx Data, SendDATA | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 029395][0m | [35mGW 0[0m: RcvDATA will ACK          | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 030395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 030895][0m | [35mGW 0[0m: WakeUp, SendACK           | [36mRL 1[0m: Wakeup to Rx ACK          | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 030955][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvACK                   | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 031995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 032495][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 033595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 034095][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 035195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 035695][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 036795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: SendDATA, FallAsleep     
+[90m[T: 037295][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 038395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep
+[90m[T: 038895][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Tx Data, SendDATA | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 038995][0m | [35mGW 0[0m: RcvDATA will ACK          | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 039995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 040495][0m | [35mGW 0[0m: WakeUp, SendACK           | [36mRL 1[0m: Wakeup to Rx ACK          | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 040555][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvACK                   | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 041595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 042095][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 043195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 043695][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 044795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 045295][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 046395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: FallAsleep, SendDATA     
+[90m[T: 046895][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 047995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep
+[90m[T: 048495][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Tx Data, SendDATA | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx Data        
+[90m[T: 048595][0m | [35mGW 0[0m: RcvDATA will ACK          | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 049595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m: FallAsleep               
+[90m[T: 050095][0m | [35mGW 0[0m: WakeUp, SendACK           | [36mRL 1[0m: Wakeup to Rx ACK          | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 050155][0m | [35mGW 0[0m:                           | [36mRL 1[0m: RecvACK                   | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 051195][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 051695][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m: Wakeup to Rx Data         | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 052795][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m: FallAsleep                | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 053295][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 054395][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m:                          
+[90m[T: 054895][0m | [35mGW 0[0m: Listen for Data           | [36mRL 1[0m:                           | [36mRL 2[0m: Wakeup to Rx Data         | [36mRL 3[0m: Wakeup to Tx Data        
+[90m[T: 055995][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m: FallAsleep                | [36mRL 3[0m: SendDATA, FallAsleep     
+[90m[T: 056495][0m | [35mGW 0[0m: WakeUp                    | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: Wakeup to Rx ACK         
+[90m[T: 057595][0m | [35mGW 0[0m: FallAsleep                | [36mRL 1[0m:                           | [36mRL 2[0m:                           | [36mRL 3[0m: NoACKReceived..., FallAsleep

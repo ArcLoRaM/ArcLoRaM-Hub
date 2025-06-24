@@ -11,21 +11,23 @@
 #include "Node/Clock/Clock.hpp"
 #include "Setup/Seed/Seed.hpp"
 #include "Setup/Common.hpp"
-
+#include "Connectivity/TCP/Client.hpp"
 #include "Node/Node.hpp"
 
 
 int main() {
 
-    //todo erase this ?
-    sf::TcpListener listener;
+
 
 
 //---------------------------------System Initialization---------------------------------
     //Logger
-    Logger logger("127.0.0.1",5000);
+    Client tcpClient("127.0.0.1", 54000);
+    Logger logger;
+    logger.setTcpClient(&tcpClient);
+    logger.enableFileOutput("log_output.txt");
+    logger.enableColorOutput(true); 
     logger.start();
-
 
     //visualiser configuration
     sf::Packet sysPacketReceiver;
@@ -60,8 +62,7 @@ int main() {
 
     std::atomic<bool> running(true);
 
-    Log startingLog("Starting Simulation...", true);
-    logger.logMessage(startingLog);
+    logger.logSystem("Simulation started");
 
     // The main thread
     clock.start();
@@ -76,19 +77,18 @@ int main() {
             char c = _getch(); // Get the character
             if (c == 'q') {
                 running = false;
-                Log stoppingLog("q pressed, stopping simulation...", true);
-                logger.logMessage(stoppingLog);
+                logger.logSystem("q pressed,Stopping simulation...");
+             
             }
         }
     }
 
 //---------------------------------End---------------------------------
     clock.stop();
-    Log clockstopLog("Scheduler stopped...", true);
-    logger.logMessage(clockstopLog);
+    logger.logSystem("Clock stopped...");
 
-    Log stoppedLog("Simulation Stopped... Thank you for using ArcLoRaM Simulator", true);
-    logger.logMessage(stoppedLog);
+    logger.logSystem("Simulation stopped... Thank you for using ArcLoRaM Framework!");
+
     logger.stop();//logger must outlive other objects since it's passed as a reference, otherwise unpredictable behavior
 
     return 0;
