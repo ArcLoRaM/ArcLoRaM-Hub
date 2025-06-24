@@ -22,7 +22,7 @@ int main() {
 
 //---------------------------------System Initialization---------------------------------
     //Logger
-    Client tcpClient("127.0.0.1", 54000);
+    Client tcpClient("127.0.0.1", 5000);
     Logger logger;
     logger.setTcpClient(&tcpClient);
     logger.enableFileOutput("log_output.txt");

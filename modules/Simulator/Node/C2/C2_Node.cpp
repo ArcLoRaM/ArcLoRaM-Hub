@@ -32,9 +32,11 @@ void C2_Node::handleCommunication()
 {
 
 #if COMMUNICATION_PERIOD == RRC_UPLINK
+NodeState snapshot = currentState;
 
     if (currentState == NodeState::Communicating)
     {
+    logEvent("HanCom state BEFORE: " + toString(snapshot));
 
         if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory) //if its an DATA slot and we are awake, it means we have to transmit
         {
@@ -42,7 +44,9 @@ void C2_Node::handleCommunication()
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitDataPacket();
                 retransmissionCounterHelper.setIsExpectingAck(true);
-                logEvent("SendDATA");
+                logEvent("HanCom state AFTER: " + toString(currentState));
+
+                logEvent("-SendDATA");
                 adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
         }
 
@@ -53,6 +57,7 @@ void C2_Node::handleCommunication()
             {
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitAckPacket();
+                logEvent("HanCom state AFTER: " + toString(currentState));
                 logEvent("SendACK");
 
             }

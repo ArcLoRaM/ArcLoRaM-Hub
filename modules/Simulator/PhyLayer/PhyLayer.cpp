@@ -69,6 +69,7 @@ void PhyLayer::registerAllNodeEvents(Clock& clk) {
     }
     logger.setNodes(nodesInfo); // Set the nodes in the logger
 }
+
 // Function to get reachable nodes for all nodes
 std::unordered_map<int,std::vector<std::shared_ptr<Node>>> PhyLayer::getReachableNodesForAllNodes() {
     std::unordered_map<int,std::vector<std::shared_ptr<Node>>> allReachableNodes;

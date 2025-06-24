@@ -30,6 +30,8 @@ enum class NodeState {
     Communicating
 };
 
+std::string toString(NodeState state);
+
 //Enum representing the scheduler proposed states for the nodes
 enum class WindowNodeState{
     

@@ -95,9 +95,9 @@ void Logger::start() {
     tcpStopFlag = false;
     loggerThread = std::thread(&Logger::processLogs, this);
 
-    // if (common::visualiserConnected) {
-    //     tcpSenderThread = std::thread(&Logger::processTcpPackets, this);
-    // }
+    if (common::visualiserConnected) {
+        tcpSenderThread = std::thread(&Logger::processTcpPackets, this);
+    }
 }
 
 

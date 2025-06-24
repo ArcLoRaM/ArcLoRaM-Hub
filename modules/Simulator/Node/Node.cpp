@@ -18,7 +18,15 @@ std::string Node::initMessage() const
     return "Node " + std::to_string(nodeId) + " located at (" + std::to_string(coordinates.first) + "," + std::to_string(coordinates.second) + ")";
 }
 
-
+std::string toString(NodeState state) {
+    switch (state) {
+        case NodeState::Transmitting:   return "Transmitting";
+        case NodeState::Listening:      return "Listening";
+        case NodeState::Sleeping:       return "Sleeping";
+        case NodeState::Communicating:  return "Communicating";
+        default:                        return "Unknown";
+    }
+}
 
 void Node::initializeTransitionMap()
 {
