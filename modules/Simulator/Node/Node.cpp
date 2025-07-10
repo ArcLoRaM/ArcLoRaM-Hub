@@ -109,6 +109,9 @@ void Node::nodeStateDisplay(std::string state, std::optional<bool> isCommunicati
     statePacketReceiver << statePacket;
     logger.sendTcpPacket(statePacketReceiver);
 }
+const std::vector<std::pair<int64_t, WindowNodeState>>& Node::getActivationSchedule() const {
+    return activationSchedule;
+}
 
 NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state)
 {
@@ -148,7 +151,6 @@ void Node::onTimeChange(WindowNodeState proposedState)
 
             // Call the transition function (condition function)
             if (it->second()) {
-                
                 
              } else {
                 logEvent("Failed Transition:"+stateToString(currentState)+" to "+stateToString(proposedState) );

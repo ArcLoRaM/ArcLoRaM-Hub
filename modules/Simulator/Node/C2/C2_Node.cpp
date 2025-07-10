@@ -36,29 +36,27 @@ NodeState snapshot = currentState;
 
     if (currentState == NodeState::Communicating)
     {
-    logEvent("HanCom state BEFORE: " + toString(snapshot));
+    
 
         if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory) //if its an DATA slot and we are awake, it means we have to transmit
         {
-
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitDataPacket();
                 retransmissionCounterHelper.setIsExpectingAck(true);
-                logEvent("HanCom state AFTER: " + toString(currentState));
+                logEvent("Tx Data..");
 
-                logEvent("-SendDATA");
+                
                 adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
         }
 
         //otherwise, its an ack slot, we transmit an ACK only if we received a message before
         else
         {
-            if (ackInformation.shouldReplyAck())//need to double check here because the node can also expect an ACK !
+            if (ackInformation.shouldReplyAck())
             {
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitAckPacket();
-                logEvent("HanCom state AFTER: " + toString(currentState));
-                logEvent("SendACK");
+                logEvent("Tx ACK..");
 
             }
 
@@ -847,7 +845,7 @@ bool C2_Node::canCommunicateFromSleeping()
         {
             setCurrentState(NodeState::Communicating);
             nodeStateDisplay("Communicate", true);
-            logEvent("Wakeup to Tx ACK");
+            logEvent("Wakeup:TxACK");
             return true;
         }
 
@@ -857,9 +855,11 @@ bool C2_Node::canCommunicateFromSleeping()
             nodeStateDisplay("Communicate", true);
             // the node is expecting an ACK, so it will wake up to listen
             // logger.logMessage(Log("Node " + std::to_string(nodeId) + " is expecting an ACK, will wake up to listen", true));
-            logEvent("Wakeup to Rx ACK");
+            logEvent("Wakeup:RxACK");
             return true;
         }
+        logEvent("ACKNoAction");
+        return true;
     }
     else
     {
@@ -872,9 +872,9 @@ bool C2_Node::canCommunicateFromSleeping()
                 slotManager.consumeSlot();
                 // we allow the state transition as the node will be sending data
                 setCurrentState(NodeState::Communicating);
-                logEvent("Wakeup to Tx Data");
+                logEvent("Wakeup:TxDATA");
                 nodeStateDisplay("Communicate", false);
-                slotManager.decrementAllSlots();
+                slotManager.decrementAllSlots();//probably stupid computation wise but this is only temporary as soon node will dynamically determine their schedule, not statically
                 return true;
             }
             slotManager.decrementAllSlots();
@@ -886,12 +886,15 @@ bool C2_Node::canCommunicateFromSleeping()
             //but this require to change the scheduling during provisionning...
             setCurrentState(NodeState::Communicating);
             nodeStateDisplay("Communicate", false);
-            logEvent("Wakeup to Rx Data");
+            logEvent("Wakeup:RxDATA");
             return true;
 
         }
+
+        logEvent("DATANoAction");
+        return true;
     }
-    return true;
+    
 }
 
 bool C2_Node::canSleepFromCommunicating()

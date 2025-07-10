@@ -73,6 +73,8 @@
 #include <SFML/Network.hpp> // Assuming this is available
 #include "../TCP/Client.hpp" // Assuming this is available
 
+class Node; // Forward declaration of Node class
+
 class Logger {
 public:
     struct NodeInfo {
@@ -93,7 +95,12 @@ public:
 
 void setNodes(const std::vector<NodeInfo>& nodeInfoList);
 void enableColorOutput(bool enabled);
-    
+void exportCombinedSchedule(
+    const std::vector<std::shared_ptr<Node>>& nodes,
+    const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
+    const std::string& outputFile = "combined_schedule.csv"
+);
+
 private:
     struct LogEntry {
         uint64_t tick;

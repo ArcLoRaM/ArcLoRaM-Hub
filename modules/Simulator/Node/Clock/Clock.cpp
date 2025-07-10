@@ -46,12 +46,12 @@ void Clock::tick() {
     //State transitions...
     executeCallbacksInRange(stateTransitions, lastProcessedTime, logicalTimeMs);
 
-    //Followed by Actual Communication... (to avoid deadlocks, we execute the communication after the state transitions)
+    //Followed by Actual Communication (nodes might or might not transmit packets but in the case they do everybody is able to transmit/receive)...
     executeCommunicationInRange(communicationSteps, lastProcessedTime, logicalTimeMs);
 
     //Transmission start and end callbacks, for interference handling
-    executeCallbacksInRange(transmissionStartCallbacks, lastProcessedTime, logicalTimeMs);
-    executeCallbacksInRange(transmissionEndCallbacks, lastProcessedTime, logicalTimeMs);
+    // executeCallbacksInRange(transmissionStartCallbacks, lastProcessedTime, logicalTimeMs);
+    // executeCallbacksInRange(transmissionEndCallbacks, lastProcessedTime, logicalTimeMs);
 
 
     lastProcessedTime = logicalTimeMs;
@@ -114,4 +114,9 @@ void Clock::scheduleTransmissionStart(int64_t time, CallbackType callback) {
 
 void Clock::scheduleTransmissionEnd(int64_t time, CallbackType callback) {
     transmissionEndCallbacks.emplace(time, std::move(callback));
+}
+
+const std::multimap<int64_t, std::shared_ptr<Node>> &Clock::getCommunicationSteps() const
+{
+    return communicationSteps;
 }

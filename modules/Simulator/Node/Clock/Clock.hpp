@@ -65,6 +65,6 @@ public:
     void scheduleCommunicationStep(int64_t time, std::shared_ptr<Node> node);
     void scheduleTransmissionStart(int64_t time, CallbackType callback);
     void scheduleTransmissionEnd(int64_t time, CallbackType callback);
-
+    const std::multimap<int64_t, std::shared_ptr<Node>>& getCommunicationSteps() const;
 };
 

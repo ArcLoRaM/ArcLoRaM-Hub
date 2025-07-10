@@ -57,6 +57,7 @@ public:
     
   
      
+    const std::vector<std::pair<int64_t, WindowNodeState>>& getActivationSchedule() const;
 
     virtual std::string initMessage() const;//default message to be logged when the node starts
 
@@ -83,15 +84,13 @@ public:
      //add TDMA
      void addActivation( int64_t activationTime, WindowNodeState activationState);
              
-    const std::vector<std::pair<int64_t, WindowNodeState>>& getActivationSchedule() const {
-        return activationSchedule;
-    }
-
+    
     void onTimeChange(WindowNodeState proposedState);
      virtual  int getClassId() const =0;
     //for the moment, no parameters, later we need to add the time_ms
     virtual void handleCommunication()=0;//we separate state transition from the communication logic, this function is called after each state transition
- 
+    static std::string stateToString(NodeState state);
+    static std::string stateToString(WindowNodeState state);
 protected:
 
     void logEvent(const std::string& message) {
@@ -133,8 +132,7 @@ protected:
 
     //Todo: put the state switch here for the GUI
 }
-    static std::string stateToString(NodeState state);
-    static std::string stateToString(WindowNodeState state);
+
 
 
     //we need to define in child classes the state machine

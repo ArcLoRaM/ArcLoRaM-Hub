@@ -66,6 +66,7 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "barrier": "cpp"
+        "barrier": "cpp",
+        "set": "cpp"
     }
 }

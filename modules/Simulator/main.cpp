@@ -49,9 +49,9 @@ int main() {
 
     
 
-    //Clock
+    //Clock (aka as the scheduler)
 
-    Clock clock(logger);//the tick interval should not be too small(<=100) otherwise the simulation has unpredicatable behavior (it's not an optimized scheduler I made here)
+    Clock clock(logger);
 
 
     phyLayer.registerAllNodeEvents(clock);

@@ -57,7 +57,7 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
 constexpr const int tickIntervalForClock_ms=5; //the tick interval for the clock, the lower the more realistic but the more CPU intensive the simulation (minimum 1ms)
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
-constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
+constexpr const bool visualiserConnected=false;//set false if you don't want to display the protocol
 
 //-----------------------------------------Communication Mode and  Topology-----------------------------------------
 
@@ -232,7 +232,7 @@ constexpr Topology getCurrentTopology() {
 
     constexpr int numberPacketsReceivedByC3ToStopSimulation =24;
 
-    constexpr  int totalNumberOfSlotsPerModuloNode=350;//Each node will dispose of these slots to potentially transmit
+    constexpr  int totalNumberOfSlotsPerModuloNode=5;//Each node will dispose of these slots to potentially transmit
     constexpr  int totalNumberOfSlots=totalNumberOfSlotsPerModuloNode*3; //Modulo three TDMA in the simulation -> multiply by three the number of slots.
     //in all the possible slots for transmission, we will choose a percentage of them to transmit
     inline constexpr float transmissionPercentage = 0.7f;
