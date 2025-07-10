@@ -139,10 +139,7 @@ void Node::addActivation(int64_t activationTime, WindowNodeState activationState
 void Node::onTimeChange(WindowNodeState proposedState)
 {
 
-    // TODO: should we put mutex to protect shared ressources?
-    //  Spawn a new thread to handle the state transition asynchronously
-    std::thread([this, proposedState]()
-                {    
+  
         auto key = std::make_pair(proposedState, currentState);
 
         // Check if there is a registered transition function for the proposed and current state
@@ -158,8 +155,8 @@ void Node::onTimeChange(WindowNodeState proposedState)
             }
         } else {
             logEvent("No state transition rule found: from " + stateToString(currentState) + " to " + stateToString(proposedState));
-        } })
-        .detach(); // Detach the thread to let it run independently
+        } 
+        
 }
 
 // todo: wiht Magic Enum, you dont need this anymore

@@ -37,7 +37,6 @@ NodeState snapshot = currentState;
     if (currentState == NodeState::Communicating)
     {
     
-
         if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory) //if its an DATA slot and we are awake, it means we have to transmit
         {
                 isTransmittingWhileCommunicating = true;
@@ -45,8 +44,8 @@ NodeState snapshot = currentState;
                 retransmissionCounterHelper.setIsExpectingAck(true);
                 logEvent("Tx Data..");
 
-                
                 adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
+
         }
 
         //otherwise, its an ack slot, we transmit an ACK only if we received a message before
@@ -56,7 +55,7 @@ NodeState snapshot = currentState;
             {
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitAckPacket();
-                logEvent("Tx ACK..");
+                 logEvent("Tx ACK..");
 
             }
 
@@ -776,7 +775,8 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message)
 
     // is it a data packet and  are we in a data window
     if (message[0] == common::typeData[0] && !isACKSlot)
-    {   logEvent("RecvData, will ACK");
+     {   
+        logEvent("RecvData, will ACK");
         // we received a packet for us, we should send an ack no matter what happened before (ack can be lost so we should not check if we already sent one)
         auto lastLocalIdPacket = extractBytesFromField(message, "localIDPacket", common::dataFieldMap);
         auto lastSenderId = extractBytesFromField(message, "senderGlobalId", common::dataFieldMap);
@@ -804,6 +804,7 @@ bool C2_Node::receiveMessage(const std::vector<uint8_t> message)
 // State Transitions ---------------------------------------------------------------------------------
 bool C2_Node::canCommunicateFromSleeping()
 {
+
     // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
     //  the first state transition, we display rooting in the visualiser if applicable
     if (common::visualiserConnected)
@@ -828,7 +829,7 @@ bool C2_Node::canCommunicateFromSleeping()
     bool showDisplay = true;
     if (currentDataSlotCategory != fixedSlotCategory && currentDataSlotCategory != ((fixedSlotCategory + 1) % 3))
     {
-        // logEvent("Asleep");
+         logEvent("Asleep");
         return true; //returning true makes sense here as the node do not wake up but it's part of the PROTOCOL
     }
 
@@ -921,7 +922,6 @@ bool C2_Node::canSleepFromCommunicating()
 // A node can refuse to change to communicate state if it is not in the right slot category
 bool C2_Node::canSleepFromSleeping()
 {
-
     retransmissionCounterHelper.toggleSecondSleepWindow();
     return true;
 }

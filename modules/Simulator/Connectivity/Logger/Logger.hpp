@@ -102,6 +102,7 @@ void exportCombinedSchedule(
 );
 
 private:
+inline static std::atomic<uint64_t> globalLogSeq{0};
     struct LogEntry {
         uint64_t tick;
         int nodeId;

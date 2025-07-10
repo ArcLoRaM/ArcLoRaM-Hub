@@ -18,10 +18,9 @@ void Clock::start(){
                 
             
                 tick();
-                
+
                 //if events are happening too fast, we sleep a bit
                 std::this_thread::sleep_for(std::chrono::milliseconds(tickDurationMs));
-                logger.setCurrentTick(logicalTimeMs);
             }
         });
     }
@@ -42,19 +41,27 @@ void Clock::tick() {
     tickPacket tickPacket(compteurTick);
     tickPacketReceiver<<tickPacket;
     logger.sendTcpPacket(tickPacketReceiver);
+    // -----------------------------
+    // Phase 1: Execute all transitions (nodes wake up, stay asleep...)
+    // -----------------------------
 
-    //State transitions...
     executeCallbacksInRange(stateTransitions, lastProcessedTime, logicalTimeMs);
-
-    //Followed by Actual Communication (nodes might or might not transmit packets but in the case they do everybody is able to transmit/receive)...
+    
+    // -----------------------------
+    // Phase 2: Execute all communication steps (nodes handle communication)
+    // -----------------------------
     executeCommunicationInRange(communicationSteps, lastProcessedTime, logicalTimeMs);
 
-    //Transmission start and end callbacks, for interference handling
-    // executeCallbacksInRange(transmissionStartCallbacks, lastProcessedTime, logicalTimeMs);
-    // executeCallbacksInRange(transmissionEndCallbacks, lastProcessedTime, logicalTimeMs);
+    // -----------------------------
+    // Phase 3: Packets transmission (deals with physical layer)
+    // -----------------------------
+
+    executeCallbacksInRange(transmissionStartCallbacks, lastProcessedTime, logicalTimeMs);
+    executeCallbacksInRange(transmissionEndCallbacks, lastProcessedTime, logicalTimeMs);
 
 
     lastProcessedTime = logicalTimeMs;
+    logger.setCurrentTick(logicalTimeMs);
 
 }
 
@@ -62,7 +69,6 @@ void Clock::scheduleStateTransition(int64_t activationTime, CallbackType callbac
         //put the callback in the list of events at the given time
         //for one time stamp, there can multiple events (one for each node)
         //emplace and move are used to avoid copying the callback
-        
         stateTransitions.emplace(activationTime, std::move(callback));
     }
 
@@ -79,8 +85,14 @@ void Clock::executeCommunicationInRange(
 {
     auto it = map.begin();
     while (it != map.end() && it->first <= end) {
+        if (it->first <= start) {
+        std::cerr << "❗ Event scheduled at or before already-processed time: " << it->first << " <= " << start << "\n";
+    }
+
+
         if (it->first > start) {
-            it->second->handleCommunication(/*logicalTimeMs*/);
+            it->second->handleCommunication();
+            logger.logEvent(it->second->getId(), "HandleComm");
             it = map.erase(it);
         } else {
             ++it;
@@ -92,6 +104,9 @@ void Clock::executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, i
     auto it = map.begin();
     // exclusive of start, inclusive of end
     while (it != map.end() && it->first <= end) {
+        if (it->first <= start) {
+          std::cerr << "❗ Event scheduled at or before already-processed time: " << it->first << " <= " << start << "\n";
+        }
         if (it->first > start) {
             it->second(); //execute the callback
             it = map.erase(it);

@@ -22,6 +22,10 @@ class Clock {
 
 
 private:
+
+
+
+
     std::atomic<bool> running;
 
 
@@ -57,7 +61,6 @@ public:
         }
 
     void start() ;
-
     void stop();
     // Current time in milliseconds
     int64_t currentTimeInMilliseconds() ;

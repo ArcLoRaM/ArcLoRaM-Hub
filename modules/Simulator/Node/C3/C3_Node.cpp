@@ -45,7 +45,7 @@ void C3_Node::handleCommunication()
     
                 addMessageToTransmit(ackPacket,common::timeOnAirAckPacket);
                 shouldReplyACK=false;    
-                logEvent("SendACK");
+                logEvent("TxACK...");
                 adressedPacketTransmissionDisplay(lastSenderId,true);
         }
     #endif
@@ -386,7 +386,7 @@ bool C3_Node::canNodeReceiveMessage() {
         stateNodePacket statePacket(nodeId, "Listen");
         statePacketReceiver<<statePacket;
         logger.sendTcpPacket(statePacketReceiver);
-        logEvent("Listen for Data");
+        logEvent("WakeUp:Lstn");
 
 
         return true;
@@ -424,7 +424,7 @@ bool C3_Node::canNodeReceiveMessage() {
         // stateNodePacket statePacket(nodeId, "Transmit");
         // statePacketReceiver<<statePacket;
         // logger.sendTcpPacket(statePacketReceiver);
-        logEvent("WakeUp");
+        logEvent("WakeUp:Trsmt");
         nodeStateDisplay("Transmit",std::nullopt);
         return true;
         }

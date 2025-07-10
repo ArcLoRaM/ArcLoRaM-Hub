@@ -130,7 +130,10 @@ void Logger::sendTcpPacket(sf::Packet packet) {
 
 void Logger::logEvent(int nodeId, const std::string& message) {
     std::lock_guard<std::mutex> lock(queueMutex);
-    pendingNodeLogs[nodeId].push_back(message);
+    uint64_t seq = globalLogSeq++;
+    std::ostringstream oss;
+    oss << std::setw(3) << std::setfill('0') << seq << ": " << message;
+    pendingNodeLogs[nodeId].emplace_back(oss.str());
 }
 
 void Logger::setCurrentTick(uint64_t tick) {

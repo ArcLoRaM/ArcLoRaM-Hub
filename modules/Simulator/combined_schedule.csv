@@ -1,61 +1,61 @@
-Timestamp,Node 0,Node 1,Node 2,Node 3
-500, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-1600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-2100,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-3200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-3700, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-4800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-5300,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-6400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-6900, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-8000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-8500,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-9600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-10100, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-11200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-11700,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-12800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-13300, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-14400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-14900,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-16000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-16500, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-17600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-18100,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-19200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-19700, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-20800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-21300,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-22400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-22900, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-24000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-24500,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-25600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-26100, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-27200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-27700,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-28800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-29300, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-30400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-30900,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-32000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-32500, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-33600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-34100,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-35200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-35700, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-36800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-37300,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-38400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-38900, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-40000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-40500,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-41600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-42100, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-43200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-43700,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-44800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-45300, Listen+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-46400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
-46900,Transmit+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm
-48000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+Timestamp,Node 11,Node 10,Node 9,Node 8,Node 7,Node 6,Node 5,Node 4,Node 3,Node 13,Node 0,Node 2,Node 12
+500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+1600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+2100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+3200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+3700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+4800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+5300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+6400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+6900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+8000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+8500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+9600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+10100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+11200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+11700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+12800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+13300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+14400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+14900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+16000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+16500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+17600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+18100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+19200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+19700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+20800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+21300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+22400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+22900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+24000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+24500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+25600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+26100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+27200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+27700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+28800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+29300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+30400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+30900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+32000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+32500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+33600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+34100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+35200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+35700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+36800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+37300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+38400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+38900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+40000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+40500, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+41600, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+42100, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+43200, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+43700, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+44800, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+45300, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Listen+Comm, Communicate+Comm, Communicate+Comm
+46400, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
+46900, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm, Communicate+Comm,Transmit+Comm, Communicate+Comm, Communicate+Comm
+48000, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm, Sleep+Comm
