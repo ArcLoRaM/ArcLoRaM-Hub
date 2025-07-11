@@ -153,29 +153,77 @@ src/Connectivity/Logger/Logger.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/Logger/Logger.cpp.s
 .PHONY : src/Connectivity/Logger/Logger.cpp.s
 
-src/Connectivity/TCP/Client.obj: src/Connectivity/TCP/Client.cpp.obj
-.PHONY : src/Connectivity/TCP/Client.obj
+src/Connectivity/TCP/Control/CommandDispatcher.obj: src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.obj
 
 # target to build an object file
-src/Connectivity/TCP/Client.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj
-.PHONY : src/Connectivity/TCP/Client.cpp.obj
+src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj
 
-src/Connectivity/TCP/Client.i: src/Connectivity/TCP/Client.cpp.i
-.PHONY : src/Connectivity/TCP/Client.i
+src/Connectivity/TCP/Control/CommandDispatcher.i: src/Connectivity/TCP/Control/CommandDispatcher.cpp.i
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.i
 
 # target to preprocess a source file
-src/Connectivity/TCP/Client.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.i
-.PHONY : src/Connectivity/TCP/Client.cpp.i
+src/Connectivity/TCP/Control/CommandDispatcher.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.i
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.cpp.i
 
-src/Connectivity/TCP/Client.s: src/Connectivity/TCP/Client.cpp.s
-.PHONY : src/Connectivity/TCP/Client.s
+src/Connectivity/TCP/Control/CommandDispatcher.s: src/Connectivity/TCP/Control/CommandDispatcher.cpp.s
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.s
 
 # target to generate assembly for a file
-src/Connectivity/TCP/Client.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.s
-.PHONY : src/Connectivity/TCP/Client.cpp.s
+src/Connectivity/TCP/Control/CommandDispatcher.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.s
+.PHONY : src/Connectivity/TCP/Control/CommandDispatcher.cpp.s
+
+src/Connectivity/TCP/Control/CommandListener.obj: src/Connectivity/TCP/Control/CommandListener.cpp.obj
+.PHONY : src/Connectivity/TCP/Control/CommandListener.obj
+
+# target to build an object file
+src/Connectivity/TCP/Control/CommandListener.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj
+.PHONY : src/Connectivity/TCP/Control/CommandListener.cpp.obj
+
+src/Connectivity/TCP/Control/CommandListener.i: src/Connectivity/TCP/Control/CommandListener.cpp.i
+.PHONY : src/Connectivity/TCP/Control/CommandListener.i
+
+# target to preprocess a source file
+src/Connectivity/TCP/Control/CommandListener.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.i
+.PHONY : src/Connectivity/TCP/Control/CommandListener.cpp.i
+
+src/Connectivity/TCP/Control/CommandListener.s: src/Connectivity/TCP/Control/CommandListener.cpp.s
+.PHONY : src/Connectivity/TCP/Control/CommandListener.s
+
+# target to generate assembly for a file
+src/Connectivity/TCP/Control/CommandListener.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.s
+.PHONY : src/Connectivity/TCP/Control/CommandListener.cpp.s
+
+src/Connectivity/TCP/Telemetry/Client.obj: src/Connectivity/TCP/Telemetry/Client.cpp.obj
+.PHONY : src/Connectivity/TCP/Telemetry/Client.obj
+
+# target to build an object file
+src/Connectivity/TCP/Telemetry/Client.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj
+.PHONY : src/Connectivity/TCP/Telemetry/Client.cpp.obj
+
+src/Connectivity/TCP/Telemetry/Client.i: src/Connectivity/TCP/Telemetry/Client.cpp.i
+.PHONY : src/Connectivity/TCP/Telemetry/Client.i
+
+# target to preprocess a source file
+src/Connectivity/TCP/Telemetry/Client.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.i
+.PHONY : src/Connectivity/TCP/Telemetry/Client.cpp.i
+
+src/Connectivity/TCP/Telemetry/Client.s: src/Connectivity/TCP/Telemetry/Client.cpp.s
+.PHONY : src/Connectivity/TCP/Telemetry/Client.s
+
+# target to generate assembly for a file
+src/Connectivity/TCP/Telemetry/Client.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\ARCLORAMSimulator.dir\build.make CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.s
+.PHONY : src/Connectivity/TCP/Telemetry/Client.cpp.s
 
 src/Connectivity/TCP/packets.obj: src/Connectivity/TCP/packets.cpp.obj
 .PHONY : src/Connectivity/TCP/packets.obj
@@ -525,9 +573,15 @@ help:
 	@echo ... src/Connectivity/Logger/Logger.obj
 	@echo ... src/Connectivity/Logger/Logger.i
 	@echo ... src/Connectivity/Logger/Logger.s
-	@echo ... src/Connectivity/TCP/Client.obj
-	@echo ... src/Connectivity/TCP/Client.i
-	@echo ... src/Connectivity/TCP/Client.s
+	@echo ... src/Connectivity/TCP/Control/CommandDispatcher.obj
+	@echo ... src/Connectivity/TCP/Control/CommandDispatcher.i
+	@echo ... src/Connectivity/TCP/Control/CommandDispatcher.s
+	@echo ... src/Connectivity/TCP/Control/CommandListener.obj
+	@echo ... src/Connectivity/TCP/Control/CommandListener.i
+	@echo ... src/Connectivity/TCP/Control/CommandListener.s
+	@echo ... src/Connectivity/TCP/Telemetry/Client.obj
+	@echo ... src/Connectivity/TCP/Telemetry/Client.i
+	@echo ... src/Connectivity/TCP/Telemetry/Client.s
 	@echo ... src/Connectivity/TCP/packets.obj
 	@echo ... src/Connectivity/TCP/packets.i
 	@echo ... src/Connectivity/TCP/packets.s

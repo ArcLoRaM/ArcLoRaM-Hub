@@ -86,26 +86,56 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/Logger/Logger.cpp.s: cmake_for
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/Logger/Logger.cpp.s"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\Logger\Logger.cpp -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\Logger\Logger.cpp.s
 
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/flags.make
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Client.cpp
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Client.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Client.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Client.cpp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/flags.make
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Control/CommandDispatcher.cpp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandDispatcher.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandDispatcher.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandDispatcher.cpp
 
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.i"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Client.cpp > CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Client.cpp.i
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.i"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandDispatcher.cpp > CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandDispatcher.cpp.i
 
-CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.s"
-	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Client.cpp -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Client.cpp.s
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.s"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandDispatcher.cpp -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandDispatcher.cpp.s
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/flags.make
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Control/CommandListener.cpp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandListener.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandListener.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandListener.cpp
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.i"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandListener.cpp > CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandListener.cpp.i
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.s"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Control\CommandListener.cpp -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Control\CommandListener.cpp.s
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/flags.make
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Telemetry/Client.cpp
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Telemetry\Client.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Telemetry\Client.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Telemetry\Client.cpp
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.i"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Telemetry\Client.cpp > CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Telemetry\Client.cpp.i
+
+CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.s"
+	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\Telemetry\Client.cpp -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\Telemetry\Client.cpp.s
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/flags.make
 CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/packets.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\packets.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Connectivity\TCP\packets.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity\TCP\packets.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.i: cmake_force
@@ -120,7 +150,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj
 CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Miscellaneous/PacketTool/PacketTool.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Miscellaneous\PacketTool\PacketTool.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Miscellaneous\PacketTool\PacketTool.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Miscellaneous\PacketTool\PacketTool.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.i: cmake_force
@@ -135,7 +165,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj: CMakeFiles/ARCLORA
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/C1/C1_Node.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\C1\C1_Node.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\C1\C1_Node.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\C1\C1_Node.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.i: cmake_force
@@ -150,7 +180,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj: CMa
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/C2/C2RccUplinkSlotManager.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\C2\C2RccUplinkSlotManager.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\C2\C2RccUplinkSlotManager.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\C2\C2RccUplinkSlotManager.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2RccUplinkSlotManager.cpp.i: cmake_force
@@ -165,7 +195,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj: CMakeFiles/ARCLORA
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/C2/C2_Node.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\C2\C2_Node.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\C2\C2_Node.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\C2\C2_Node.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C2/C2_Node.cpp.i: cmake_force
@@ -180,7 +210,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj: CMakeFiles/ARCLORA
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/C3/C3_Node.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\C3\C3_Node.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\C3\C3_Node.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\C3\C3_Node.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/C3/C3_Node.cpp.i: cmake_force
@@ -195,7 +225,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj: CMakeFiles/ARCLOR
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/Clock/Clock.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\Clock\Clock.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\Clock\Clock.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\Clock\Clock.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Clock/Clock.cpp.i: cmake_force
@@ -210,7 +240,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj: CMakeFiles/ARCLORAMSimul
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/Node.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Node\Node.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Node\Node.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Node\Node.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Node/Node.cpp.i: cmake_force
@@ -225,7 +255,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj: CMakeFiles/ARCLO
 CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/PhyLayer/PhyLayer.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\PhyLayer\PhyLayer.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\PhyLayer\PhyLayer.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\PhyLayer\PhyLayer.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/PhyLayer/PhyLayer.cpp.i: cmake_force
@@ -240,7 +270,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.c
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/DeploymentManager/DeploymentManager.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Setup\DeploymentManager\DeploymentManager.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Setup\DeploymentManager\DeploymentManager.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup\DeploymentManager\DeploymentManager.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/DeploymentManager/DeploymentManager.cpp.i: cmake_force
@@ -255,7 +285,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySele
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/Factories/FactorySelector/FactorySelector.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Factories\FactorySelector\FactorySelector.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Factories\FactorySelector\FactorySelector.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup\Factories\FactorySelector\FactorySelector.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/FactorySelector/FactorySelector.cpp.i: cmake_force
@@ -270,7 +300,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUpl
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Factories\RrcUplinkNodeFactory\RrcUplinkNodeFactory.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Factories\RrcUplinkNodeFactory\RrcUplinkNodeFactory.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup\Factories\RrcUplinkNodeFactory\RrcUplinkNodeFactory.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Factories/RrcUplinkNodeFactory/RrcUplinkNodeFactory.cpp.i: cmake_force
@@ -285,7 +315,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj: CMakeFiles/ARCLORA
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/Seed/Seed.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Seed\Seed.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\Setup\Seed\Seed.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup\Seed\Seed.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/Setup/Seed/Seed.cpp.i: cmake_force
@@ -300,7 +330,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: CMakeFiles/ARCLORAMSimulator.
 CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/includes_CXX.rsp
 CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/main.cpp
 CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: CMakeFiles/ARCLORAMSimulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj"
 	C:\msys64\ucrt64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj -MF CMakeFiles\ARCLORAMSimulator.dir\src\main.cpp.obj.d -o CMakeFiles\ARCLORAMSimulator.dir\src\main.cpp.obj -c C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\main.cpp
 
 CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.i: cmake_force
@@ -314,7 +344,9 @@ CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.s: cmake_force
 # Object files for target ARCLORAMSimulator
 ARCLORAMSimulator_OBJECTS = \
 "CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/Logger/Logger.cpp.obj" \
-"CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj" \
+"CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj" \
+"CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj" \
+"CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj" \
 "CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj" \
 "CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj" \
 "CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj" \
@@ -334,7 +366,9 @@ ARCLORAMSimulator_OBJECTS = \
 ARCLORAMSimulator_EXTERNAL_OBJECTS =
 
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/Logger/Logger.cpp.obj
-exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Client.cpp.obj
+exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandDispatcher.cpp.obj
+exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Control/CommandListener.cpp.obj
+exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/Telemetry/Client.cpp.obj
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Connectivity/TCP/packets.cpp.obj
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Miscellaneous/PacketTool/PacketTool.cpp.obj
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/src/Node/C1/C1_Node.cpp.obj
@@ -353,7 +387,7 @@ exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/build.make
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/linkLibs.rsp
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/objects1.rsp
 exec/ARCLORAMSimulator.exe: CMakeFiles/ARCLORAMSimulator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable exec\ARCLORAMSimulator.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\build\CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable exec\ARCLORAMSimulator.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\ARCLORAMSimulator.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

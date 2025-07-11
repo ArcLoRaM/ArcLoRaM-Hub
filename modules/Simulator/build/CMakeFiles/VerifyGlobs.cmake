@@ -5,7 +5,9 @@
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/*.cpp")
 set(OLD_GLOB
   "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/Logger/Logger.cpp"
-  "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Client.cpp"
+  "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Control/CommandDispatcher.cpp"
+  "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Control/CommandListener.cpp"
+  "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Telemetry/Client.cpp"
   "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/packets.cpp"
   "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Miscellaneous/PacketTool/PacketTool.cpp"
   "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Node/C1/C1_Node.cpp"

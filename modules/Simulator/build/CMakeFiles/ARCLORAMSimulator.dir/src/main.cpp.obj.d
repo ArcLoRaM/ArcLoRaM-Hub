@@ -283,8 +283,7 @@ CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: \
  C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/include/SFML/System/Vector2.inl \
  C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/include/SFML/System/Vector3.hpp \
  C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/include/SFML/System/Vector3.inl \
- C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Client.hpp \
- C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/Common.hpp \
+ C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Connectivity/TCP/Telemetry/Client.hpp \
  C:/msys64/ucrt64/include/c++/14.2.0/utility \
  C:/msys64/ucrt64/include/c++/14.2.0/bits/stl_relops.h \
  C:/msys64/ucrt64/include/c++/14.2.0/functional \
@@ -343,4 +342,6 @@ CMakeFiles/ARCLORAMSimulator.dir/src/main.cpp.obj: \
  C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/Simulator/src/Setup/Common.hpp \
  C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup/Seed/Seed.hpp \
  C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Setup/Common.hpp \
- C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity/TCP/Client.hpp
+ C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity/TCP/Telemetry/Client.hpp \
+ C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity/TCP/Control/CommandDispatcher.hpp \
+ C:\Users\srcla\Desktop\ArcLoRaM\ArcLoRaM-Hub\modules\Simulator\src\Connectivity/TCP/Control/CommandListener.hpp

@@ -16,6 +16,12 @@ public:
     virtual ~BasePacket() = default; // Virtual destructor for polymorphism
 };
 
+
+
+//TELEMETRY PACKETS
+
+
+
 // Packet class declarations
 class systemPacket : public BasePacket {
 public:
@@ -134,5 +140,25 @@ class stopSimulationPacket : public BasePacket {
     friend sf::Packet& operator<<(sf::Packet& packet, const stopSimulationPacket& sp);
     friend sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp);
 };
+
+
+
+
+//CONTROL PACKETS
+
+class launchConfigCommandPacket : public BasePacket {
+
+public:
+    double distanceThreshold;
+    std::string communicationMode;
+    std::string topology;
+    launchConfigCommandPacket(double distanceThreshold = 100, std::string communicationMode = "error", std::string topology = "error");
+    // Future use — optional now
+    std::vector<std::string> configLines; // Raw node lines from .simcfg file
+
+    friend sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
+};
+
 
 #endif // PACKETS_HPP
