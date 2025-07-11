@@ -1,0 +1,19 @@
+Communication Mode,RRC_Uplink
+Number of Nodes,13
+Retransmissions,4
+Total Data Packets Sent,56
+
+ID,Class,HopCount,Packets Sent,Retransmissions,PDR,ListenData,TransmitData,ListenAck,TransmitAck
+12,C2,4,2,0,1,146,2,2,0
+2,C2,1,5,1,0.8,146,5,5,2
+0,C3,0,0,0,0,0,0,-18,18
+13,C2,4,2,0,1,146,2,2,0
+3,C2,1,15,1,0.933333,146,15,15,14
+4,C2,2,5,1,0.8,145,5,5,2
+5,C2,3,2,0,1,146,2,2,4
+6,C2,2,2,0,1,145,2,2,0
+7,C2,4,2,0,1,146,2,2,0
+8,C2,2,11,1,0.909091,145,11,11,8
+9,C2,3,4,0,1,146,4,4,2
+10,C2,3,4,0,1,146,4,4,2
+11,C2,4,2,0,1,146,2,2,0
