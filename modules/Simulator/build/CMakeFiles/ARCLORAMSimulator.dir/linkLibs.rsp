@@ -1,0 +1,1 @@
+  -L"C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/lib"  -lsfml-system -lsfml-network -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
