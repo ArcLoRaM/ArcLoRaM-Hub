@@ -1,3 +1,0 @@
-"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\ARCLORAMSimulator.dir/objects.a
-C:\msys64\ucrt64\bin\ar.exe qc CMakeFiles\ARCLORAMSimulator.dir/objects.a @CMakeFiles\ARCLORAMSimulator.dir\objects1.rsp
-C:\msys64\ucrt64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\ARCLORAMSimulator.dir/objects.a -Wl,--no-whole-archive -o exec\ARCLORAMSimulator.exe -Wl,--out-implib,libARCLORAMSimulator.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ARCLORAMSimulator.dir\linkLibs.rsp
