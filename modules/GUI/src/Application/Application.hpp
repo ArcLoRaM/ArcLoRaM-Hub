@@ -5,6 +5,8 @@
 #include <memory>
 #include "../Network/TcpServer/TcpServer.hpp"
 #include "../Shared/InputManager/InputManager.hpp"
+#include <TGUI/TGUI.hpp>  // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 class Application {
 public:
@@ -22,4 +24,6 @@ private:
 
     TcpServer tcpServer; // Owns the server, lives as long as the application
     InputManager inputManager;
+
+    tgui::Gui gui; // TGUI GUI object
 };

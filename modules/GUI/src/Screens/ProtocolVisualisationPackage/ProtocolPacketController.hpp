@@ -15,7 +15,7 @@ class ProtocolPacketController : public IPacketController {
 
 
     private:
-    //put state and manager as private members of the class, to avoid passing them as parameters
+    //TODO:put state and manager as private members of the class, to avoid passing them as parameters
     void handleSystemPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleTickPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleStateNodePacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);

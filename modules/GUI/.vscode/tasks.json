@@ -1,6 +1,24 @@
 {
     "tasks": [
-           {
+        {
+            "label": "CMake Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                ".",
+                "-B",
+                "build",
+                "-G",
+                "MinGW Makefiles",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "Run ARCLORAMGUI",
             "type": "shell",
             "command": "${workspaceFolder}/build/exec/ARCLORAMGUI.exe",
@@ -38,7 +56,6 @@
                 "isDefault": true
             }
         }
-           
     ],
     "version": "2.0.0"
 }

@@ -37,7 +37,7 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
 
 void ProtocolPacketController::handleSystemPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {
 
-
+    //old serialization way
     systemPacket sp;
     packet >> sp.distanceThreshold >> sp.mode;
     //missing the distance threshold. For the moment it's manually set
@@ -278,7 +278,7 @@ void ProtocolPacketController::handleStopSimulationPacket(sf::Packet& packet,Pro
 
     try {
         CsvMetricWriter writer;
-        writer.writeNetworkMetricsToCsv("network_state.csv", manager, state);
+        writer.writeNetworkMetricsToCsv("output/network_state.csv", manager, state);
         std::cout << "Network state saved to network_state.csv\n";
     } catch (const std::exception& e) {
         std::cerr << "Error writing CSV: " << e.what() << '\n';

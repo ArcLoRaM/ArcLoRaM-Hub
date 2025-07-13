@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/include"
+                "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/SFML-3.0.0/include",
+                "C:/Users/srcla/Desktop/ArcLoRaM/ArcLoRaM-Hub/modules/libraries/TGUI-1.10/include"
 
                 
             ],

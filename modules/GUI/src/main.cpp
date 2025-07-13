@@ -2,6 +2,7 @@
 #include "Shared/RessourceManager/RessourceManager.hpp"
 #include "Application/Application.hpp"
 
+
 int main() {
 
     try {
@@ -15,7 +16,7 @@ int main() {
         app.run();
     }
     catch (const std::exception& e) {
-        std::cerr << "Fatal error: " << e.what() << '\n';
+        std::cerr << "Fatal error : " << e.what() << '\n';
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;

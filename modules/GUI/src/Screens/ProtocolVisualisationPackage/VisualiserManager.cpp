@@ -76,7 +76,7 @@ VisualiserManager::VisualiserManager(ProtocolVisualisationState &state)
                            {
             try {
         CsvMetricWriter writer;
-        writer.writeNetworkMetricsToCsv("network_state.csv", *this, state);
+        writer.writeNetworkMetricsToCsv("output/network_state.csv", *this, state);
         std::cout << "Network state saved to network_state.csv\n";
     } catch (const std::exception& e) {
         std::cerr << "Error writing CSV: " << e.what() << '\n';
