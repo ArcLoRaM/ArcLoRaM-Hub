@@ -1,2 +1,2 @@
-.exec/*.dll
-.exec/*.exe
+build/
+git
