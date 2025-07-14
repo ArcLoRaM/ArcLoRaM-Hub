@@ -16,6 +16,7 @@ public:
     void changeScreen(std::unique_ptr<Screen> newScreen);
 
     sf::RenderWindow& getWindow();
+    tgui::Gui& getGui();  // New method
 
 private:
     sf::RenderWindow window;
@@ -26,4 +27,6 @@ private:
     InputManager inputManager;
 
     tgui::Gui gui; // TGUI GUI object
+        tgui::Theme theme;
+
 };

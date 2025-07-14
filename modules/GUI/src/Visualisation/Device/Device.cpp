@@ -3,6 +3,9 @@
 #include "../../Shared/Config.hpp"
 #include <iostream>
 #include <magic_enum.hpp>
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
+
 
 Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel)
     : nodeId(nodeId), classNode(classNode), centeredPosition(centeredPosition),hopCount(hopCount), batteryLevel(batteryLevel) {
@@ -49,14 +52,19 @@ void Device::updateCoordinatesString()
     textCoordinates = ss.str();
 }
 
-void Device::draw(sf::RenderWindow& window) {
-    window.draw(shape);
+void Device::draw(tgui::CanvasSFML::Ptr canvas) {
+    if(!canvas) {
+        std::cerr << "Canvas is null, cannot draw Device." << std::endl;
+        return;
+    }
+
+    canvas->draw(shape);
 
     if (displayInfoWindow) {
-        window.draw(infoWindow);
-        window.draw(*infoTextId);
-        window.draw(*infoTextBattery);
-        window.draw(*infoTextCoordinates);
+        canvas->draw(infoWindow);
+        canvas->draw(*infoTextId);
+        canvas->draw(*infoTextBattery);
+        canvas->draw(*infoTextCoordinates);
     }
 }
 

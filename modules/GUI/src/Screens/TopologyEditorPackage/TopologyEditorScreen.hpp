@@ -10,12 +10,14 @@
 #include "TopologyEditorState.hpp"
 
 class TopologyEditorScreen : public Screen {
+
 public:
     // Constructor for new topology (empty editor)
-    explicit TopologyEditorScreen(ScreenAction backAction);
+    explicit TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
 
     // Constructor for editing existing topology from file
-    TopologyEditorScreen(const std::string& topologyFilePath, ScreenAction backAction);
+    TopologyEditorScreen(const std::string& topologyFilePath, std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
+    void setupUI(std::vector<std::pair<std::string, ScreenAction>> actions) override;
 
     // Overridden Screen methods
     void handleEvent(InputManager& input) override;
@@ -23,17 +25,10 @@ public:
     void draw(sf::RenderWindow& window) override;
 
 private:
-    // Common initialization code (DRY principle)
-    void initializeUI(ScreenAction backAction);
-    // void loadTopologyFromFile(const std::filesystem::path& filePath);
 
-    sf::View editorView;
-    std::unique_ptr<Button> backButton;
-    
-  
+    sf::View editorView;    
     TopologyEditorState editorState;
     TopologyEditorManager editorManager;
-
-
-
+    
+    void onResize() override;
 };

@@ -2,8 +2,8 @@
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
 
-ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, ScreenAction backAction)
-    : manager(state),
+ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, ScreenAction backAction,tgui::Gui& gui)
+    : Screen(gui),manager(state),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
     tcpServer.setPacketHandler([this](sf::Packet& packet) {
@@ -74,4 +74,8 @@ void ProtocolVisualisationScreen::draw(sf::RenderWindow& window)
     backButton->draw(window);
     manager.draw(window, networkView, state);
 
+}
+
+void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, ScreenAction>> actions)
+{
 }

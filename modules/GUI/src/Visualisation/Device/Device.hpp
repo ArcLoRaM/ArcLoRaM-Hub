@@ -116,7 +116,7 @@ public:
 
     void updateCoordinatesString();
 
-    void draw(sf::RenderWindow& window);
+    void draw(tgui::CanvasSFML::Ptr canvas);
     void update(const InputManager& input);
 
     void setState(DeviceState newState);

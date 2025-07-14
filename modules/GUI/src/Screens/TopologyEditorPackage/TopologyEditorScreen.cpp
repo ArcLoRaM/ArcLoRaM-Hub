@@ -2,28 +2,41 @@
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
 #include "TopologyConfigIO.hpp"
+#include "../../UI/UIFactory/UIFactory.hpp"
+#include <TGUI/TGUI.hpp>  // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
-TopologyEditorScreen::TopologyEditorScreen(ScreenAction backAction)
-    : editorView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
-    , editorManager(editorState)
+TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
+    : Screen(gui),editorView(sf::FloatRect({0, 0}, {0,0}))
+    , editorManager(editorState,gui)
 {
-    initializeUI(backAction);
+    setupUI(actions);
+    editorManager.setupUI(gui,editorView);
 }
 
-TopologyEditorScreen::TopologyEditorScreen(const std::string &topologyFilePath, ScreenAction backAction)
-:editorView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
-    , editorManager(editorState)
+TopologyEditorScreen::TopologyEditorScreen(const std::string &topologyFilePath,std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
+:Screen(gui),editorView(sf::FloatRect({0, 0}, {0,0}))
+    , editorManager(editorState,gui)
 {
 
-    initializeUI(backAction);
+   setupUI(actions);
+   editorManager.setupUI(gui,editorView);
    TopologyConfigIO::read(topologyFilePath,editorState);
 
 }
 
+void TopologyEditorScreen::setupUI(std::vector<std::pair<std::string, ScreenAction>> actions)
+{   
+    gui.removeAllWidgets();
+
+    updateTextSize(0.03f);
+
+    auto picture = tgui::Picture::create("assets/background.jpg");
+    picture->setSize({"100%", "100%"});
+    gui.add(picture);
 
 
-void TopologyEditorScreen::initializeUI(ScreenAction backAction)
-{
+
     constexpr float buttonWidth = 150.f;
     constexpr float buttonHeight = 50.f;
     constexpr float spacingY = 20.f;
@@ -31,25 +44,18 @@ void TopologyEditorScreen::initializeUI(ScreenAction backAction)
 
     float posY = 20.f;
 
-    backButton = std::make_unique<Button>(
-        startX,
-        posY,
-        buttonWidth,
-        buttonHeight,
-        sf::Color(200, 50, 50),
-        "Back",
-        "Arial",
-        false
-    );
-    backButton->setOnClick(backAction);
 
-    
+    auto button = UIFactory::createButton("Back", actions[0].second);
+    button->setSize({"7%", "4%"});
+    button->setPosition({"1%", "1%"});
+    gui.add(button);
 }
+
+
 
 void TopologyEditorScreen::handleEvent(InputManager& input)
 {
-    // Update buttons for hover/click detection
-    if (backButton) backButton->update(input);
+    
 
     // Example of future navigation keys (like in ProtocolVisualisationScreen)
     if (input.isKeyPressed(sf::Keyboard::Scancode::Left)) {
@@ -91,6 +97,10 @@ void TopologyEditorScreen::draw(sf::RenderWindow& window)
 {
     // Switch back to default view for UI buttons
     window.setView(window.getDefaultView());
-    if (backButton) backButton->draw(window);
     editorManager.draw(window,editorView);
+}
+
+void TopologyEditorScreen::onResize()
+{
+    updateTextSize(0.03f);  // Update text size based on new window dimensions
 }

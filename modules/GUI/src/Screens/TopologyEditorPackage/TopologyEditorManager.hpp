@@ -10,12 +10,14 @@
 #include "../../UI/Button/Button.hpp"
 #include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
 #include "../../UI/TypeableInput/TypeableInput.hpp" 
-
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 class TopologyEditorManager {
 
 public:
-    TopologyEditorManager(TopologyEditorState& state);
+    TopologyEditorManager(TopologyEditorState& state,tgui::Gui& gui);
+    void setupUI(tgui::Gui& gui,sf::View& editorView);
     void handleInput( InputManager& input);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window,sf::View& editorView);
@@ -39,24 +41,16 @@ bool isBoundsFullyInsideRect(
 
 private:
 
-    std::optional<sf::Text> coordText;
     std::optional<int> selectedNodeId;
  
-
-    Dropdown<TopologyMode> modeDropdown;
+std::map<EditorMode, tgui::ToggleButton::Ptr> toolButtons;
     TopologyEditorState& state;
+
+
     sf::RectangleShape topologyBounds;
-
-    std::unique_ptr<Button> saveButton;
-    std::unique_ptr<Button> addLinkButton;
-    std::unique_ptr<Button> cutNodeButton;  
-    std::unique_ptr<Button> cutLinkButton;
-    std::unique_ptr<Button> addNodeC1Button;
-    std::unique_ptr<Button> addNodeC2Button;
-    std::unique_ptr<Button> addNodeC3Button;
-    std::unique_ptr<Button> moveNodeButton;
-
-    std::unique_ptr<TypeableInput> typeableInput;
+    //UI
+    tgui::Label::Ptr coordLabel;
+    tgui::CanvasSFML::Ptr canvas;
 
     //broadcast animations
     void startBroadcast(const sf::Vector2f& startPosition, float duration);
