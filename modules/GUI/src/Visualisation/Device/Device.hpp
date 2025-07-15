@@ -5,6 +5,8 @@
 #include <optional>
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
 enum class DeviceState {
     Sleep,

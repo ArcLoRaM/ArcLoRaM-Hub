@@ -12,6 +12,8 @@ public:
     void handleEvent(const std::optional<sf::Event>& event);
     void postUpdate(const sf::RenderWindow& window);
 
+
+    //todo: clean that shit
     sf::Vector2i getMouseScreenPosition() const;
     sf::Vector2f getMouseWorldPosition() const;
     sf::Vector2f getMouseUIScreenPosition() const;
@@ -31,7 +33,8 @@ public:
     const std::u32string& getTextBuffer() const;
     void clearTextBuffer();
 private:
-//you should have only two mouse positin? Check
+
+    
     sf::Vector2i mouseScreenPosition{};
     sf::Vector2f mouseWorldPosition{};
     sf::Vector2f mouseUIScreenPosition{};  // <-- Add this

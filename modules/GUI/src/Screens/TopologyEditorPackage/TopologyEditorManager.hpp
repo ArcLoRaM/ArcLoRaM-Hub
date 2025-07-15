@@ -37,6 +37,9 @@ bool isBoundsFullyInsideRect(
     const sf::FloatRect& rect
 );
 
+    //to do: make getter and setView
+    tgui::CanvasSFML::Ptr canvas;
+
 
 
 private:
@@ -46,16 +49,16 @@ private:
 std::map<EditorMode, tgui::ToggleButton::Ptr> toolButtons;
     TopologyEditorState& state;
 
+    tgui::Gui& gui;
 
     sf::RectangleShape topologyBounds;
     //UI
     tgui::Label::Ptr coordLabel;
-    tgui::CanvasSFML::Ptr canvas;
 
     //broadcast animations
     void startBroadcast(const sf::Vector2f& startPosition, float duration);
     std::vector<std::unique_ptr<BroadcastAnimation>> broadcastAnimations; 
-    void drawRootings(sf::RenderWindow& window);
+    void drawRootings(tgui::CanvasSFML::Ptr canvas);
 
 
 

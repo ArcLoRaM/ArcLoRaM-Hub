@@ -28,7 +28,7 @@ inline sf::ConvexShape createArrowhead(sf::Vector2f position, sf::Vector2f direc
 }
 
 // Function to draw a shaft and multiple arrowheads along the shaft
-inline void drawArrowWithHeads(sf::RenderWindow& window, sf::Vector2f start, sf::Vector2f end, float headSpacing) {
+inline void drawArrowWithHeads(tgui::CanvasSFML::Ptr canvas, sf::Vector2f start, sf::Vector2f end, float headSpacing) {
     // Calculate the direction vector and length of the arrow
     sf::Vector2f direction = end - start;
     float totalLength = std::sqrt(direction.x * direction.x + direction.y * direction.y);
@@ -58,7 +58,7 @@ inline void drawArrowWithHeads(sf::RenderWindow& window, sf::Vector2f start, sf:
     shaft.setPoint(2, shaftEnd2);
     shaft.setPoint(3, shaftEnd1);
     shaft.setFillColor(sf::Color::Yellow);
-    window.draw(shaft);
+    canvas->draw(shaft);
 
     // Place arrowheads along the shaft
     float currentLength = headSpacing; // Start after the first headSpacing
@@ -68,7 +68,7 @@ inline void drawArrowWithHeads(sf::RenderWindow& window, sf::Vector2f start, sf:
 
         // Create and draw the arrowhead
         sf::ConvexShape arrowhead = createArrowhead(headPosition, direction, headLength, headWidth);
-        window.draw(arrowhead);
+        canvas->draw(arrowhead);
 
         // Move to the next position
         currentLength += headSpacing;

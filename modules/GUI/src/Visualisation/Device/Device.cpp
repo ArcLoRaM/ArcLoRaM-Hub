@@ -3,8 +3,7 @@
 #include "../../Shared/Config.hpp"
 #include <iostream>
 #include <magic_enum.hpp>
-#include <TGUI/TGUI.hpp> // TGUI header
-#include <TGUI/Backend/SFML-Graphics.hpp>
+
 
 
 Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel)

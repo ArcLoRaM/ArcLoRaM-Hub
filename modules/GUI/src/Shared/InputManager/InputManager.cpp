@@ -90,6 +90,8 @@ void InputManager::postUpdate(const sf::RenderWindow &window)
     doubleClickedMouseButtons.clear();
 }
 
+
+//honestly This is super messy
 sf::Vector2i InputManager::getMouseScreenPosition() const
 {
     return mouseScreenPosition;

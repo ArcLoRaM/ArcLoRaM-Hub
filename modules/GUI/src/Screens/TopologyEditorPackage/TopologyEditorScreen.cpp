@@ -56,19 +56,17 @@ void TopologyEditorScreen::setupUI(std::vector<std::pair<std::string, ScreenActi
 void TopologyEditorScreen::handleEvent(InputManager& input)
 {
     
-
-    // Example of future navigation keys (like in ProtocolVisualisationScreen)
     if (input.isKeyPressed(sf::Keyboard::Scancode::Left)) {
-        editorView.move({-10.f, 0.f});
+        editorView.move({-20.f, 0.f});
     }
     if (input.isKeyPressed(sf::Keyboard::Scancode::Right)) {
-        editorView.move({10.f, 0.f});
+        editorView.move({20.f, 0.f});
     }
     if (input.isKeyPressed(sf::Keyboard::Scancode::Up)) {
-        editorView.move({0.f, -10.f});
+        editorView.move({0.f, -20.f});
     }
     if (input.isKeyPressed(sf::Keyboard::Scancode::Down)) {
-        editorView.move({0.f, 10.f});
+        editorView.move({0.f, 20.f});
     }
 
     float wheelDelta = input.getMouseWheelDelta();
@@ -96,11 +94,14 @@ void TopologyEditorScreen::update(float deltaTime, InputManager& input)
 void TopologyEditorScreen::draw(sf::RenderWindow& window)
 {
     // Switch back to default view for UI buttons
-    window.setView(window.getDefaultView());
     editorManager.draw(window,editorView);
 }
 
 void TopologyEditorScreen::onResize()
 {
     updateTextSize(0.03f);  // Update text size based on new window dimensions
+    auto size =editorManager.canvas->getSize();
+    editorView.setSize(size);
+    editorView.setCenter(size / 2.f);
+    editorManager.canvas->setView(editorView);
 }

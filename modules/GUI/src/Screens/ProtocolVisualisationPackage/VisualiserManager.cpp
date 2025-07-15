@@ -360,19 +360,20 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
     window.setView(networkView);
 
     if (routingDisplayEnabled)
-        drawRootings(window);
+        // drawRootings(window);
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-for (auto& [id, device] : devices) {
-    device->draw(window);
-}
+    for (auto& [id, device] : devices) {
+        // device->draw(window);
+    }
 }
 
     {
         std::lock_guard<std::mutex> lock(arrowsMutex);
         for (auto &arrow : arrows)
-            arrow->draw(window);
+            // arrow->draw(window);
+            auto a=2;
     }
 
     {
@@ -443,7 +444,7 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
 
             if (foundPos)
             {
-                drawArrowWithHeads(window, start, end, 35.f);
+                // drawArrowWithHeads(window, start, end, 35.f);
             }
         }
     }
