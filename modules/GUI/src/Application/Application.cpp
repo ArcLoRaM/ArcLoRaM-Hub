@@ -38,7 +38,7 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         std::vector<std::pair<std::string, ScreenAction>> actions = {
             { "Back", backToHome }
         };
-       changeScreen(std::make_unique<TopologyEditorScreen>("output/topology_config.txt", actions,gui));
+       changeScreen(std::make_unique<TopologyEditorScreen>( actions,gui,"Edit"));
     }},
     { "Network Visualisation", [this, homePageActions]() {
         auto backToHome = [this, homePageActions]() {

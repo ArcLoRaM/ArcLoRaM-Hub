@@ -67,10 +67,23 @@ void Device::draw(tgui::CanvasSFML::Ptr canvas) {
     }
 }
 
-void Device::update(const InputManager& input) {
-    sf::Vector2f mouseWorldPos = input.getMouseWorldPosition();
+void Device::update(const InputManager& input,const tgui::Gui& gui,const tgui::CanvasSFML::Ptr& canvas) {
+
+
+        // 1. Get raw mouse position in window
+    sf::Vector2i pixelPos = input.getMouseScreenPosition();  // <- your sf::RenderWindow
+
+    // 2. Map to GUI layout space (e.g. %/px positioning)
+    sf::Vector2f guiPos = gui.mapPixelToCoords(pixelPos);
+
+    // 3. Subtract canvas position to get local canvas coords
+    sf::Vector2f canvasLocal = guiPos - sf::Vector2f(canvas->getAbsolutePosition());
+
+    // 4. Convert to view/world space inside the canvas
+    sf::Vector2f worldCoords = canvas->mapPixelToCoords(canvasLocal);
+
     bool wasHovered = isHovered;
-    isHovered = shape.getGlobalBounds().contains(mouseWorldPos);
+    isHovered = shape.getGlobalBounds().contains(worldCoords);
 
     // Visual feedback (hover effect)
     if (isHovered && !wasHovered) {
@@ -84,7 +97,7 @@ void Device::update(const InputManager& input) {
         displayInfoWindow = !displayInfoWindow;
 
         if (displayInfoWindow) {
-            infoWindow.setPosition(mouseWorldPos + sf::Vector2f(10, 10));
+            infoWindow.setPosition(shape.getPosition()+shape.getRadius() * 2.f * sf::Vector2f(0.5f, 0.5f)+ sf::Vector2f(20, 20));
             infoTextId->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 10));
             infoTextBattery->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 30));
             infoTextCoordinates->setPosition(infoWindow.getPosition() + sf::Vector2f(10, 50));

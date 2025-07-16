@@ -16,7 +16,7 @@ public:
     explicit TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
 
     // Constructor for editing existing topology from file
-    TopologyEditorScreen(const std::string& topologyFilePath, std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
+    TopologyEditorScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui,const std::string& action);
     void setupUI(std::vector<std::pair<std::string, ScreenAction>> actions) override;
 
     // Overridden Screen methods

@@ -16,7 +16,7 @@ public:
     static tgui::ComboBox::Ptr createEnumComboBox(const tgui::Layout2d& size = {"30%", "5%"});
     static tgui::Label::Ptr createLabel(const std::string& text);
     static tgui::ToggleButton::Ptr createToggleButton(const std::string& text);
-
+    static tgui::MessageBox::Ptr createMessageBox(const std::string& title, const std::string& message, const std::vector<std::string>& buttons = {"OK"});
     // tgui::Label::Ptr createLabel(const std::string& text);
     // tgui::EditBox::Ptr createEditBox(const std::string& defaultText = "");
     // tgui::CheckBox::Ptr createCheckBox(const std::string& label, bool defaultState = false);
@@ -25,7 +25,12 @@ public:
 
     static void applyRenderer(tgui::Widget::Ptr widget, const std::string& section);
 
-
+    static tgui::ChildWindow::Ptr createEditWithLabelPopup(
+        const std::string& title,
+        const std::string& labelText,
+        const std::string& defaultText ,
+        const std::string&buttonText,
+        const std::function<void(const std::string&)>& callback);
 private:
     static inline tgui::Theme* s_theme = nullptr; // pointer to shared theme
 };

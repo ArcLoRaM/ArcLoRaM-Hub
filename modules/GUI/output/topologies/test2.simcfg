@@ -1,0 +1,4 @@
+MODE RRC_Uplink
+NODE 3 C2 758 332 nextHop=2 hopCount=2
+NODE 2 C2 659 531 nextHop=1 hopCount=1
+NODE 1 C3 451 359

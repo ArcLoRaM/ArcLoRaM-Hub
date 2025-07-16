@@ -13,7 +13,7 @@
 class TopologyConfigIO {
 public:
     // Write current topology to a file
-    static void write(const std::string& path,
+    static bool write(const std::string& path,
                       const std::unordered_map<int, std::unique_ptr<Device>>& nodes,
                       const std::unordered_map<int, std::unordered_set<int>>& routings,
                       TopologyMode mode);

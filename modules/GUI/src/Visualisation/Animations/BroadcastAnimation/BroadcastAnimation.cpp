@@ -31,9 +31,9 @@ void BroadcastAnimation::update() {
     circle.setOrigin(newOrigin); // Set the origin to the center of the circle
 }
 
-void BroadcastAnimation::draw(sf::RenderWindow& window) const {
+void BroadcastAnimation::draw(tgui::CanvasSFML::Ptr canvas) const {
     if (!isFinished()) {
-        window.draw(circle);
+        canvas->draw(circle); // Draw the circle on the canvas
     }
 }
 

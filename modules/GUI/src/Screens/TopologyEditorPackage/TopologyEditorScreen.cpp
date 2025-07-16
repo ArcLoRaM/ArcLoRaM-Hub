@@ -14,16 +14,51 @@ TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, Sc
     editorManager.setupUI(gui,editorView);
 }
 
-TopologyEditorScreen::TopologyEditorScreen(const std::string &topologyFilePath,std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
+TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui,const std::string& action)
 :Screen(gui),editorView(sf::FloatRect({0, 0}, {0,0}))
     , editorManager(editorState,gui)
 {
 
    setupUI(actions);
    editorManager.setupUI(gui,editorView);
-   TopologyConfigIO::read(topologyFilePath,editorState);
+   if(action=="Edit"){
+    //openFile
+    auto targetDir = std::filesystem::path("output/topologies");
+    auto openFileDialog = tgui::FileDialog::create("Open file", "Open");
+    openFileDialog->setMultiSelect(false);
+    openFileDialog->setPath(targetDir.string());  // Set default dir
+    openFileDialog->setFileTypeFilters({ {"Simulation File", {"*.simcfg"}} }, 1);
+    openFileDialog->onFileSelect([this,&gui](const std::vector<tgui::Filesystem::Path>& paths){
+       
+        if (!paths.empty()) {
+            if(TopologyConfigIO::read(paths[0].asString().toStdString(), editorState)){
+                auto currentMode = editorState.getTopologyMode();
+                std::string label = std::string(magic_enum::enum_name(currentMode));
+                if (editorManager.modeDropdown->contains(label)) editorManager.modeDropdown->setSelectedItem(label);
+                   
+            }
+            else{
+                auto errorBox = UIFactory::createMessageBox("Error", "Failed to load topology configuration.");
+                errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                    if(button == "OK" ){
+                        msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                    } 
+                });
+                gui.add(errorBox);
+            }
 
-}
+        }
+    });
+    openFileDialog->setTitle("Open Topology Configuration");
+    openFileDialog->setSize({"50%", "50%"});
+    openFileDialog->setPosition({"25%", "25%"});
+    gui.add(openFileDialog);
+    unsigned int textSize = 0.015f * gui.getView().getRect().height;  // e.g. 2.5% of height
+    openFileDialog->setTextSize(textSize);
+    openFileDialog->getRenderer()->setTextSize(textSize);
+    }
+    
+}   
 
 void TopologyEditorScreen::setupUI(std::vector<std::pair<std::string, ScreenAction>> actions)
 {   

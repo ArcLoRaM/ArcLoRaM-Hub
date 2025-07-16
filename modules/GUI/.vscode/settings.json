@@ -62,6 +62,15 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "cstdarg": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "cstring": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "regex": "cpp",
+        "future": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp"
     }
 }

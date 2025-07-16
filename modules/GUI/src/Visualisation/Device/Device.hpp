@@ -119,7 +119,7 @@ public:
     void updateCoordinatesString();
 
     void draw(tgui::CanvasSFML::Ptr canvas);
-    void update(const InputManager& input);
+    void update(const InputManager& input,const tgui::Gui& gui,const tgui::CanvasSFML::Ptr& canvas);
 
     void setState(DeviceState newState);
 

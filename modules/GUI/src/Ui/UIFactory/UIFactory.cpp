@@ -16,7 +16,23 @@ tgui::ToggleButton::Ptr UIFactory::createToggleButton(const std::string& text) {
         button->setRenderer(s_theme->getRenderer("ToggleButton"));
     return button;
 }
+
+tgui::MessageBox::Ptr UIFactory::createMessageBox(const std::string &title, const std::string &message, const std::vector<std::string> &buttons)
+{
+    auto messageBox = tgui::MessageBox::create(title, message);
+    for( const auto &button : buttons) {
+        messageBox->addButton(button);
+    }
+    messageBox->setButtonAlignment(tgui::HorizontalAlignment::Right);
+    messageBox->setSize({"60%", "40%"});
+    messageBox->setPosition({"20%", "20%"});
     
+    return messageBox;
+
+
+
+}
+
 tgui::EditBox::Ptr UIFactory::createTypeableInput(const std::string& defaultText, const tgui::Layout2d& size) {
     auto editBox = tgui::EditBox::create();
     editBox->setSize(size);
@@ -51,6 +67,40 @@ void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string& secti
         widget->setRenderer(s_theme->getRenderer(section));
 }
 
+tgui::ChildWindow::Ptr UIFactory::createEditWithLabelPopup(const std::string &title, const std::string &labelText, const std::string &defaultText,const std::string&buttonText,const std::function<void(const std::string&)>& callback)
+{
+   auto popup = tgui::ChildWindow::create(title);
+   popup->setTitleButtons(tgui::ChildWindow::TitleButton::Close);
+
+    popup->setSize({"35%", "18%"});
+    popup->setPosition({"32.5%", "41%"});
+    popup->setTitleAlignment(tgui::ChildWindow::TitleAlignment::Center);
+    popup->setResizable(true);
+
+    auto editBox = createTypeableInput(defaultText,{"60%", "25%"});
+    editBox->setDefaultText("Enter text...");
+    editBox->setText(defaultText);
+    editBox->setPosition({"5%", "25%"});
+    popup->add(editBox);
+
+    auto label = createLabel(labelText);
+    label->setSize({"30%", "25%"});
+    label->setPosition({"70%", "25%"});
+    label->setHorizontalAlignment(tgui::HorizontalAlignment::Center);
+    label->setText(".simcfg");
+    popup->add(label);
+
+
+    // Create Button
+    auto button = createButton(buttonText, [editBox, callback]() {
+        callback(editBox->getText().toStdString());
+    });
+    button->setSize({"30%", "25%"});
+    button->setPosition({"35%", "65%"});
+    popup->add(button);
+    
+    return popup;
+}
 
 tgui::Label::Ptr UIFactory::createLabel(const std::string& text) {
     auto label = tgui::Label::create(text);

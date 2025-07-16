@@ -304,7 +304,7 @@ void VisualiserManager::update(InputManager &inputManager)
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
 for (auto& [id, device] : devices) {
-    device->update(inputManager);
+    // device->update(inputManager);
 }
     }
 }
@@ -379,7 +379,8 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
     {
         std::lock_guard<std::mutex> lock(broadcastAnimationsMutex);
         for (auto &animation : broadcastAnimations)
-            animation->draw(window);
+            // animation->draw(window);
+            auto a=2;
     }
 
     {

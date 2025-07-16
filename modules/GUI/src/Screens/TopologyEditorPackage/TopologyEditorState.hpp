@@ -108,7 +108,7 @@ public:
 private:
     
     EditorMode currentEditorMode{EditorMode::Idle};
-    TopologyMode currentMode{TopologyMode::RRC_Uplink};
+    TopologyMode currentMode;
 
 
 

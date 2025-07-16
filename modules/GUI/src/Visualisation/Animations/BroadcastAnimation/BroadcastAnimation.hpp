@@ -2,7 +2,8 @@
 #define BROADCASTANIMATION_HPP
 
 #include <SFML/Graphics.hpp>
-
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 class BroadcastAnimation {
 public:
     // Constructor
@@ -12,7 +13,7 @@ public:
     void update();
 
     // Draw the animation
-    void draw(sf::RenderWindow& window) const;
+    void draw(tgui::CanvasSFML::Ptr canvas) const;
 
     // Check if the animation is finished
     bool isFinished() const;

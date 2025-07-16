@@ -4,7 +4,7 @@
 #include "../../Shared/Config.hpp"
 #include "../../Shared/Helper.hpp"
 #include "TopologyConfigIO.hpp"
-
+#include <filesystem>  // C++17
 #include "../../UI/UIFactory/UIFactory.hpp"
 
 TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state, tgui::Gui &gui)
@@ -20,60 +20,125 @@ void TopologyEditorManager::setupUI(tgui::Gui &gui, sf::View &editorView)
     gui.add(coordLabel);
 
     // Create a ComboBox for TopologyMode selection
-    auto comboBox = UIFactory::createEnumComboBox({"15%", "5%"});
-    comboBox->setPosition({"9%", "2%"});
+    modeDropdown = UIFactory::createEnumComboBox({"15%", "5%"});
+    modeDropdown->setPosition({"9%", "2%"});
 
     // Add each enum value by name
     for (auto mode : magic_enum::enum_values<TopologyMode>())
     {
         std::string label = std::string(magic_enum::enum_name(mode));
-        comboBox->addItem(label, label);
+        modeDropdown->addItem(label, label);
     }
 
-    comboBox->onItemSelect([this, comboBox]
+    modeDropdown->onItemSelect([this]
                            {
-        auto selected = comboBox->getSelectedItem();
+        resetToggleButtons();
+        auto selected = modeDropdown->getSelectedItem();
          if (auto modeOpt = magic_enum::enum_cast<TopologyMode>(selected.toStdString())) {
             state.setTopologyMode(*modeOpt);
              std::cout << "Selected mode: " << selected.toStdString() << std::endl;
          } });
-    gui.add(comboBox);
 
-    auto saveButton = UIFactory::createButton("Save",
-                                              [this]
-                                              {
-                                                  //   std::string filename = fileNameBox->getText().toStdString() + ".simcfg";
-                                                  //   TopologyConfigIO::write(filename, state.getNodes(), state.getRoutings(), state.getTopologyMode());
-                                              });
-    saveButton->setSize({"7%", "4%"});
-    saveButton->setPosition({"1%", "7%"});
-    gui.add(saveButton);
+    modeDropdown->onFocus([this]
+                           {
+        resetToggleButtons();
+                           });
+    gui.add(modeDropdown);
 
-    std::vector<std::pair<std::string, EditorMode>> toolData = {
-        {"C1", EditorMode::AddingC1Node},
-        {"C2", EditorMode::AddingC2Node},
-        {"C3", EditorMode::AddingC3Node},
-        {"Add Link", EditorMode::AddingLink},
-        {"Cut Node", EditorMode::CuttingNode},
-        {"Cut Link", EditorMode::CuttingLink},
-        {"Move Node", EditorMode::MovingNode}};
+    auto saveButton = UIFactory::createButton("Save",[this, &gui]{
+        resetToggleButtons();
+        if(state.getNodes().empty()) {
+            auto errorBox = UIFactory::createMessageBox("Error", "No nodes to save.");
+            errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                if(button == "OK" ){
+                    msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                } 
+            });
+            gui.add(errorBox);
+            return;
+        }
 
-    const float basePercent = 20.f;
-    const float percentStep = 6.f;
-    const tgui::String xPos = "1%";
-    const tgui::String sizeX = "7%";
-    const tgui::String sizeY = "4.5%";
+        if((modeDropdown->getSelectedItem()).empty()) {
+            auto errorBox = UIFactory::createMessageBox("Error", "Please select a topology mode.");
+            errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                if(button == "OK" ){
+                    msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                } 
+            });
+            gui.add(errorBox);
+            return;
+        }
 
-    for (std::size_t i = 0; i < toolData.size(); ++i)
-    {
-        const auto &[label, mode] = toolData[i];
 
-        auto button = UIFactory::createToggleButton(label);
-        button->setSize({sizeX, sizeY});
-        button->setPosition({xPos, tgui::String(std::to_string(basePercent + i * percentStep) + "%")});
+        //TODO: put more check control on the topology (tree type for RRC Uplink, at least one C3....), no circle rooting...
+        auto targetDir = std::filesystem::path("output/topologies");
+        
+        // Auto-create directory if it doesn't exist
+        if (!std::filesystem::exists(targetDir))
+            std::filesystem::create_directories(targetDir);
 
-        button->onClick([this, mode, button]
-                        {
+        //saveFileDialog
+        auto dialog = tgui::FileDialog::create("Save Topology", "Save");
+        dialog->setFileMustExist(false);
+        dialog->setPath(targetDir.string());  // Set default dir
+        dialog->setFilename("topology.simcfg");
+        // dialog->setFileTypeFilters( {{ "Simulation Config (*.simcfg)", "*.simcfg" }});
+        dialog->setTitle("Save Topology Configuration");
+        dialog->setSize({"50%", "50%"});
+        dialog->setPosition({"25%", "25%"});
+        dialog->setFileTypeFilters({ {"Simulation File", {"*.simcfg"}} }, 0);
+      //convert "2%" to pixels based on window height
+        dialog->onFileSelect([this,&gui](const tgui::String& filePath) {
+            if(!TopologyConfigIO::write(filePath.toStdString(), state.getNodes(), state.getRoutings(), state.getTopologyMode())){
+                auto errorBox = UIFactory::createMessageBox("Incorrect Topology", "An Invalid file was created");
+                errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                if(button == "OK" ){
+                    msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                } 
+            });
+            gui.add(errorBox);
+            return;
+            };
+        });
+
+        gui.add(dialog);
+        //after add
+        unsigned int textSize = 0.015f * gui.getView().getRect().height;  // e.g. 2.5% of height
+        dialog->setTextSize(textSize);
+        dialog->getRenderer()->setTextSize(textSize);
+
+    });
+
+
+saveButton->setSize({"7%", "4%"});
+saveButton->setPosition({"1%", "7%"});
+gui.add(saveButton);
+
+std::vector<std::pair<std::string, EditorMode>> toolData = {
+    {"C1", EditorMode::AddingC1Node},
+    {"C2", EditorMode::AddingC2Node},
+    {"C3", EditorMode::AddingC3Node},
+    {"Add Link", EditorMode::AddingLink},
+    {"Cut Node", EditorMode::CuttingNode},
+    {"Cut Link", EditorMode::CuttingLink},
+    {"Move Node", EditorMode::MovingNode}};
+
+const float basePercent = 20.f;
+const float percentStep = 6.f;
+const tgui::String xPos = "1%";
+const tgui::String sizeX = "9%";
+const tgui::String sizeY = "5.5%";
+
+for (std::size_t i = 0; i < toolData.size(); ++i)
+{
+    const auto &[label, mode] = toolData[i];
+
+    auto button = UIFactory::createToggleButton(label);
+    button->setSize({sizeX, sizeY});
+    button->setPosition({xPos, tgui::String(std::to_string(basePercent + i * percentStep) + "%")});
+
+    button->onClick([this, mode, button]
+                    {
         if (state.getEditorMode() == mode) {
             // Toggle off
             state.setEditorMode(EditorMode::Idle);
@@ -82,67 +147,81 @@ void TopologyEditorManager::setupUI(tgui::Gui &gui, sf::View &editorView)
             // Toggle on and unpress others
             for (auto& [otherMode, btn] : toolButtons)
                 btn->setDown(false);
-
             button->setDown(true);
             state.setEditorMode(mode);
             state.resetLink();
         } });
 
-        gui.add(button);
-        toolButtons[mode] = button;
+    gui.add(button);
+    toolButtons[mode] = button;
+}
+
+auto rangeButton = UIFactory::createButton("Range",[this](){
+    for(auto& [_,node] : state.getNodes()) {
+        startBroadcast(node->getCenteredPosition(), 2.f); 
     }
+});
+rangeButton->setSize({"7%", "4%"});
+rangeButton->setPosition({"1%", "70%"});
 
-    // TODO: button to display the range aka broadcast
+gui.add(rangeButton);
 
-    // for pure SFML content (nodes, rootings...)
-    canvas = tgui::CanvasSFML::create();
-    canvas->setSize({"85%", "85%"});
-    canvas->setPosition({"13%", "13%"});
-    canvas->clear(tgui::Color(30, 30, 30));
-    gui.add(canvas);
+// for pure SFML content (nodes, rootings...)
+canvas = tgui::CanvasSFML::create();
+canvas->setSize({"85%", "85%"});
+canvas->setPosition({"13%", "13%"});
+canvas->clear(tgui::Color(30, 30, 30));
+gui.add(canvas);
 
-    //we need to fit the view to the canvas dimensions.
-    editorView.setCenter({canvas->getAbsolutePosition().x+canvas->getSize().x/2,canvas->getAbsolutePosition().y+canvas->getSize().y/2} );
-    editorView.setSize({canvas->getSize().x,canvas->getSize().y});
-    canvas->setView(editorView);
+// we need to fit the view to the canvas dimensions.
+editorView.setCenter({canvas->getAbsolutePosition().x + canvas->getSize().x / 2, canvas->getAbsolutePosition().y + canvas->getSize().y / 2});
+editorView.setSize({canvas->getSize().x, canvas->getSize().y});
+canvas->setView(editorView);
+
 }
 
 void TopologyEditorManager::handleInput(InputManager &input)
 {
 
-    sf::Vector2i mouseWorld = input.getMouseScreenPosition();
-    tgui::Vector2f guiMousePos = gui.mapPixelToCoords(mouseWorld);
+    sf::Vector2i mouseWinPos  = input.getMouseScreenPosition();
 
-
-    tgui::Vector2f canvasPos = canvas->getAbsolutePosition();
+    tgui::Vector2f canvasPos = canvas->getPosition();
     tgui::Vector2f canvasSize = canvas->getSize();
+
+// Step 3: Convert to pixel position relative to canvas
+    sf::Vector2i canvasPixel = sf::Vector2i(
+    static_cast<int>(mouseWinPos.x - canvasPos.x),
+    static_cast<int>(mouseWinPos.y - canvasPos.y)
+    );
+
 
     std::unordered_map<int, std::unique_ptr<Device>> &nodes = state.getNodes();
 
-    //within the canvas
-    if (canvasPos.x <= guiMousePos.x &&
-        canvasPos.y <= guiMousePos.y &&
-        guiMousePos.x <= canvasPos.x + canvasSize.x &&
-        guiMousePos.y <= canvasPos.y + canvasSize.y)
-    {
-        // Mouse clicked inside canvas
-        // Convert to canvas-local coords
-        sf::Vector2f localCanvasPos = guiMousePos - canvas->getAbsolutePosition();
+        if (canvasPixel.x < 0 || canvasPixel.y < 0 ||
+            canvasPixel.x >= static_cast<int>(canvasSize.x) ||
+            canvasPixel.y >= static_cast<int>(canvasSize.y))
+        {
+            return; // Outside canvas, skip
+        }
 
-        // Convert to world coordinates if using view
-        sf::Vector2f worldPos = canvas->mapPixelToCoords(tgui::Vector2f(localCanvasPos) );
+
+        // MMouse inside the canvas
+
+        sf::Vector2f localCanvasPos = canvas->mapPixelToCoords(tgui::Vector2f(tgui::Vector2i(canvasPixel))); // Uses canvas's active view
+
+
+        
         std::ostringstream ss;
-            ss << "X: " << static_cast<int>(localCanvasPos.x) << " Y: " << static_cast<int>(localCanvasPos.y);
-            coordLabel->setText(ss.str());
-    
+        ss << "X: " << static_cast<int>(localCanvasPos.x) << " Y: " << static_cast<int>(localCanvasPos.y);
+        coordLabel->setText(ss.str());
+
         if (state.getEditorMode() == EditorMode::MovingNode && selectedNodeId.has_value())
         {
             auto it = nodes.find(*selectedNodeId);
             if (it != nodes.end())
             {
                 auto &device = it->second;
-                device->changePosition(sf::Vector2f(mouseWorld));
-                // state.changeNodePosition(device->nodeId, mouseWorld);
+                device->changePosition(sf::Vector2f(localCanvasPos));
             }
         }
 
@@ -154,14 +233,14 @@ void TopologyEditorManager::handleInput(InputManager &input)
         {
             DeviceClass cls = DeviceClass::C2;
 
-            state.addNode(cls, sf::Vector2f(mouseWorld));
+            state.addNode(cls, localCanvasPos );
         }
 
         else if (state.getEditorMode() == EditorMode::AddingC3Node && input.isLeftMouseJustPressed())
         {
             DeviceClass cls = DeviceClass::C3;
             // for the save logic
-            state.addNode(cls, sf::Vector2f(mouseWorld));
+            state.addNode(cls, localCanvasPos );
         }
         bool CuttingNode = (state.getEditorMode() == EditorMode::CuttingNode && input.isLeftMouseJustPressed());
         bool AddingLink = (state.getEditorMode() == EditorMode::AddingLink && input.isLeftMouseJustPressed());
@@ -172,7 +251,7 @@ void TopologyEditorManager::handleInput(InputManager &input)
         for (auto it = nodes.begin(); it != nodes.end();)
         {
             auto &device = it->second;
-            device->update(input);
+            device->update(input,gui,canvas);
             int nodeId = device->getNodeId();
 
             if (CuttingNode && device->getIsHovered())
@@ -236,12 +315,19 @@ void TopologyEditorManager::handleInput(InputManager &input)
             }
         }
     }
-    // broadcast animations
 
 
-    
 
-  }
+
+void TopologyEditorManager::resetToggleButtons()
+{
+    for(auto &[_, button] : toolButtons)
+    {
+        button->setDown(false);
+    }
+    state.setEditorMode(EditorMode::Idle);
+    state.resetLink();
+}
 
 void TopologyEditorManager::startBroadcast(const sf::Vector2f &startPosition, float duration)
 {
@@ -285,8 +371,7 @@ void TopologyEditorManager::update(float deltaTime)
                               broadcastAnimations.end());
 }
 
-
-//THESE two are not needed
+// THESE two are not needed
 void TopologyEditorManager::setSelectedNode(std::optional<int> nodeId)
 {
 
@@ -300,20 +385,9 @@ std::optional<int> TopologyEditorManager::getSelectedNode() const
 
 void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
 {
-    //canvas stores a copy of the view, so we need to set it everytime we draw
+    // canvas stores a copy of the view, so we need to set it everytime we draw
     canvas->setView(editorView);
     canvas->clear(tgui::Color(30, 30, 30));
-
-    // sf::View defaultView = window.getDefaultView();
-    // window.setView(defaultView);
-
-    // draw the topology bounds rectangle adapting to the screen size.
-    // Recalculate size based on window dimensions
-    // sf::Vector2f windowSize = defaultView.getSize();
-    // sf::Vector2f viewCenter = defaultView.getCenter();
-    // sf::Vector2f rectSize(
-    //     0.8f * windowSize.x,
-    //     0.8f * windowSize.y);
 
     for (auto &[_, device] : state.getNodes())
     {
@@ -323,47 +397,7 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
 
     drawRootings(canvas);
     for (auto &animation : broadcastAnimations)
-        animation->draw(window);
+        animation->draw(canvas);
     canvas->display();
 }
 
-
-//todo: useless?
-sf::RectangleShape TopologyEditorManager::convertRectangleToTopologyView(
-    const sf::RenderWindow &window,
-    const sf::View &topologyView,
-    const sf::RectangleShape &screenRect)
-{
-    // Extract position and size in default view space
-    sf::Vector2f topLeftDefault = screenRect.getPosition();
-    sf::Vector2f sizeDefault = screenRect.getSize();
-
-    // Convert top-left and bottom-right corners to topology view space
-    sf::Vector2f topLeft = window.mapPixelToCoords(
-        sf::Vector2i(static_cast<int>(topLeftDefault.x), static_cast<int>(topLeftDefault.y)),
-        topologyView);
-
-    sf::Vector2f bottomRight = window.mapPixelToCoords(
-        sf::Vector2i(static_cast<int>(topLeftDefault.x + sizeDefault.x),
-                     static_cast<int>(topLeftDefault.y + sizeDefault.y)),
-        topologyView);
-
-    // Create and return a new rectangle in topology view space
-    sf::RectangleShape worldRect;
-    worldRect.setPosition(topLeft);
-    worldRect.setSize(bottomRight - topLeft);
-    return worldRect;
-}
-
-
-
-bool TopologyEditorManager::isBoundsFullyInsideRect(
-    const sf::Vector2f &position, // top-left corner
-    const sf::Vector2f &size,
-    const sf::FloatRect &rect)
-{
-    sf::Vector2f topLeft = position;
-    sf::Vector2f bottomRight = position + size;
-
-    return rect.contains(topLeft) && rect.contains(bottomRight);
-}
