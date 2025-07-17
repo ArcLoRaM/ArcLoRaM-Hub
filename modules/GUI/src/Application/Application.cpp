@@ -44,7 +44,10 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         auto backToHome = [this, homePageActions]() {
             changeScreen(std::make_unique<HomePageScreen>(*homePageActions,gui));
         };
-        changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, backToHome,gui));
+        std::vector<std::pair<std::string, ScreenAction>> actions = {
+                    { "Back", backToHome }
+                };
+                changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, actions, gui));
     }}
 };
     // Set the initial screen to the home page

@@ -1,14 +1,15 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp> // TGUI header
 class ReceptionIcon
 {
 
     public:
     ReceptionIcon(const sf::Vector2f& senderPos,const sf::Vector2f& receiverPos, std::string state);
     //void update();
-    void draw(sf::RenderWindow& window) const;
+    void draw(tgui::CanvasSFML::Ptr canvas) const;
     bool isFinished() const;
 
     private:

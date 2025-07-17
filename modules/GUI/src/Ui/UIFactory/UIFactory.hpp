@@ -17,6 +17,7 @@ public:
     static tgui::Label::Ptr createLabel(const std::string& text);
     static tgui::ToggleButton::Ptr createToggleButton(const std::string& text);
     static tgui::MessageBox::Ptr createMessageBox(const std::string& title, const std::string& message, const std::vector<std::string>& buttons = {"OK"});
+    static tgui::TabContainer::Ptr createTabContainer(const tgui::Layout2d& size = {"100%", "100%"});
     // tgui::Label::Ptr createLabel(const std::string& text);
     // tgui::EditBox::Ptr createEditBox(const std::string& defaultText = "");
     // tgui::CheckBox::Ptr createCheckBox(const std::string& label, bool defaultState = false);

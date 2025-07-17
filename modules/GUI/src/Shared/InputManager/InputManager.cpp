@@ -39,7 +39,6 @@ void InputManager::handleEvent(const std::optional<sf::Event> &event)
             }
             lastClickTime[mousePressed->button] = now;
 
-            std::cout << "Mouse button pressed: " << static_cast<int>(mousePressed->button) << std::endl;
         }
         pressedMouseButtons.insert(mousePressed->button);
     }

@@ -5,13 +5,14 @@
 #include "../../UI/UIFactory/UIFactory.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include "../../Shared/Libraries/magic_enum.hpp"
 
 TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
     : Screen(gui),editorView(sf::FloatRect({0, 0}, {0,0}))
     , editorManager(editorState,gui)
 {
     setupUI(actions);
-    editorManager.setupUI(gui,editorView);
+    editorManager.setupUI(editorView);
 }
 
 TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui,const std::string& action)
@@ -20,7 +21,7 @@ TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, Sc
 {
 
    setupUI(actions);
-   editorManager.setupUI(gui,editorView);
+   editorManager.setupUI(editorView);
    if(action=="Edit"){
     //openFile
     auto targetDir = std::filesystem::path("output/topologies");
@@ -70,16 +71,6 @@ void TopologyEditorScreen::setupUI(std::vector<std::pair<std::string, ScreenActi
     picture->setSize({"100%", "100%"});
     gui.add(picture);
 
-
-
-    constexpr float buttonWidth = 150.f;
-    constexpr float buttonHeight = 50.f;
-    constexpr float spacingY = 20.f;
-    constexpr float startX = 20.f;
-
-    float posY = 20.f;
-
-
     auto button = UIFactory::createButton("Back", actions[0].second);
     button->setSize({"7%", "4%"});
     button->setPosition({"1%", "1%"});
@@ -111,14 +102,14 @@ void TopologyEditorScreen::handleEvent(InputManager& input)
         editorView.zoom(1.1f);
     }
 
+    //todo: move in update?
     editorManager.handleInput(input);
 
 }
 
 void TopologyEditorScreen::update(float deltaTime, InputManager& input)
 {
-    (void)deltaTime;
-    (void)input;
+
 
     // Example: Update model visualization, nodes, links, etc.
     //we don´t need delta time for now because there is no general animation.

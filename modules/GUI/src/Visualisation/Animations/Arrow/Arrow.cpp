@@ -89,12 +89,12 @@ void Arrow::update() {
 }
 
 // Draw the arrow and the icon (if applicable)
-void Arrow::draw(sf::RenderWindow& window) {
-    window.draw(line);
-    window.draw(arrowhead);
+void Arrow::draw(tgui::CanvasSFML::Ptr canvas)  {
+    canvas->draw(line);
+    canvas->draw(arrowhead);
 
     if (isFinished() && !receptionComplete) {
-        window.draw(*icon);
+        canvas->draw(*icon);
     }
 }
 

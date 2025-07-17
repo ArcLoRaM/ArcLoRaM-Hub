@@ -34,10 +34,10 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
         icon->setOrigin(sf::Vector2f( bounds.size.x / 2, bounds.size.y / 2));
 }
 
-void ReceptionIcon::draw(sf::RenderWindow &window) const
+void ReceptionIcon::draw(tgui::CanvasSFML::Ptr canvas) const
 {
 if(!isFinished()){
-    window.draw(*icon);
+    canvas->draw(*icon);
 
 }
 }

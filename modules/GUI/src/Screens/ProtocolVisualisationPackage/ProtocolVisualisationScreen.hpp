@@ -12,7 +12,7 @@
 class ProtocolVisualisationScreen : public Screen {
     
 public:
-    explicit ProtocolVisualisationScreen(TcpServer& tcpServer,ScreenAction backAction,tgui::Gui& gui);
+    explicit ProtocolVisualisationScreen(TcpServer& tcpServer,std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
     void handleEvent(InputManager& input) override;
     void update(float deltaTime,InputManager &input) override;
     void draw(sf::RenderWindow& window) override;
@@ -20,12 +20,11 @@ public:
 
 private:
 
-    
     VisualiserManager manager;
     sf::View networkView;
     ProtocolVisualisationState state; 
     ProtocolPacketController packetController;
-    std::unique_ptr<Button> backButton;
+    void onResize() override;
 
 };
 

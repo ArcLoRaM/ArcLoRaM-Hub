@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <TGUI/Backend/SFML-Graphics.hpp>
+#include <TGUI/TGUI.hpp> // TGUI header
 
 class Arrow {
 private:
@@ -44,7 +46,7 @@ public:
     void update();
 
     // Draw the arrow on the given window
-    void draw(sf::RenderWindow& window);
+    void draw(tgui::CanvasSFML::Ptr canvas);
 
     // Check if the animation is finished
     bool isFinished() const;

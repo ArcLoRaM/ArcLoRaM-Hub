@@ -9,7 +9,6 @@
 #include <unordered_set>
 #include <cmath>
 #include "../../Visualisation/Device/Device.hpp"
-#include "../../Ui/Button/Button.hpp"
 #include "../../Visualisation/Animations/Arrow/Arrow.hpp"
 #include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
 
@@ -17,42 +16,21 @@
 #include "../../Visualisation/Animations/ReceptionIcon/ReceptionIcon.hpp"
 #include "ProtocolVisualisationState.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
+
 
 class VisualiserManager {
 private:
-    sf::Font* font; // Font for rendering text
-    std::optional< sf::Text> text; // SFML text object
-    std::optional< sf::Text> communicationMode;
-    std::optional< sf::Text> tickNb;
-
-    std::optional< sf::Text> nbRetransmission;
-    sf::String nbRetransmissionString;
-    std::optional< sf::Text> energyExpenditure;
-    sf::String energyExpenditureString;
-
-    std::optional<sf::Text> pdrText;
-    std::string pdrString = "PDR: ";
-
-
-
-
 
     //TODO: put rooting and Devices in the state, manager should only handle interface specific to the feature ( not like redirection between pages) and animations (transmission etc..)
-
+    // I really think it's necessary, the sooner the better 
+    
     //Routing
-    //to do: use the same data structure as in the TopologyEditorManager for the Id and the ptdr to the devices, all in one ! fantastic
     std::unordered_map<int, std::unordered_set<int>> routings; // Oriented Graph ! 2->4 is not equl to 4->2
     bool routingDisplayEnabled = false; // Flag to control routing display
-    void drawRootings(sf::RenderWindow& window);
-
-    std::vector<std::unique_ptr<Button>> buttons; // List of buttons
-    mutable std::mutex buttonsMutex;
-
-
-
+    void drawRootings(tgui::CanvasSFML::Ptr canvas);
     
-    // std::unordered_set<int> devicesId; // Stores unique devices ID
-    // std::vector<std::unique_ptr<Device>> devices; 
     std::unordered_map<int, std::unique_ptr<Device>> devices;
     mutable std::mutex devicesMutex;  // Protects 'devices' for all access (including reads and writes)
 
@@ -65,10 +43,21 @@ private:
     std::vector<std::unique_ptr<ReceptionIcon>> receptionIcons;
     mutable std::mutex receptionIconsMutex; 
 
+    ProtocolVisualisationState& state;
 
+  void setNetworkPanelUI(sf::View &networkView);
+  void setLogsPanelUI();
+  void setMetricsPanelUI();
+  void setServerPanelUI();
 
     public:
-    VisualiserManager(ProtocolVisualisationState& state);
+    VisualiserManager(ProtocolVisualisationState& state, tgui::Gui &gui);
+
+
+    //todo: networkView should be owned by the manager, since it's already receving the inputManager it doesnt make sense for the parent screen to handle the view
+    //do the same for the editorView in TopologyEditorManager
+    void setupUI(sf::View &networkView);
+
     const std::unordered_map<int, std::unique_ptr<Device>>& getDevices() const { return devices; }
     std::mutex& getDevicesMutex() const { return devicesMutex; }
     void update(InputManager & inputManager);
@@ -76,7 +65,6 @@ private:
 
     void updateDevicesState(int nodeId,  DeviceState state);
 
-    void addButton(std::unique_ptr<Button> button);
     void addDevice(std::unique_ptr<Device> device);
     void addArrow(std::unique_ptr<Arrow> arrow);
     void addReceptionIcon(std::unique_ptr<ReceptionIcon> receptionIcon);
@@ -101,8 +89,35 @@ private:
     void incrementListeningAck(int nodeId);
     void incrementTransmittingAck(int nodeId);
 
+
+    //todo: put this in priavte section and make getters/setters
+    //UI:
+    tgui::Gui& gui;
+    tgui::TabContainer::Ptr tabContainer;
+    tgui::Panel::Ptr serverPanel;
+    tgui::Panel::Ptr networkPanel;
+    tgui::Panel::Ptr logsPanel;
+    tgui::Panel::Ptr metricsPanel;
+
+
+    //Server TAB
+
+    //Network TAB
+    tgui::CanvasSFML::Ptr canvas;
+    tgui::Label::Ptr timeText;
+    //todo: put the buttons to handle routing display, time management
+    tgui::Label::Ptr communicationModeText;
+
+    //Logs TAB
+    tgui::Label::Ptr logText;
+
+    //Metrics TAB
+    tgui::Label::Ptr nbRetransmissionText;
+    tgui::Label::Ptr energyExpenditureText; 
+    tgui::Label::Ptr pdrText;
+
 };
 
 
 
-#endif // VISUALISERMANAGER_HPP
+#endif 

@@ -23,14 +23,22 @@ tgui::MessageBox::Ptr UIFactory::createMessageBox(const std::string &title, cons
     for( const auto &button : buttons) {
         messageBox->addButton(button);
     }
+    if(s_theme) {
+        messageBox->setRenderer(s_theme->getRenderer("MessageBox"));
+    }
     messageBox->setButtonAlignment(tgui::HorizontalAlignment::Right);
     messageBox->setSize({"60%", "40%"});
     messageBox->setPosition({"20%", "20%"});
-    
     return messageBox;
+}
 
-
-
+tgui::TabContainer::Ptr UIFactory::createTabContainer(const tgui::Layout2d &size)
+{
+    auto tabContainer = tgui::TabContainer::create();
+    tabContainer->setSize(size);
+    // if (s_theme) tabContainer->setRenderer(s_theme->getRenderer("TabContainer"));
+    tabContainer->setTabAlignment(tgui::TabContainer::TabAlign::Top); // Tabs above panels
+    return tabContainer;
 }
 
 tgui::EditBox::Ptr UIFactory::createTypeableInput(const std::string& defaultText, const tgui::Layout2d& size) {

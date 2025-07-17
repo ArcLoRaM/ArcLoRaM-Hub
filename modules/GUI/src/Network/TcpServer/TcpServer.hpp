@@ -21,7 +21,6 @@ public:
     void setPacketHandler(PacketHandler handler);
 
 private:
-    void runLoop();
     void processPacket(sf::Packet& packet);
 
     std::atomic<bool> running{false};

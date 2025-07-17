@@ -2,13 +2,15 @@
 #define PACKETDROP_HPP
 
 #include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp> // TGUI header
 
+#include <TGUI/Backend/SFML-Graphics.hpp>
 class PacketDrop {
 public:
     PacketDrop( const sf::Vector2f startPosition, float duration);
 
     void update(); // No need for deltaTime; internal clock manages timing
-    void draw(sf::RenderWindow& window);
+    void draw(tgui::CanvasSFML::Ptr canvas);
 
     bool isFinished() const;
 

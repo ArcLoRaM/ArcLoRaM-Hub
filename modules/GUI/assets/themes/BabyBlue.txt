@@ -116,6 +116,15 @@ Tabs {
     DistanceToSide     = 5;
 }
 
+//custom
+TabContainer {
+    TabsBackgroundColor = rgb(40, 40, 40);              // Dark gray tabs
+    TabsTextColor = rgb(200, 200, 200);                 // Light gray text
+    TabsBorderColor = rgb(80, 80, 80);                  // Subtle border
+    TabsSelectedBackgroundColor = rgb(33, 100, 180);
+    TabsSelectedTextColor = rgb(255, 255, 255);
+}
+
 TextArea {
     CaretColor = rgb(145, 180, 190);
     Borders    = (2, 2, 2, 2);

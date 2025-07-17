@@ -37,9 +37,9 @@ void PacketDrop::update() {
     }
 }
 
-void PacketDrop::draw(sf::RenderWindow& window) {
+void PacketDrop::draw(tgui::CanvasSFML::Ptr canvas) {
     if (!isFinished()) {
-        window.draw(*m_sprite);
+        canvas->draw(*m_sprite);
     }
 }
 

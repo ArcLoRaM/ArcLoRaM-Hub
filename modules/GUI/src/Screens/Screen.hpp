@@ -19,6 +19,7 @@ public:
     virtual void handleEvent(InputManager& input) = 0;
     virtual void update(float deltaTime,InputManager &input) = 0;
 
+    //Todo: I think we dont need the window anymore.
     //since raw SFML and TGUI cohabit, we keep this custom draw function
     virtual void draw(sf::RenderWindow& window) = 0;
 

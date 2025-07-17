@@ -6,10 +6,7 @@
 #include <cmath>
 #include "TopologyEditorState.hpp"
 #include "../../Visualisation/Device/Device.hpp"
-#include "../../UI/Dropdown/Dropdown.hpp"
-#include "../../UI/Button/Button.hpp"
 #include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
-#include "../../UI/TypeableInput/TypeableInput.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -18,7 +15,7 @@ class TopologyEditorManager
 
 public:
     TopologyEditorManager(TopologyEditorState &state, tgui::Gui &gui);
-    void setupUI(tgui::Gui &gui, sf::View &editorView);
+    void setupUI(sf::View &editorView);
     void handleInput(InputManager &input);
     void update(float deltaTime);
     void draw(sf::RenderWindow &window, sf::View &editorView);

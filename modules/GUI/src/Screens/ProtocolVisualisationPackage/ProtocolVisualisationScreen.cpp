@@ -1,44 +1,33 @@
 #include "ProtocolVisualisationScreen.hpp"
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
+#include "../../UI/UIFactory/UIFactory.hpp"
+#include <TGUI/TGUI.hpp>  // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
 
-ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, ScreenAction backAction,tgui::Gui& gui)
-    : Screen(gui),manager(state),
+
+ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
+    : Screen(gui),manager(state,gui),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
     tcpServer.setPacketHandler([this](sf::Packet& packet) {
         packetController.handlePacket(packet, state, manager);
     });
 
-    float buttonWidth = 150.f;
-    float buttonHeight = 50.f;
-    float posX = config::windowWidth - buttonWidth - 20.f;  // Top-right corner, 20px margin
-    float posY = 20.f;
+    
 
-    backButton = std::make_unique<Button>(
-        posX,
-        posY,
-        buttonWidth,
-        buttonHeight,
-        sf::Color(200, 50, 50),
-        "Back",
-        "Arial",
-        false
-    );
+
+    setupUI(actions);
+    manager.setupUI(networkView);
 
     //Todo: terminate the current process gracefully, right now there is memory problem which causes a crash
     //maybe you will want to have an "unfocused" state for the screen where packets are still received but not processed
 
-    
-    backButton->setOnClick(
-        //like manager.clear()
-        backAction
-    );
+
 }
 
 void ProtocolVisualisationScreen::handleEvent(InputManager& input)
 {
-    backButton->update(input);
 
     if (input.isKeyPressed(sf::Keyboard::Scancode::Left)) {
         networkView.move({-10.f, 0.f});
@@ -62,20 +51,40 @@ void ProtocolVisualisationScreen::handleEvent(InputManager& input)
     }
 }
 
+//todo: remove deltaTime in every update
 void ProtocolVisualisationScreen::update(float deltaTime, InputManager& input)
 {
-    (void)deltaTime;
     manager.update(input);
 }
 
 void ProtocolVisualisationScreen::draw(sf::RenderWindow& window)
 {    
-    window.setView(window.getDefaultView());
-    backButton->draw(window);
     manager.draw(window, networkView, state);
 
 }
 
 void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, ScreenAction>> actions)
 {
+    gui.removeAllWidgets();
+    updateTextSize(0.02f);  // Update text size based on new window dimensions
+    auto picture = tgui::Picture::create("assets/background.jpg");
+    picture->setSize({"100%", "100%"});
+    gui.add(picture);
+
+    
+        auto button = UIFactory::createButton("Back", actions[0].second);
+        button->setSize({"7%", "4%"});
+        button->setPosition({"1%", "1%"});
+        gui.add(button);
+    
 }
+
+void ProtocolVisualisationScreen::onResize()
+{
+    updateTextSize(0.02f);  // Update text size based on new window dimensions
+    auto size =manager.canvas->getSize();
+    networkView.setSize(size);
+    networkView.setCenter(size / 2.f);
+    manager.canvas->setView(networkView);
+}
+

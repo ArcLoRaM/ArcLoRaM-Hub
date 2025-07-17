@@ -9,87 +9,79 @@
 #include "../../Shared/Config.hpp"
 #include "../../Shared/Helper.hpp"
 #include "CsvMetricWriter.hpp"
+#include "../../UI/UIFactory/UIFactory.hpp"
 
-VisualiserManager::VisualiserManager(ProtocolVisualisationState &state)
+
+VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui)
 
 {
 
-    font = &ResourceManager::getInstance().getFont("Arial");
-    text.emplace(*font);
-    text->setCharacterSize(20);
-    text->setFillColor(sf::Color::White);
-
-    communicationMode = sf::Text(*font);
-    communicationMode->setCharacterSize(40);
-    sf::Vector2f position1(10.f, 30.f);
-    communicationMode->setPosition(position1);
-    communicationMode->setFillColor(sf::Color::White);
-
-    nbRetransmission.emplace(*font);
-    nbRetransmission->setCharacterSize(20);
-    sf::Vector2f position3(10.f, 80.f);
-    nbRetransmission->setPosition(position3);
-    nbRetransmission->setFillColor(sf::Color::White);
-    nbRetransmissionString = "Retransmissions:  ";
-
-    energyExpenditure.emplace(*font);
-    energyExpenditure->setCharacterSize(20);
-    sf::Vector2f position4(10.f, 110.f);
-    energyExpenditure->setPosition(position4);
-    energyExpenditure->setFillColor(sf::Color::White);
-    energyExpenditureString = "Energy Expenditure: ";
-
-    tickNb.emplace(*font);
-    tickNb->setCharacterSize(20);
-    sf::Vector2f position2(10.f, 150.f);
-    tickNb->setPosition(position2);
-    tickNb->setFillColor(sf::Color::White);
-
-    pdrText.emplace(*font);
-    pdrText->setCharacterSize(20);
-    sf::Vector2f position5(10.f, 180.f);
-    pdrText->setPosition(position5);
-    pdrText->setFillColor(sf::Color::White);
-    pdrString = "PDR: ";
-
-    const float x4coor = 1800.f - 350.f;
-    const float y4coor = 100.f;
-    const float width4 = 80.f;
-    const float height4 = 40;
-    const sf::Color color4 = sf::Color::Yellow;
-
-    auto buttonRouting = std::make_unique<Button>(x4coor, y4coor, width4, height4, color4, "Rooting_Button");
-    buttonRouting->setOnClick([this]()
-                              {
-                                  // Toggle internal state (could be a bool, enum, etc.)
-                                  routingDisplayEnabled = !routingDisplayEnabled;
-                                  // std::cout << "Routing display toggled: " << (routingDisplayEnabled ? "ON" : "OFF") << std::endl;
-                              });
-
-    buttons.push_back(std::move(buttonRouting));
-
-    const float y5coor = 160.f;
-    const sf::Color color5 = sf::Color::Green;
-
-    auto buttonSave = std::make_unique<Button>(x4coor, y5coor, width4, height4, color5, "Save", "Arial", false);
-    buttonSave->setOnClick([this, &state]()
-                           {
-            try {
-        CsvMetricWriter writer;
-        writer.writeNetworkMetricsToCsv("output/network_state.csv", *this, state);
-        std::cout << "Network state saved to network_state.csv\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Error writing CSV: " << e.what() << '\n';
-    } });
-
-    buttons.push_back(std::move(buttonSave));
 }
 
-void VisualiserManager::addButton(std::unique_ptr<Button> button)
+
+void VisualiserManager::setupUI(sf::View &networkView){
+
+    tabContainer = UIFactory::createTabContainer({"92%", "92%"});
+    tabContainer->setTabsHeight(50);
+    tabContainer->setPosition({"4%", "6%"});
+
+    serverPanel=tabContainer->addTab("Server");
+    networkPanel=tabContainer->addTab("Network");
+    logsPanel=tabContainer->addTab("Log");
+    metricsPanel=tabContainer->addTab("Metrics");
+
+    // setServerPanelUI();
+     setNetworkPanelUI(networkView);
+    // setLogsPanelUI();
+    // setMetricsPanelUI();
+
+    tabContainer->select(0);
+    gui.add(tabContainer);
+}
+
+void VisualiserManager::setNetworkPanelUI(sf::View &networkView)
 {
-    std::lock_guard<std::mutex> lock(buttonsMutex);
-    buttons.push_back(std::move(button));
+    canvas = tgui::CanvasSFML::create();
+    canvas->setPosition({"0%", "10%"});
+    canvas->setSize({"100%", "90%"});
+    canvas->setView(networkView);
+    canvas->clear(tgui::Color(30, 30, 30));
+    networkPanel->add(canvas);
+
+    timeText = UIFactory::createLabel("Time: 0s");
+    timeText->setPosition({"2%", "2%"});
+    networkPanel->add(timeText);
+
+    communicationModeText = UIFactory::createLabel("Communication Mode: ");
+    communicationModeText->setPosition({"10%", "2%"});
+    networkPanel->add(communicationModeText);
+
+    auto buttonRouting = UIFactory::createButton("Routing");
+    buttonRouting->setPosition({"90%", "2%"});
+    buttonRouting->setSize({"7%", "4%"});
+    buttonRouting->onPress([this]()
+                           { routingDisplayEnabled = !routingDisplayEnabled; });
+    networkPanel->add(buttonRouting);
+
+    auto buttonSave = UIFactory::createButton("Save");
+    buttonSave->setPosition({"80%", "2%"});
+    buttonSave->setSize({"7%", "4%"});
+    buttonSave->onPress([this]()
+                        {
+                            try
+                            {
+                                CsvMetricWriter writer;
+                                writer.writeNetworkMetricsToCsv("output/network_state.csv", *this, state);
+                                std::cout << "Network state saved to network_state.csv\n";
+                            }
+                            catch (const std::exception &e)
+                            {
+                                std::cerr << "Error writing CSV: " << e.what() << '\n';
+                            };
+                        });
+    networkPanel->add(buttonSave);
 }
+
 
 void VisualiserManager::addDevice(std::unique_ptr<Device> device)
 {
@@ -294,106 +286,93 @@ void VisualiserManager::update(InputManager &inputManager)
                              receptionIcons.end());
     }
 
-    // with interactivity through inputManager Injection
-    {
-        std::lock_guard<std::mutex> lock(buttonsMutex);
-        for (auto &button : buttons)
-            button->update(inputManager);
-    }
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-for (auto& [id, device] : devices) {
-    // device->update(inputManager);
-}
+    for (auto& [id, device] : devices) {
+        device->update(inputManager,gui, canvas);
+    }
     }
 }
 
 void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, ProtocolVisualisationState &state)
 {
+        canvas->setView(networkView);
+        canvas->clear(tgui::Color(30, 30, 30));
 
-    // Todo: have their own mutexes
-    window.setView(window.getDefaultView());
-    communicationMode->setString("Communication Mode: " + state.communicationMode);
-    window.draw(*communicationMode);
+        communicationModeText->setText("Communication Mode: " + state.communicationMode);
 
-    tickNb->setString("Tick Number: " + std::to_string(state.tickNumber));
-    window.draw(*tickNb);
+        //Todo: have a tick duration in the config file
+        timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
 
-    energyExpenditure->setString(energyExpenditureString + std::to_string(state.energyExp));
-    window.draw(*energyExpenditure);
 
-    nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
-    window.draw(*nbRetransmission);
+        //todo: display the metrics in the UI
+//     energyExpenditure->setString(energyExpenditureString + std::to_string(state.energyExp));
+//     window.draw(*energyExpenditure);
 
-    pdrText->setString(pdrString +  std::to_string(state.totalDataPacketsSent > 0 ? static_cast<float>(state.totalDataPacketsSent -state.retransmissions) / state.totalDataPacketsSent * 100 : 0) + "%");
-    window.draw(*pdrText);
-    {
-        std::lock_guard<std::mutex> lock(buttonsMutex);
-        for (auto &button : buttons)
-        {
-            button->draw(window);
-        }
-    }
+//     nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
+//     window.draw(*nbRetransmission);
 
-    // Draw logs and also get rid of the oldest log messages if the limit is reached
-    {
-        std::lock_guard<std::mutex> lock(state.logMutex);
+//     pdrText->setString(pdrString +  std::to_string(state.totalDataPacketsSent > 0 ? static_cast<float>(state.totalDataPacketsSent -state.retransmissions) / state.totalDataPacketsSent * 100 : 0) + "%");
+//     window.draw(*pdrText);
 
-        float y = 940.0f;
+//     // Draw logs and also get rid of the oldest log messages if the limit is reached
+//     {
+//         std::lock_guard<std::mutex> lock(state.logMutex);
 
-        if (state.logMessages.size() > 10)
-        {
-            state.logMessages.erase(state.logMessages.begin(), state.logMessages.end() - 10);
-        }
+//         float y = 940.0f;
 
-        for (auto it = state.logMessages.rbegin(); it != state.logMessages.rend(); ++it)
-        {
-            sf::Text text(*font, *it, 10);
-            text.setFillColor(sf::Color::White);
-            text.setPosition(sf::Vector2f(10.0f, y));
-            window.draw(text);
-            y -= 15.0f;
-        }
-    }
+//         if (state.logMessages.size() > 10)
+//         {
+//             state.logMessages.erase(state.logMessages.begin(), state.logMessages.end() - 10);
+//         }
 
-    window.setView(networkView);
+//         for (auto it = state.logMessages.rbegin(); it != state.logMessages.rend(); ++it)
+//         {
+//             sf::Text text(*font, *it, 10);
+//             text.setFillColor(sf::Color::White);
+//             text.setPosition(sf::Vector2f(10.0f, y));
+//             window.draw(text);
+//             y -= 15.0f;
+//         }
+//     }
+
 
     if (routingDisplayEnabled)
-        // drawRootings(window);
+        drawRootings(canvas);
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
     for (auto& [id, device] : devices) {
-        // device->draw(window);
+        device->draw(canvas);
+        }
     }
-}
 
     {
         std::lock_guard<std::mutex> lock(arrowsMutex);
         for (auto &arrow : arrows)
-            // arrow->draw(window);
-            auto a=2;
+            arrow->draw(canvas);
     }
 
     {
         std::lock_guard<std::mutex> lock(broadcastAnimationsMutex);
         for (auto &animation : broadcastAnimations)
-            // animation->draw(window);
-            auto a=2;
+            animation->draw(canvas);
     }
 
     {
         std::lock_guard<std::mutex> lock(receptionIconsMutex);
         for (auto &icon : receptionIcons)
-            icon->draw(window);
+            icon->draw(canvas);
     }
 
     {
         std::lock_guard<std::mutex> lock(dropAnimationsMutex);
         for (auto &animation : dropAnimations)
-            animation->draw(window);
+            animation->draw(canvas);
     }
+
+    canvas->display();
 
 }
 
@@ -413,7 +392,7 @@ void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
 std::pair<sf::Vector2f, bool> VisualiserManager::findDeviceCoordinates(int nodeId)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
-        if (!devices.contains(nodeId))
+    if (!devices.contains(nodeId))
     {
         std::cerr << "Error: Device with ID " << nodeId << " does not exist to find device coordinate." << std::endl;
         return {{}, false};
@@ -422,7 +401,7 @@ std::pair<sf::Vector2f, bool> VisualiserManager::findDeviceCoordinates(int nodeI
     return {devices[nodeId]->getCenteredPosition(), true};
 }
 
-void VisualiserManager::drawRootings(sf::RenderWindow &window)
+void VisualiserManager::drawRootings(tgui::CanvasSFML::Ptr canvas)
 {
     for (const auto &[device, connectedDevices] : routings)
     {
@@ -445,7 +424,7 @@ void VisualiserManager::drawRootings(sf::RenderWindow &window)
 
             if (foundPos)
             {
-                // drawArrowWithHeads(window, start, end, 35.f);
+                drawArrowWithHeads(canvas, start, end, 35.f);
             }
         }
     }

@@ -6,13 +6,14 @@
 #include "TopologyConfigIO.hpp"
 #include <filesystem>  // C++17
 #include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Shared/Libraries/magic_enum.hpp"
 
 TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state, tgui::Gui &gui)
     : selectedNodeId(std::nullopt), state(state), gui(gui)
 {
 }
 
-void TopologyEditorManager::setupUI(tgui::Gui &gui, sf::View &editorView)
+void TopologyEditorManager::setupUI( sf::View &editorView)
 {
 
     coordLabel = UIFactory::createLabel("X: -, Y: -");
@@ -45,7 +46,7 @@ void TopologyEditorManager::setupUI(tgui::Gui &gui, sf::View &editorView)
                            });
     gui.add(modeDropdown);
 
-    auto saveButton = UIFactory::createButton("Save",[this, &gui]{
+    auto saveButton = UIFactory::createButton("Save",[this]{
         resetToggleButtons();
         if(state.getNodes().empty()) {
             auto errorBox = UIFactory::createMessageBox("Error", "No nodes to save.");
@@ -88,7 +89,7 @@ void TopologyEditorManager::setupUI(tgui::Gui &gui, sf::View &editorView)
         dialog->setPosition({"25%", "25%"});
         dialog->setFileTypeFilters({ {"Simulation File", {"*.simcfg"}} }, 0);
       //convert "2%" to pixels based on window height
-        dialog->onFileSelect([this,&gui](const tgui::String& filePath) {
+        dialog->onFileSelect([this](const tgui::String& filePath) {
             if(!TopologyConfigIO::write(filePath.toStdString(), state.getNodes(), state.getRoutings(), state.getTopologyMode())){
                 auto errorBox = UIFactory::createMessageBox("Incorrect Topology", "An Invalid file was created");
                 errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
@@ -383,11 +384,14 @@ std::optional<int> TopologyEditorManager::getSelectedNode() const
     return selectedNodeId;
 }
 
+//todo: suppress window?
 void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
 {
     // canvas stores a copy of the view, so we need to set it everytime we draw
     canvas->setView(editorView);
     canvas->clear(tgui::Color(30, 30, 30));
+
+    drawRootings(canvas);
 
     for (auto &[_, device] : state.getNodes())
     {
@@ -395,7 +399,6 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
         device->draw(canvas);
     }
 
-    drawRootings(canvas);
     for (auto &animation : broadcastAnimations)
         animation->draw(canvas);
     canvas->display();

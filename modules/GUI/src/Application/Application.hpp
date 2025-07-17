@@ -23,6 +23,7 @@ private:
     std::unique_ptr<Screen> currentScreen;
     std::unique_ptr<Screen> nextScreen;
 
+    //todo: put the server in the appropriate screen
     TcpServer tcpServer; // Owns the server, lives as long as the application
     InputManager inputManager;
 

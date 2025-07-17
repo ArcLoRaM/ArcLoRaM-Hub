@@ -22,6 +22,7 @@ void ResourceManager::loadTexture(const std::string& key, const std::string& pat
 }
 
 void ResourceManager::loadAll() {
+    //Todo. arial still needed?
     loadFont("Arial", "assets/arial.ttf");
     loadTexture("C3_Sleep", "assets/Icons/C3_Sleep.png");
     loadTexture("C2_Sleep", "assets/Icons/C2_Sleep.png");
@@ -41,6 +42,8 @@ void ResourceManager::loadAll() {
     // ... add all other assets here centrally
 }
 
+
+//todo: still needed?
 sf::Font& ResourceManager::getFont(const std::string& key) {
     auto it = fonts.find(key);
     if (it == fonts.end()) {
