@@ -13,7 +13,7 @@
 #include <variant>
 #include <iostream>
 #include <SFML/Network.hpp> // Assuming this is available
-#include "../TCP/Telemetry/Client.hpp" // Assuming this is available
+#include "../TCP/Client/Client.hpp" // Assuming this is available
 
 class Node; // Forward declaration of Node class
 

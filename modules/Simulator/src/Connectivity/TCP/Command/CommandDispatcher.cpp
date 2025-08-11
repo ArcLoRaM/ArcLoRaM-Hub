@@ -1,7 +1,7 @@
 #include "CommandDispatcher.hpp"
 #include <filesystem>
 #include <iostream>
-#include "../packets.hpp"
+#include "../Packets/Packets.hpp"
 
 CommandDispatcher::CommandDispatcher(Logger& logger)
     : logger(logger)

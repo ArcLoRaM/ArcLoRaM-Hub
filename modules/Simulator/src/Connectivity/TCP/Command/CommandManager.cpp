@@ -7,8 +7,8 @@ CommandManager::CommandManager(Logger &logger_)
     : logger(logger_),
       tcpClient("127.0.0.1", 5000,logger_),
       dispatcher(logger),
-      listener(6000, [this](sf::Packet &p)
-               { dispatcher.onCommand(p); }, logger),
+     
+
       running(false)
 {
 
@@ -43,7 +43,8 @@ CommandManager::~CommandManager()
 
 void CommandManager::start()
 {
-    listener.start();
+
+
     logger.start();
 
     logger.logSystem("Waiting for launch config from GUI...");
@@ -105,7 +106,7 @@ void CommandManager::stopSimulation()
 void CommandManager::stop()
 {
     stopSimulation();
-    listener.stop();
+
 }
 
 bool CommandManager::isRunning() const

@@ -4,9 +4,8 @@
 #include <memory>
 #include <thread>
 #include <optional>
-#include "Connectivity/TCP/Control/CommandDispatcher.hpp"
-#include "Connectivity/TCP/Control/CommandListener.hpp"
-#include "Connectivity/TCP/Telemetry/Client.hpp"
+#include "Connectivity/TCP/Command/CommandDispatcher.hpp"
+#include "Connectivity/TCP/Client/Client.hpp"
 #include "Connectivity/Logger/Logger.hpp"
 #include "Node/Clock/Clock.hpp"
 #include "PhyLayer/PhyLayer.hpp"

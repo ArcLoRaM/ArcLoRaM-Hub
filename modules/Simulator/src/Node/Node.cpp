@@ -1,5 +1,5 @@
 #include "Node.hpp"
-#include "../Connectivity/TCP/packets.hpp"
+#include "../Connectivity/TCP/Packets/Packets.hpp"
 #include "../PhyLayer/PhyLayer.hpp"
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batteryLevel)

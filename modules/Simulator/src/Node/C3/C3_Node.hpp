@@ -2,8 +2,9 @@
 
 #include "../../Setup/Common.hpp"
 #include "../Node.hpp"
-#include "../../Connectivity/TCP/packets.hpp"	
+#include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include <unordered_set>
+
 class C3_Node : public Node {
 
 public :

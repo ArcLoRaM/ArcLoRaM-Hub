@@ -11,10 +11,9 @@
 #include "Node/Clock/Clock.hpp"
 #include "Setup/Seed/Seed.hpp"
 #include "Setup/Common.hpp"
-#include "Connectivity/TCP/Telemetry/Client.hpp"
+#include "Connectivity/TCP/Client/Client.hpp"
 #include "Node/Node.hpp"
-#include "Connectivity/TCP/Control/CommandDispatcher.hpp"
-#include "Connectivity/TCP/Control/CommandListener.hpp"
+#include "Connectivity/TCP/Command/CommandDispatcher.hpp"
 
 int main() {
 

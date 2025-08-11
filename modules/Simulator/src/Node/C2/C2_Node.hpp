@@ -1,7 +1,7 @@
 #pragma once
 #include "../Node.hpp"
 #include "../../Setup/Common.hpp"
-#include "../../Connectivity/TCP/packets.hpp"
+#include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include "C2RccUplinkSlotManager.hpp"
 // TODO:
 // instead of having multiple variables, prepare struct or objects that will contain the information needed to pass logic between receive() and transmit()

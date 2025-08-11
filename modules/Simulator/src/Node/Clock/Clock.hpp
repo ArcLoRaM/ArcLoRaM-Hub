@@ -10,7 +10,7 @@
 #include <mutex>
 #include "../../Connectivity/Logger/Logger.hpp"
 #include <string>
-#include "../../Connectivity/TCP/packets.hpp"
+#include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include "../Node.hpp"
 
 
