@@ -21,40 +21,40 @@ int main() {
 //---------------------------------System Initialization---------------------------------
     //Logger
     Logger logger;
-    Client tcpClient("127.0.0.1", 5000);
+
+    //to send packets
+    Client tcpClient("127.0.0.1", 5000,logger);
 
     logger.setTcpClient(&tcpClient);
     logger.enableFileOutput("output/log_output.txt");
     logger.enableColorOutput(true); 
     logger.start();
 
-
+    //to receive packets
     CommandDispatcher dispatcher(logger);
-    CommandListener listener(6000, [&dispatcher](sf::Packet& p) {
+    tcpClient.setPacketHandler([&dispatcher](sf::Packet& p) {
         dispatcher.onCommand(p);
-    },logger);
+    });
+    tcpClient.start();
 
-    listener.start();
 
+    // logger.logSystem("Waiting for launch config from GUI...");
+    // std::optional<LaunchConfig> configOpt;
+    // while (!(configOpt = dispatcher.getPendingLaunchConfig())) {
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // }
 
-    logger.logSystem("Waiting for launch config from GUI...");
-    std::optional<LaunchConfig> configOpt;
-    while (!(configOpt = dispatcher.getPendingLaunchConfig())) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    // Once available:
-    LaunchConfig config = *configOpt;
+    // // Once available:
+    // LaunchConfig config = *configOpt;
 
 
     //visualiser configuration
     sf::Packet sysPacketReceiver;
-    systemPacket sysPacket(config.distanceThreshold, config.communicationMode);
+    systemPacket sysPacket(common::distanceThreshold, common::communicationMode);
     sysPacketReceiver<<sysPacket;
     logger.sendTcpPacket(sysPacketReceiver);
 
-
-    PhyLayer phyLayer(config.distanceThreshold,logger);
+    PhyLayer phyLayer(common::distanceThreshold,logger);
 
 //--------------------------------------------------------------Node Provisionning-------------------------------------------------
 
@@ -62,7 +62,7 @@ int main() {
 
 
 
-    Seed seed(std::string(config.communicationMode), std::string(config.topology),logger);
+    Seed seed(std::string(common::communicationMode), std::string(common::topology),logger);
     phyLayer.takeOwnership(seed.transferOwnership());    //the seed object memory is released safely
 
     

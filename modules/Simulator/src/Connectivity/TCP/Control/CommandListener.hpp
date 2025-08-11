@@ -10,6 +10,14 @@
 #include <iostream>
 #include "../../Logger/Logger.hpp"  
 
+/*
+
+Create the server that receives packet and dispatches commands to the CommandDispatcher.
+
+
+*/
+
+
 class CommandListener {
 public:
     using CommandHandler = std::function<void(sf::Packet&)>;

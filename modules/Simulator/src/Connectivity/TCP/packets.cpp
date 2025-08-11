@@ -194,24 +194,28 @@ launchConfigCommandPacket::launchConfigCommandPacket(double distanceThreshold, s
 //-------------------- Packet Serialization --------------------
 
 sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& lccp) {
-// packet << static_cast<uint32_t>(lccp.nodeLines.size());
-//     for (const auto& line : lccp.nodeLines) {
-//         packet << line;
-//     }
-
     return packet << lccp.type << lccp.distanceThreshold << lccp.communicationMode << lccp.topology;
 }
 sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& lccp) {
-
-    // uint32_t size;
-    // packet >> p.distanceThreshold >> p.communicationMode >> size;
-
-    // p.nodeLines.clear();
-    // for (uint32_t i = 0; i < size; ++i) {
-    //     std::string line;
-    //     packet >> line;
-    //     p.nodeLines.push_back(line);
-    // }
-
     return packet >> lccp.distanceThreshold >> lccp.communicationMode >> lccp.topology;
+}
+sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd) {
+    return packet << cmd.type;
+}
+sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd) {
+    return packet; // Nothing to deserialize
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const restartCommandPacket& cmd) {
+    return packet << cmd.type;
+}
+sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd) {
+    return packet;
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& rsp) {
+    return packet << rsp.type << rsp.status;
+}
+sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& rsp) {
+    return packet >> rsp.status;
 }

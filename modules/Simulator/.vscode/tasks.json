@@ -1,6 +1,24 @@
 {
     "tasks": [
         {
+            "label": "CMake Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S",
+                ".",
+                "-B",
+                "build",
+                "-G",
+                "MinGW Makefiles",
+                "-DCMAKE_BUILD_TYPE=Debug"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "Run ARCLORAMSimulator",
             "type": "shell",
             "command": "${workspaceFolder}/build/exec/ARCLORAMSimulator.exe",

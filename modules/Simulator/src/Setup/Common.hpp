@@ -57,7 +57,7 @@ If time allows, we will consider an hybrid use case that will combine the two pr
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
 constexpr const int tickIntervalForClock_ms=10; //the tick interval for the clock, the lower the more realistic but the more CPU intensive the simulation (minimum 1ms)
 constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
-constexpr const bool visualiserConnected=false;//set false if you don't want to display the protocol
+constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
 
 //-----------------------------------------Communication Mode and  Topology-----------------------------------------
 

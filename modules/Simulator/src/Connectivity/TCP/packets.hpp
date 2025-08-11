@@ -160,5 +160,40 @@ public:
     friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
 };
 
+class pingCommandPacket : public BasePacket {
+public:
+    pingCommandPacket() { type = 103; }
+
+    // Optional future use
+    // int requestId;
+    
+    friend sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd);
+};
+
+
+class pingResponsePacket : public BasePacket {
+public:
+    std::string status;
+
+    pingResponsePacket(std::string status = "OK") 
+        : status(std::move(status)) { type = 203; }
+
+    friend sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& cmd);
+};
+
+class restartCommandPacket : public BasePacket {
+public:
+    restartCommandPacket() { type = 104; }
+
+    // Optional: could include restart mode or reuse-last-config flag
+    
+    friend sf::Packet& operator<<(sf::Packet& packet, const restartCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd);
+};
+
+
+
 
 #endif // PACKETS_HPP

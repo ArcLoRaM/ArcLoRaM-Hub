@@ -37,7 +37,6 @@ void CommandListener::stop() {
 }
 
 void CommandListener::listenLoop() {
-    logger.logSystem("CommandListener: Listening on port " + std::to_string(port));
 
     while (running) {
         {

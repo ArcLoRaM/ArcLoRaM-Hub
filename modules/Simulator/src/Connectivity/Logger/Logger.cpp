@@ -28,6 +28,7 @@ void Logger::stop() {
     if (fileStream.is_open()) fileStream.close();
 }
 
+//Todo: should the logger be the one sending packets? 
 void Logger::sendTcpPacket(sf::Packet packet) {
     if (!common::visualiserConnected) return;
 
