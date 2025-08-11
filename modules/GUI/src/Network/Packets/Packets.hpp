@@ -16,6 +16,12 @@ public:
     virtual ~BasePacket() = default; // Virtual destructor for polymorphism
 };
 
+
+
+//TELEMETRY PACKETS
+
+
+
 // Packet class declarations
 class systemPacket : public BasePacket {
 public:
@@ -134,5 +140,60 @@ class stopSimulationPacket : public BasePacket {
     friend sf::Packet& operator<<(sf::Packet& packet, const stopSimulationPacket& sp);
     friend sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp);
 };
+
+
+
+
+//CONTROL PACKETS
+
+class launchConfigCommandPacket : public BasePacket {
+
+public:
+    double distanceThreshold;
+    std::string communicationMode;
+    std::string topology;
+    launchConfigCommandPacket(double distanceThreshold = 100, std::string communicationMode = "error", std::string topology = "error");
+    // Future use — optional now
+    std::vector<std::string> configLines; // Raw node lines from .simcfg file
+
+    friend sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
+};
+
+class pingCommandPacket : public BasePacket {
+public:
+    pingCommandPacket() { type = 103; }
+
+    // Optional future use
+    // int requestId;
+    
+    friend sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd);
+};
+
+
+class pingResponsePacket : public BasePacket {
+public:
+    std::string status;
+
+    pingResponsePacket(std::string status = "OK") 
+        : status(std::move(status)) { type = 203; }
+
+    friend sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& cmd);
+};
+
+class restartCommandPacket : public BasePacket {
+public:
+    restartCommandPacket() { type = 104; }
+
+    // Optional: could include restart mode or reuse-last-config flag
+    
+    friend sf::Packet& operator<<(sf::Packet& packet, const restartCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd);
+};
+
+
+
 
 #endif // PACKETS_HPP

@@ -5,6 +5,10 @@
 #include <utility>
 #include <iostream> // optional for debugging
 
+
+
+//-------------------- TELEMETRY PACKETS --------------------
+
 // -------------------- Constructors --------------------
 
 systemPacket::systemPacket(double distanceThreshold, std::string mode)
@@ -168,7 +172,7 @@ sf::Packet& operator>>(sf::Packet& packet, retransmissionPacket& rp) {
 }
 
 
-sf::Packet& operator<<(sf::Packet& packet, stopSimulationPacket& sp) {
+sf::Packet& operator<<(sf::Packet& packet,const stopSimulationPacket& sp) {
     return packet << sp.type<<sp.nodeId;
 }
 
@@ -176,3 +180,42 @@ sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
     return packet >> sp.nodeId;
 }
 
+
+//-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
+
+//------ Constructors --------------------
+launchConfigCommandPacket::launchConfigCommandPacket(double distanceThreshold, std::string communicationMode, std::string topology)
+    : distanceThreshold(distanceThreshold), communicationMode(std::move(communicationMode)), topology(std::move(topology)) {
+    type = 101;
+}
+
+
+
+//-------------------- Packet Serialization --------------------
+
+sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& lccp) {
+    return packet << lccp.type << lccp.distanceThreshold << lccp.communicationMode << lccp.topology;
+}
+sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& lccp) {
+    return packet >> lccp.distanceThreshold >> lccp.communicationMode >> lccp.topology;
+}
+sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd) {
+    return packet << cmd.type;
+}
+sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd) {
+    return packet; // Nothing to deserialize
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const restartCommandPacket& cmd) {
+    return packet << cmd.type;
+}
+sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd) {
+    return packet;
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& rsp) {
+    return packet << rsp.type << rsp.status;
+}
+sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& rsp) {
+    return packet >> rsp.status;
+}

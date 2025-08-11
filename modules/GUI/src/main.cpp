@@ -10,7 +10,6 @@ int main() {
         ResourceManager::getInstance().loadAll();
         std::cout << "Assets loaded\n";
 
-        // Start the Application
         Application app;
         std::cout << "Application created\n";
         app.run();

@@ -17,7 +17,6 @@ Application::Application()
     theme.load("assets/themes/BabyBlue.txt");
     UIFactory::setTheme(&theme);
 
-    tcpServer.start(5000);
 
 auto homePageActions = std::make_shared<std::vector<std::pair<std::string, ScreenAction>>>();
 //provision the actions for the home page
@@ -47,7 +46,7 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         std::vector<std::pair<std::string, ScreenAction>> actions = {
                     { "Back", backToHome }
                 };
-                changeScreen(std::make_unique<ProtocolVisualisationScreen>(tcpServer, actions, gui));
+                changeScreen(std::make_unique<ProtocolVisualisationScreen>( actions, gui));
     }}
 };
     // Set the initial screen to the home page

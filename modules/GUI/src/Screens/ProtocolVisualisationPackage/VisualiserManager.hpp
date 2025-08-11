@@ -11,17 +11,18 @@
 #include "../../Visualisation/Device/Device.hpp"
 #include "../../Visualisation/Animations/Arrow/Arrow.hpp"
 #include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
-
 #include "../../Visualisation/Animations/PacketDrop/PacketDrop.hpp"
 #include "../../Visualisation/Animations/ReceptionIcon/ReceptionIcon.hpp"
 #include "ProtocolVisualisationState.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include "CommandSender.hpp"
 
 
 class VisualiserManager {
 private:
+    CommandSender commandSender;
 
     //TODO: put rooting and Devices in the state, manager should only handle interface specific to the feature ( not like redirection between pages) and animations (transmission etc..)
     // I really think it's necessary, the sooner the better 
@@ -50,8 +51,10 @@ private:
   void setMetricsPanelUI();
   void setServerPanelUI();
 
+
+    TcpServer& server;
     public:
-    VisualiserManager(ProtocolVisualisationState& state, tgui::Gui &gui);
+    VisualiserManager(ProtocolVisualisationState& state, tgui::Gui &gui, TcpServer& server);
 
 
     //todo: networkView should be owned by the manager, since it's already receving the inputManager it doesnt make sense for the parent screen to handle the view
@@ -98,7 +101,7 @@ private:
     tgui::Panel::Ptr networkPanel;
     tgui::Panel::Ptr logsPanel;
     tgui::Panel::Ptr metricsPanel;
-
+    tgui::Label::Ptr serverStatus;
 
     //Server TAB
 

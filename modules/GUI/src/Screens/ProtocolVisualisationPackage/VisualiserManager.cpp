@@ -12,7 +12,7 @@
 #include "../../UI/UIFactory/UIFactory.hpp"
 
 
-VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui)
+VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui, TcpServer& server) : state(state), gui(gui), server(server), commandSender(server)
 
 {
 
@@ -30,7 +30,7 @@ void VisualiserManager::setupUI(sf::View &networkView){
     logsPanel=tabContainer->addTab("Log");
     metricsPanel=tabContainer->addTab("Metrics");
 
-    // setServerPanelUI();
+    setServerPanelUI();
      setNetworkPanelUI(networkView);
     // setLogsPanelUI();
     // setMetricsPanelUI();
@@ -82,6 +82,37 @@ void VisualiserManager::setNetworkPanelUI(sf::View &networkView)
     networkPanel->add(buttonSave);
 }
 
+void VisualiserManager::setLogsPanelUI()
+{
+}
+
+void VisualiserManager::setMetricsPanelUI()
+{
+}
+
+void VisualiserManager::setServerPanelUI()
+{
+    auto serverLabel = UIFactory::createLabel("Server");
+    serverLabel->setPosition({"2%", "2%"});
+    serverLabel->setSize({"20%", "6%"});
+    serverPanel->add(serverLabel);
+
+    serverStatus = UIFactory::createLabel("Status: Not connected");
+    serverStatus->setPosition({"2%", "10%"});
+    serverPanel->add(serverStatus);
+
+    auto connectButton = UIFactory::createButton("Connect");
+    connectButton->setPosition({"2%", "20%"});
+    connectButton->onPress([&]()
+                            {
+                                // Implement connection logic here
+                                serverStatus->setText(commandSender.getClientStatus());
+                                commandSender.sendPing();
+                            });
+    serverPanel->add(connectButton);
+
+
+}
 
 void VisualiserManager::addDevice(std::unique_ptr<Device> device)
 {

@@ -6,22 +6,18 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
 
-ProtocolVisualisationScreen::ProtocolVisualisationScreen(TcpServer& tcpServer, std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
-    : Screen(gui),manager(state,gui),
+ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
+    : Screen(gui),manager(state,gui,tcpServer),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
+
     tcpServer.setPacketHandler([this](sf::Packet& packet) {
         packetController.handlePacket(packet, state, manager);
     });
 
-    
-
-
     setupUI(actions);
     manager.setupUI(networkView);
-
-    //Todo: terminate the current process gracefully, right now there is memory problem which causes a crash
-    //maybe you will want to have an "unfocused" state for the screen where packets are still received but not processed
+    tcpServer.start(5000);
 
 
 }
