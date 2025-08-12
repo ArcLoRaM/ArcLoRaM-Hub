@@ -213,9 +213,9 @@ sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd) {
     return packet;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& rsp) {
-    return packet << rsp.type << rsp.status;
+sf::Packet& operator<<(sf::Packet& packet, const pongPacket& rsp) {
+    return packet << rsp.type;
 }
-sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& rsp) {
-    return packet >> rsp.status;
+sf::Packet& operator>>(sf::Packet& packet, pongPacket& rsp) {
+    return packet;
 }

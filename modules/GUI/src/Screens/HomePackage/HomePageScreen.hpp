@@ -5,7 +5,6 @@
 #include <memory>
 #include "../Screen.hpp"
 #include "HomePageState.hpp"
-#include "../../Network/TcpServer/TcpServer.hpp"
 
 
 class HomePageScreen : public Screen {

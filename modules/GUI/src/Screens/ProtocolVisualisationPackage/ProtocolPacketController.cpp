@@ -5,6 +5,8 @@
 #include <magic_enum.hpp>
 #include "../../Visualisation/Device/Device.hpp"
 #include "CsvMetricWriter.hpp"
+#include "../../Network/TcpServer/TcpServer.hpp"
+
 
 void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualisationState &state, VisualiserManager &manager)
 {
@@ -14,6 +16,8 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
     packet >> packetType;
 
     switch (packetType) {
+
+    //Protocol actions
     case 0: handleSystemPacket(packet, state,manager); break;
     case 1: handleTickPacket(packet, state,manager); break;
     case 2: handleStateNodePacket(packet, state,manager); break;
@@ -25,6 +29,10 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
     case 8: handleDropAnimationPacket(packet, state,manager); break;
     case 9: handleRetransmissionPacket(packet, state,manager); break;
     case 10: handleStopSimulationPacket(packet, state,manager); break;
+
+    //server - client 
+    case 104: handlePongPacket(packet);break;
+    
     default:
         std::cerr << "Unknown packet type: " << packetType << std::endl;
         break;
@@ -33,6 +41,11 @@ void ProtocolPacketController::handlePacket(sf::Packet &packet, ProtocolVisualis
 
 }
 
+void ProtocolPacketController::handlePongPacket(sf::Packet &packet)
+{
+    TcpServer::instance().updateLastPong();
+    
+}
 
 
 void ProtocolPacketController::handleSystemPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager) {

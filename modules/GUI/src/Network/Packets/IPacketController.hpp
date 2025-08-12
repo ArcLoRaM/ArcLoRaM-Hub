@@ -6,6 +6,8 @@
 #include "../../Screens/ProtocolVisualisationPackage/ProtocolVisualisationState.hpp"
 
 
+
+//TODO: i think this class is useless since we have only one Controller
 class ProtocolVisualisationState; // Forward declaration to avoid circular dependency
 class VisualiserManager; // Forward declaration to avoid circular dependency
 

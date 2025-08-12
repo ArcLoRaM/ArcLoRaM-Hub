@@ -163,29 +163,25 @@ public:
 class pingCommandPacket : public BasePacket {
 public:
     pingCommandPacket() { type = 103; }
-
-    // Optional future use
-    // int requestId;
     
     friend sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd);
 };
 
 
-class pingResponsePacket : public BasePacket {
+class pongPacket : public BasePacket {
 public:
-    std::string status;
 
-    pingResponsePacket(std::string status = "OK") 
-        : status(std::move(status)) { type = 203; }
+    pongPacket() 
+         { type = 104; }
 
-    friend sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& cmd);
-    friend sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& cmd);
+    friend sf::Packet& operator<<(sf::Packet& packet, const pongPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pongPacket& cmd);
 };
 
 class restartCommandPacket : public BasePacket {
 public:
-    restartCommandPacket() { type = 104; }
+    restartCommandPacket() { type = 105; }
 
     // Optional: could include restart mode or reuse-last-config flag
     

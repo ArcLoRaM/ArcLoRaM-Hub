@@ -3,7 +3,6 @@
 #include <SFML/Graphics.hpp>
 #include "../Screens/Screen.hpp"
 #include <memory>
-#include "../Network/TcpServer/TcpServer.hpp"
 #include "../Shared/InputManager/InputManager.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>

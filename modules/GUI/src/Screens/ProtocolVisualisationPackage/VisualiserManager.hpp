@@ -18,6 +18,7 @@
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "CommandSender.hpp"
+#include "../../Network/TcpServer/ClientSession.hpp"
 
 
 class VisualiserManager {
@@ -52,10 +53,9 @@ private:
   void setServerPanelUI();
 
 
-    TcpServer& server;
     public:
-    VisualiserManager(ProtocolVisualisationState& state, tgui::Gui &gui, TcpServer& server);
-
+    VisualiserManager(ProtocolVisualisationState& state, tgui::Gui &gui);
+    ~VisualiserManager();
 
     //todo: networkView should be owned by the manager, since it's already receving the inputManager it doesnt make sense for the parent screen to handle the view
     //do the same for the editorView in TopologyEditorManager
@@ -101,9 +101,13 @@ private:
     tgui::Panel::Ptr networkPanel;
     tgui::Panel::Ptr logsPanel;
     tgui::Panel::Ptr metricsPanel;
-    tgui::Label::Ptr serverStatus;
 
     //Server TAB
+    tgui::Label::Ptr serverStatusConnected;
+    tgui::Label::Ptr serverStatusDisconnected;
+    std::thread routineServer;
+    std::atomic<bool> isRoutineServerRunning{false};
+    void routineServerLoop();
 
     //Network TAB
     tgui::CanvasSFML::Ptr canvas;

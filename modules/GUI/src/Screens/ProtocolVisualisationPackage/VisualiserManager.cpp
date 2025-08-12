@@ -10,15 +10,40 @@
 #include "../../Shared/Helper.hpp"
 #include "CsvMetricWriter.hpp"
 #include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Network/TcpServer/ClientSession.hpp"
 
 
-VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui, TcpServer& server) : state(state), gui(gui), server(server), commandSender(server)
+VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui), commandSender()
 
 {
 
 }
 
+VisualiserManager::~VisualiserManager()
+{
+    isRoutineServerRunning.store(false);
+    if (routineServer.joinable())
+    {
+        routineServer.join();
+    }
+}
+void VisualiserManager::routineServerLoop() {
+    while (isRoutineServerRunning.load()) {
+        auto& s = ClientSession::instance();
 
+
+        if(s.isConnected()) {
+            serverStatusConnected->setVisible(true);
+            serverStatusDisconnected->setVisible(false);
+        }
+        else {
+            serverStatusConnected->setVisible(false);
+            serverStatusDisconnected->setVisible(true); 
+        }
+        // std::cout << "Server connection status updated with:" << (s.isConnected() ? "Connected" : "Disconnected") << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
+}
 void VisualiserManager::setupUI(sf::View &networkView){
 
     tabContainer = UIFactory::createTabContainer({"92%", "92%"});
@@ -97,21 +122,19 @@ void VisualiserManager::setServerPanelUI()
     serverLabel->setSize({"20%", "6%"});
     serverPanel->add(serverLabel);
 
-    serverStatus = UIFactory::createLabel("Status: Not connected");
-    serverStatus->setPosition({"2%", "10%"});
-    serverPanel->add(serverStatus);
 
-    auto connectButton = UIFactory::createButton("Connect");
-    connectButton->setPosition({"2%", "20%"});
-    connectButton->onPress([&]()
-                            {
-                                // Implement connection logic here
-                                serverStatus->setText(commandSender.getClientStatus());
-                                commandSender.sendPing();
-                            });
-    serverPanel->add(connectButton);
+    serverStatusConnected=UIFactory::createLabel("Simulator Connected");
+    serverStatusConnected->setPosition({"2%", "10%"});
+    serverPanel->add(serverStatusConnected);
 
-
+    serverStatusDisconnected=UIFactory::createLabel("Simulator disconnected...");
+    serverStatusDisconnected->setPosition({"2%", "10%"});
+    serverPanel->add(serverStatusDisconnected);
+    serverStatusDisconnected->setVisible(false);
+    
+    //launch the routine that will check client-server connection
+    isRoutineServerRunning.store(true);
+    routineServer = std::thread(&VisualiserManager::routineServerLoop, this);
 }
 
 void VisualiserManager::addDevice(std::unique_ptr<Device> device)

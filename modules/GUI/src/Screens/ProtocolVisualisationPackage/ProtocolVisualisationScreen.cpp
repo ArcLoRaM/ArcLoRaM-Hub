@@ -4,13 +4,15 @@
 #include "../../UI/UIFactory/UIFactory.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
+#include "../../Network/TcpServer/TcpServer.hpp"
+
 
 
 ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
-    : Screen(gui),manager(state,gui,tcpServer),
+    : Screen(gui),manager(state,gui),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
 {
-
+    auto& tcpServer = TcpServer::instance();
     tcpServer.setPacketHandler([this](sf::Packet& packet) {
         packetController.handlePacket(packet, state, manager);
     });
@@ -67,8 +69,14 @@ void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, Scr
     picture->setSize({"100%", "100%"});
     gui.add(picture);
 
-    
-        auto button = UIFactory::createButton("Back", actions[0].second);
+
+    //todo: undertand why it's laggy when you click back, probably not well handled memory leak...
+        auto button = UIFactory::createButton("Back", [this, actions]() {
+            actions[0].second();
+            TcpServer::instance().stop();
+
+            
+        });
         button->setSize({"7%", "4%"});
         button->setPosition({"1%", "1%"});
         gui.add(button);

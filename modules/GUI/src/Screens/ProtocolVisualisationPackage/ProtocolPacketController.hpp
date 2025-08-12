@@ -28,6 +28,8 @@ class ProtocolPacketController : public IPacketController {
     void handleRetransmissionPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
     void handleStopSimulationPacket(sf::Packet& packet,ProtocolVisualisationState &state, VisualiserManager &manager);
 
+
+    void handlePongPacket(sf::Packet& packet);
 public:
     void handlePacket(sf::Packet& packet, ProtocolVisualisationState& state, VisualiserManager& manager) override;
 };

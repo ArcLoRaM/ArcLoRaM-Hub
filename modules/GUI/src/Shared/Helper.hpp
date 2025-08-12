@@ -1,6 +1,86 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <functional>
+#include <mutex>
+#include <vector>
+#include <algorithm>
+#include <TGUI/TGUI.hpp> // TGUI header
+#include <TGUI/Backend/SFML-Graphics.hpp>
+
+
+//honestly no idea how this works
+template <class T>
+class Property {
+public:
+    using Callback = std::function<void(const T&)>;
+
+    explicit Property(T v = {}) : value_(std::move(v)) {}
+
+    // Subscribe; auto-unsub on Token destruction
+    struct Token {
+        size_t id{}; Property<T>* owner{};
+        Token() = default;
+        Token(size_t i, Property<T>* o): id(i), owner(o) {}
+        Token(const Token&) = delete;
+        Token& operator=(const Token&) = delete;
+        Token(Token&& r) noexcept { *this = std::move(r); }
+        Token& operator=(Token&& r) noexcept {
+            if (this != &r) { reset(); id = r.id; owner = r.owner; r.owner = nullptr; }
+            return *this;
+        }
+        ~Token() { reset(); }
+        void reset() { if (owner) owner->unsubscribe(id); owner = nullptr; id = 0; }
+    };
+
+    Token subscribe(Callback cb) {
+        std::lock_guard<std::mutex> lock(m_);
+        const size_t id = ++counter_;
+        listeners_.push_back({id, std::move(cb)});
+        return Token{id, this};
+    }
+
+    void unsubscribe(size_t id) {
+        std::lock_guard<std::mutex> lock(m_);
+        auto it = std::remove_if(listeners_.begin(), listeners_.end(),
+                                 [id](auto& p){ return p.first == id; });
+        listeners_.erase(it, listeners_.end());
+    }
+
+    const T& get() const { return value_; }
+
+    void set(const T& v) {
+        std::vector<Callback> toCall;
+        {
+            std::lock_guard<std::mutex> lock(m_);
+            if (v == value_) return;
+            value_ = v;
+            toCall.reserve(listeners_.size());
+            for (auto& [_, cb] : listeners_) toCall.push_back(cb);
+        }
+        for (auto& cb : toCall) cb(value_);
+    }
+
+private:
+    T value_{};
+    mutable std::mutex m_;
+    std::vector<std::pair<size_t, Callback>> listeners_;
+    size_t counter_ = 0;
+};
+
+// One-way binding: source -> target (with optional transform)
+template <class T, class U = T>
+struct OneWayBinding {
+    typename Property<T>::Token sub;
+    OneWayBinding(Property<T>& source, Property<U>& target,
+                  std::function<U(const T&)> transform = [](const T& v){ return U(v); })
+    {
+        sub = source.subscribe([&target, transform](const T& value) {
+            target.set(transform(value));
+        });
+    }
+};
+
 
 //For the routing Arrow
 // Function to create an arrowhead shape
@@ -74,4 +154,6 @@ inline void drawArrowWithHeads(tgui::CanvasSFML::Ptr canvas, sf::Vector2f start,
         currentLength += headSpacing;
     }
 }
+
+
 

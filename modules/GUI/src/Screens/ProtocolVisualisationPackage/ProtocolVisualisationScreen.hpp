@@ -3,7 +3,6 @@
 #include "../Screen.hpp"
 #include "VisualiserManager.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
-#include "../../Network/TcpServer/TcpServer.hpp"
 #include "ProtocolPacketController.hpp"
 #include "ProtocolVisualisationState.hpp"
 
@@ -25,10 +24,6 @@ private:
     ProtocolVisualisationState state; 
     ProtocolPacketController packetController;
     void onResize() override;
-
-    TcpServer tcpServer; 
-
-
 };
 
 

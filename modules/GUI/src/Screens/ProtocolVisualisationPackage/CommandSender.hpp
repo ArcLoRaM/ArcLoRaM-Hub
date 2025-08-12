@@ -4,14 +4,12 @@
 class CommandSender {
 
 public:
-    explicit CommandSender(TcpServer& server);
+    explicit CommandSender();
     void sendPing();
     void sendStop();
     void sendRestart();
     void sendLaunch(double threshold, const std::string& mode, const std::string& topology);
-    std::string getClientStatus();
     
 private:
-    TcpServer& server;
 
 };
