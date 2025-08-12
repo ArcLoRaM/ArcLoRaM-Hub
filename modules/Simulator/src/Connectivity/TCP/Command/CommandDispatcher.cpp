@@ -24,7 +24,7 @@ void CommandDispatcher::onCommand(sf::Packet& packet) {
             }
             break;
         case 103:
-            logger.logSystem("Ping command received.");
+            // logger.logSystem("Ping command received.");
             if (pingCallback) pingCallback();
             break;
 

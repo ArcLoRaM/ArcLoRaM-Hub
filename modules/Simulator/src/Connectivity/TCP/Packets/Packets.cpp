@@ -1,4 +1,4 @@
-#include "Packets.hpp"
+#include "packets.hpp"
 #include <SFML/Network/Packet.hpp>
 #include <string>
 #include <optional>
@@ -181,7 +181,7 @@ sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
 }
 
 
-//-------------------- CONTROL PACKETS --------------------
+//-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
 
 //------ Constructors --------------------
 launchConfigCommandPacket::launchConfigCommandPacket(double distanceThreshold, std::string communicationMode, std::string topology)
@@ -213,9 +213,9 @@ sf::Packet& operator>>(sf::Packet& packet, restartCommandPacket& cmd) {
     return packet;
 }
 
-sf::Packet& operator<<(sf::Packet& packet, const pingResponsePacket& rsp) {
-    return packet << rsp.type << rsp.status;
+sf::Packet& operator<<(sf::Packet& packet, const pongPacket& rsp) {
+    return packet << rsp.type;
 }
-sf::Packet& operator>>(sf::Packet& packet, pingResponsePacket& rsp) {
-    return packet >> rsp.status;
+sf::Packet& operator>>(sf::Packet& packet, pongPacket& rsp) {
+    return packet;
 }

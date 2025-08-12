@@ -48,6 +48,7 @@
 #include <functional>
 
 
+//todo: this could be a singleton but is it worth the effort?
 
 class Client {
 public:
@@ -64,6 +65,9 @@ public:
 
     void setPacketHandler(PacketHandler handler);
 
+  using ConnectionChanged = std::function<void(bool up)>; // true=connected, false=disconnected
+    void setConnectionChangedCallback(ConnectionChanged cb);  
+
 private:
     void receiveLoop();
 
@@ -78,6 +82,12 @@ private:
     Logger& logger;
 
     PacketHandler packetHandler;
+
+    // Add (private):
+bool tryConnect();               // one attempt (blocking), returns true on success
+std::chrono::seconds reconnectDelay{5};
+
+ConnectionChanged onConnectionChanged;    // user-provided callback
 };
 
 

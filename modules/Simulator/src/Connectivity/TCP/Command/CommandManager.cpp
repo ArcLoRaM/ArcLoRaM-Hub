@@ -2,19 +2,19 @@
 #include "Setup/Common.hpp"
 #include "Setup/Seed/Seed.hpp"
 #include "Node/Node.hpp"
+#include "../Packets/Packets.hpp"
 
 CommandManager::CommandManager(Logger &logger_)
     : logger(logger_),
       tcpClient("127.0.0.1", 5000,logger_),
       dispatcher(logger),
-     
-
       running(false)
 {
 
     logger.setTcpClient(&tcpClient);
-    logger.enableFileOutput("output/log_output.txt");
-    logger.enableColorOutput(true);
+    tcpClient.setPacketHandler([this](sf::Packet& p) {
+        dispatcher.onCommand(p);
+    });
 
     dispatcher.setStopCallback([this]()
                                { 
@@ -25,27 +25,43 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setPingCallback([this]()
                                {
-                                   logger.logSystem("Ping callback triggered.");
-                                   // Optional: reply to GUI with status
+                                //    logger.logSystem("Ping callback triggered, sending pong");
+                                    sf::Packet pongBasePacket;
+                                    pongPacket pongPck;
+                                    pongBasePacket << pongPck;
+                                    logger.sendTcpPacket(pongBasePacket);
                                });
 
     dispatcher.setRestartCallback([this]() {
             logger.logSystem("Restart callback triggered.");
             this->stopSimulation();
     });
+
+
+
+    tcpClient.setConnectionChangedCallback([this](bool up){
+    if (!up) {
+        logger.logSystem("Connection lost — stopping simulation.");
+        this->stopSimulation();
+    } else {
+        logger.logSystem("Connection re-established.");
+        // If you want to auto-resume or re-request config, do it here.
+    }
+});
+
 }
 
 CommandManager::~CommandManager()
 {
+
     stop();
-    logger.stop(); // Must be stopped last
+
 }
 
 void CommandManager::start()
 {
 
-
-    logger.start();
+    tcpClient.start();
 
     logger.logSystem("Waiting for launch config from GUI...");
     waitForLaunchConfig();
@@ -66,7 +82,7 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
 {
     logger.logSystem("Launching simulation...");
 
-    // Notify GUI of system parameters
+    // Notify GUI of system parameters, information is sent back as a security check
     sf::Packet sysPacket;
     systemPacket sys(common::distanceThreshold, common::communicationMode);
     sysPacket << sys;
@@ -75,8 +91,9 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
     // Build simulation
     phyLayer = std::make_unique<PhyLayer>(common::distanceThreshold, logger);
     Seed seed(common::communicationMode, common::topology, logger);
-    phyLayer->takeOwnership(seed.transferOwnership());
+    phyLayer->takeOwnership(seed.transferOwnership()); //seed memory is released safely
 
+    //the clock could be renamed as the scheduler TODO
     clock = std::make_unique<Clock>(logger);
     phyLayer->registerAllNodeEvents(*clock);
     clock->start();

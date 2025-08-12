@@ -1,0 +1,143 @@
+[SYSTEM] Waiting for launch config from GUI...
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[SYSTEM] Connection re-established.
+[SYSTEM] Server disconnected.
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] Connection lost — stopping simulation.
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] ****** Client is not connected to a server ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[SYSTEM] Connection re-established.
+[SYSTEM] Server disconnected.
+[SYSTEM] Connection lost — stopping simulation.
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] ****** Error connecting to server. Retrying in 5 seconds... ******
