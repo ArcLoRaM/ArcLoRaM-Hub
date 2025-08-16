@@ -11,12 +11,16 @@
 #include "CsvMetricWriter.hpp"
 #include "../../UI/UIFactory/UIFactory.hpp"
 #include "../../Network/TcpServer/ClientSession.hpp"
+#include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
+#include "../../Network/Packets/Packets.hpp"
+#include "../../Network/TcpServer/TcpServer.hpp"
+#include "magic_enum.hpp"
 
+//TODO: make this class more modular, it's too heavy?
 
 VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui), commandSender()
 
 {
-
 }
 
 VisualiserManager::~VisualiserManager()
@@ -27,36 +31,45 @@ VisualiserManager::~VisualiserManager()
         routineServer.join();
     }
 }
-void VisualiserManager::routineServerLoop() {
-    while (isRoutineServerRunning.load()) {
-        auto& s = ClientSession::instance();
+void VisualiserManager::routineServerLoop()
+{
+    while (isRoutineServerRunning.load())
+    {
+        auto &s = ClientSession::instance();
 
-
-        if(s.isConnected()) {
+        if (s.isConnected())
+        {
             serverStatusConnected->setVisible(true);
+            confFileSelectionGroup->setVisible(true);
             serverStatusDisconnected->setVisible(false);
         }
-        else {
+        else
+        {
             serverStatusConnected->setVisible(false);
-            serverStatusDisconnected->setVisible(true); 
+            confFileSelectionGroup->setVisible(false);
+            serverStatusDisconnected->setVisible(true);
+            startSimulationButton->setEnabled(false);
+            tgui::String fileNameLabelString= "No File Selected";
+            fileNameLabel->setText(fileNameLabelString);
         }
         // std::cout << "Server connection status updated with:" << (s.isConnected() ? "Connected" : "Disconnected") << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 }
-void VisualiserManager::setupUI(sf::View &networkView){
+void VisualiserManager::setupUI(sf::View &networkView)
+{
 
     tabContainer = UIFactory::createTabContainer({"92%", "92%"});
     tabContainer->setTabsHeight(50);
     tabContainer->setPosition({"4%", "6%"});
 
-    serverPanel=tabContainer->addTab("Server");
-    networkPanel=tabContainer->addTab("Network");
-    logsPanel=tabContainer->addTab("Log");
-    metricsPanel=tabContainer->addTab("Metrics");
+    serverPanel = tabContainer->addTab("Server");
+    networkPanel = tabContainer->addTab("Network");
+    logsPanel = tabContainer->addTab("Log");
+    metricsPanel = tabContainer->addTab("Metrics");
 
     setServerPanelUI();
-     setNetworkPanelUI(networkView);
+    setNetworkPanelUI(networkView);
     // setLogsPanelUI();
     // setMetricsPanelUI();
 
@@ -102,8 +115,7 @@ void VisualiserManager::setNetworkPanelUI(sf::View &networkView)
                             catch (const std::exception &e)
                             {
                                 std::cerr << "Error writing CSV: " << e.what() << '\n';
-                            };
-                        });
+                            }; });
     networkPanel->add(buttonSave);
 }
 
@@ -122,17 +134,91 @@ void VisualiserManager::setServerPanelUI()
     serverLabel->setSize({"20%", "6%"});
     serverPanel->add(serverLabel);
 
-
-    serverStatusConnected=UIFactory::createLabel("Simulator Connected");
+    serverStatusConnected = UIFactory::createLabel("Simulator Connected");
     serverStatusConnected->setPosition({"2%", "10%"});
     serverPanel->add(serverStatusConnected);
 
-    serverStatusDisconnected=UIFactory::createLabel("Simulator disconnected...");
+    serverStatusDisconnected = UIFactory::createLabel("Simulator disconnected...");
     serverStatusDisconnected->setPosition({"2%", "10%"});
     serverPanel->add(serverStatusDisconnected);
     serverStatusDisconnected->setVisible(false);
+
+    confFileSelectionGroup = tgui::Group::create();
+    serverPanel->add(confFileSelectionGroup);
+
+    auto confFileLabel = UIFactory::createLabel("Configuration File:");
+    confFileSelectionGroup->add(confFileLabel);
+    confFileLabel->setPosition({"2%", "20%"});
+    confFileLabel->setSize({"20%", "6%"});
+
+    auto confFileSelection = UIFactory::createButton("Select File");
+    confFileSelectionGroup->add(confFileSelection);
+    confFileSelection->setPosition({"25%", "20%"});
+    confFileSelection->setSize({"20%", "6%"});
+    confFileSelection->onPress([this]()
+                               {
+                                   auto targetDir = std::filesystem::path("output/topologies");
+                                   auto openFileDialog = tgui::FileDialog::create("Open file", "Open");
+                                   openFileDialog->setMultiSelect(false);
+                                   openFileDialog->setPath(targetDir.string()); // Set default dir
+                                   openFileDialog->setFileTypeFilters({{"Simulation File", {"*.simcfg"}}}, 1);
+                                   openFileDialog->onFileSelect([this](const std::vector<tgui::Filesystem::Path> &paths)
+                                                                {
+                                                                if (!paths.empty()) {
+                                                                     
+                                                                    if (TopologyConfigIO::readToVisualisationState(paths[0].asString().toStdString(),topoVisuState)) {
+                                                                        startSimulationButton->setEnabled(true);
+                                                                        tgui::String fileNameLabelString= "File Selected: " + paths[0].asString();
+                                                                        fileNameLabel->setText(fileNameLabelString);
+                                                                    }
+                                                                    else{
+                                                                        auto errorBox = UIFactory::createMessageBox("Error", "Failed to load topology configuration.");
+                                                                        errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                                                                            if(button == "OK" ){
+                                                                                msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                                                                            } 
+                                                                        });
+                                                                        gui.add(errorBox);
+
+                                                                        startSimulationButton->setEnabled(true);
+                                                                        tgui::String fileNameLabelString= "Incorrect File Selected: " + paths[0].asString();
+                                                                        fileNameLabel->setText(fileNameLabelString);
+                                                                    }
+
+                                                                } });
+                                   openFileDialog->setTitle("Open Topology Configuration");
+                                   openFileDialog->setSize({"50%", "50%"});
+                                   openFileDialog->setPosition({"25%", "25%"});
+                                   gui.add(openFileDialog);
+                                   unsigned int textSize = 0.015f * gui.getView().getRect().height; // e.g. 2.5% of height
+                                   openFileDialog->setTextSize(textSize);
+                                   openFileDialog->getRenderer()->setTextSize(textSize); 
+                                });
+
+    fileNameLabel = UIFactory::createLabel("No configuration file selected");
+    fileNameLabel->setPosition({"25%", "15%"});
+    fileNameLabel->setSize({"50%", "6%"});
+    confFileSelectionGroup->add(fileNameLabel); 
+
+
+    startSimulationButton = UIFactory::createButton("Start Simulation");
+    startSimulationButton->onPress([this]()
+                                     {
+                                         // Start the simulation
+                                         std::cout << "Starting simulation..." << std::endl;
+
+                                         sf::Packet basePacket;
+                                        // Construct launchConfigCommandPacket with required arguments
+                                        launchConfigCommandPacket confPacket(topoVisuState.getDistanceThreshold(), magic_enum::enum_name(topoVisuState.getTDMAMode()), topoVisuState.getTopologyLines());
+                                        basePacket << confPacket;
+                                        TcpServer::instance().transmitPacket(basePacket);
+                                     });
     
-    //launch the routine that will check client-server connection
+    confFileSelectionGroup->add(startSimulationButton);
+    startSimulationButton->setPosition({"2%", "40%"});
+    startSimulationButton->setSize({"20%", "6%"});
+    startSimulationButton->setEnabled(false); // Initially disabled until a file is selected
+    // launch the routine that will check client-server connection
     isRoutineServerRunning.store(true);
     routineServer = std::thread(&VisualiserManager::routineServerLoop, this);
 }
@@ -141,11 +227,11 @@ void VisualiserManager::addDevice(std::unique_ptr<Device> device)
 {
     std::lock_guard<std::mutex> lock(devicesMutex);
 
-    if(!device)
+    if (!device)
     {
         throw std::runtime_error("Error: Attempted to add a null device.");
     }
-        int nodeId = device->getNodeId();
+    int nodeId = device->getNodeId();
 
     if (devices.contains(nodeId))
     {
@@ -154,8 +240,6 @@ void VisualiserManager::addDevice(std::unique_ptr<Device> device)
     }
 
     devices[nodeId] = std::move(device);
-
-
 }
 
 void VisualiserManager::addArrow(std::unique_ptr<Arrow> arrow)
@@ -198,8 +282,6 @@ void VisualiserManager::startBroadcast(const sf::Vector2f &startPosition, float 
     broadcastAnimations.push_back(std::make_unique<BroadcastAnimation>(startPosition, duration));
 }
 
-
-
 void VisualiserManager::addRouting(int id1, int id2)
 {
     // ID1 ---> ID2 , path towards ID2
@@ -212,7 +294,6 @@ void VisualiserManager::addRouting(int id1, int id2)
     {
         std::cout << "********One or both devices do not exist.********\n";
     }
-
 }
 
 void VisualiserManager::removeRouting(int id1, int id2)
@@ -237,8 +318,6 @@ void VisualiserManager::addRetransmission(int nodeId)
         return; // Device does not exist, do not increment retransmission
     }
     devices[nodeId]->metrics.incrementRetransmission();
-
-
 }
 
 void VisualiserManager::incrementPacketSent(int nodeId)
@@ -250,8 +329,7 @@ void VisualiserManager::incrementPacketSent(int nodeId)
         return; // Device does not exist, do not increment retransmission
     }
 
-     devices[nodeId]->metrics.incrementPacketSent();
-
+    devices[nodeId]->metrics.incrementPacketSent();
 }
 
 void VisualiserManager::incrementListeningData(int nodeId)
@@ -263,7 +341,6 @@ void VisualiserManager::incrementListeningData(int nodeId)
         return; // Device does not exist, do not increment
     }
     devices[nodeId]->metrics.incrementListeningData();
-
 }
 
 void VisualiserManager::incrementTransmittingData(int nodeId)
@@ -340,65 +417,64 @@ void VisualiserManager::update(InputManager &inputManager)
                              receptionIcons.end());
     }
 
-
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-    for (auto& [id, device] : devices) {
-        device->update(inputManager,gui, canvas);
-    }
+        for (auto &[id, device] : devices)
+        {
+            device->update(inputManager, gui, canvas);
+        }
     }
 }
 
 void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, ProtocolVisualisationState &state)
 {
-        canvas->setView(networkView);
-        canvas->clear(tgui::Color(30, 30, 30));
+    canvas->setView(networkView);
+    canvas->clear(tgui::Color(30, 30, 30));
 
-        communicationModeText->setText("Communication Mode: " + state.communicationMode);
+    communicationModeText->setText("Communication Mode: " + state.communicationMode);
 
-        //Todo: have a tick duration in the config file
-        timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
+    // Todo: have a tick duration in the config file
+    timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
 
+    // todo: display the metrics in the UI
+    //     energyExpenditure->setString(energyExpenditureString + std::to_string(state.energyExp));
+    //     window.draw(*energyExpenditure);
 
-        //todo: display the metrics in the UI
-//     energyExpenditure->setString(energyExpenditureString + std::to_string(state.energyExp));
-//     window.draw(*energyExpenditure);
+    //     nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
+    //     window.draw(*nbRetransmission);
 
-//     nbRetransmission->setString(nbRetransmissionString + std::to_string(state.retransmissions));
-//     window.draw(*nbRetransmission);
+    //     pdrText->setString(pdrString +  std::to_string(state.totalDataPacketsSent > 0 ? static_cast<float>(state.totalDataPacketsSent -state.retransmissions) / state.totalDataPacketsSent * 100 : 0) + "%");
+    //     window.draw(*pdrText);
 
-//     pdrText->setString(pdrString +  std::to_string(state.totalDataPacketsSent > 0 ? static_cast<float>(state.totalDataPacketsSent -state.retransmissions) / state.totalDataPacketsSent * 100 : 0) + "%");
-//     window.draw(*pdrText);
+    //     // Draw logs and also get rid of the oldest log messages if the limit is reached
+    //     {
+    //         std::lock_guard<std::mutex> lock(state.logMutex);
 
-//     // Draw logs and also get rid of the oldest log messages if the limit is reached
-//     {
-//         std::lock_guard<std::mutex> lock(state.logMutex);
+    //         float y = 940.0f;
 
-//         float y = 940.0f;
+    //         if (state.logMessages.size() > 10)
+    //         {
+    //             state.logMessages.erase(state.logMessages.begin(), state.logMessages.end() - 10);
+    //         }
 
-//         if (state.logMessages.size() > 10)
-//         {
-//             state.logMessages.erase(state.logMessages.begin(), state.logMessages.end() - 10);
-//         }
-
-//         for (auto it = state.logMessages.rbegin(); it != state.logMessages.rend(); ++it)
-//         {
-//             sf::Text text(*font, *it, 10);
-//             text.setFillColor(sf::Color::White);
-//             text.setPosition(sf::Vector2f(10.0f, y));
-//             window.draw(text);
-//             y -= 15.0f;
-//         }
-//     }
-
+    //         for (auto it = state.logMessages.rbegin(); it != state.logMessages.rend(); ++it)
+    //         {
+    //             sf::Text text(*font, *it, 10);
+    //             text.setFillColor(sf::Color::White);
+    //             text.setPosition(sf::Vector2f(10.0f, y));
+    //             window.draw(text);
+    //             y -= 15.0f;
+    //         }
+    //     }
 
     if (routingDisplayEnabled)
         drawRootings(canvas);
 
     {
         std::lock_guard<std::mutex> lock(devicesMutex);
-    for (auto& [id, device] : devices) {
-        device->draw(canvas);
+        for (auto &[id, device] : devices)
+        {
+            device->draw(canvas);
         }
     }
 
@@ -427,7 +503,6 @@ void VisualiserManager::draw(sf::RenderWindow &window, sf::View &networkView, Pr
     }
 
     canvas->display();
-
 }
 
 void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
@@ -440,7 +515,6 @@ void VisualiserManager::updateDevicesState(int nodeId, DeviceState state)
     }
 
     devices[nodeId]->setState(state);
-
 }
 
 std::pair<sf::Vector2f, bool> VisualiserManager::findDeviceCoordinates(int nodeId)
@@ -470,7 +544,8 @@ void VisualiserManager::drawRootings(tgui::CanvasSFML::Ptr canvas)
             auto it1 = devices.find(device);
             auto it2 = devices.find(connectedDevice);
 
-            if (it1 != devices.end() && it2 != devices.end()) {
+            if (it1 != devices.end() && it2 != devices.end())
+            {
                 start = it1->second->getCenteredPosition();
                 end = it2->second->getCenteredPosition();
                 foundPos = true;

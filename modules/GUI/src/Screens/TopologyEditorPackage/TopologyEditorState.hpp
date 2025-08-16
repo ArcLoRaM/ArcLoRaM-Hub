@@ -19,7 +19,7 @@ enum class EditorMode {
     MovingNode
 };
 
-
+//TODO: should be renamed TDMAMode
 enum class TopologyMode {
     RRC_Uplink,
     RRC_Downlink,
@@ -117,4 +117,5 @@ private:
 
     PendingLink link;
 };
+
 

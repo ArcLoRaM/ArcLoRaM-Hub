@@ -1,7 +1,7 @@
 #include "TopologyEditorScreen.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
-#include "TopologyConfigIO.hpp"
+#include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
 #include "../../UI/UIFactory/UIFactory.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>

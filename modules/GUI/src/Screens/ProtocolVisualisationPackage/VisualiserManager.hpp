@@ -19,7 +19,7 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "CommandSender.hpp"
 #include "../../Network/TcpServer/ClientSession.hpp"
-
+#include "TopologyVisualisationState.hpp"
 
 class VisualiserManager {
 private:
@@ -107,7 +107,11 @@ private:
     tgui::Label::Ptr serverStatusDisconnected;
     std::thread routineServer;
     std::atomic<bool> isRoutineServerRunning{false};
+    tgui::Group::Ptr confFileSelectionGroup;
+    tgui::Button::Ptr startSimulationButton;
+    tgui::Label::Ptr fileNameLabel;
     void routineServerLoop();
+    TopologyVisualisationState topoVisuState;
 
     //Network TAB
     tgui::CanvasSFML::Ptr canvas;
