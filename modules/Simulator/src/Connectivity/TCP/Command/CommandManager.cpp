@@ -44,7 +44,7 @@ CommandManager::CommandManager(Logger &logger_)
         logger.logSystem("Connection lost — stopping simulation.");
         this->stopSimulation();
     } else {
-        logger.logSystem("Connection re-established.");
+        logger.logSystem("Connection established.");
         // If you want to auto-resume or re-request config, do it here.
     }
 });
@@ -80,7 +80,7 @@ void CommandManager::waitForLaunchConfig()
 
 void CommandManager::launchSimulation(const LaunchConfig &config)
 {
-    logger.logSystem("Launching simulation...");
+    logger.logSystem("Configuration received. Launching simulation...");
 
     // Notify GUI of system parameters, information is sent back as a security check
     sf::Packet sysPacket;

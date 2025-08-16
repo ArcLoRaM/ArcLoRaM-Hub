@@ -133,6 +133,9 @@ class retransmissionPacket : public BasePacket {
     friend sf::Packet& operator>>(sf::Packet& packet, retransmissionPacket& rp);
 };
 
+
+//THIS IS AN OUTDATED MECHANISM TO STOP SIMULATION from the simulator WHEN CERTAIN CONDItions are met (ex: the gateway received 50 packets)
+
 class stopSimulationPacket : public BasePacket {
     public:
     int nodeId;
@@ -149,20 +152,33 @@ class stopSimulationPacket : public BasePacket {
 class launchConfigCommandPacket : public BasePacket {
 
 public:
-    double distanceThreshold;
-    std::string communicationMode;
-    std::string topology;
-    launchConfigCommandPacket(double distanceThreshold = 100, std::string communicationMode = "error", std::string topology = "error");
-    // Future use — optional now
-    std::vector<std::string> configLines; // Raw node lines from .simcfg file
 
+    launchConfigCommandPacket(double threshold,std::string tdmaMode,std::string topologyString = "");
+    std::string tdmaMode;
+    std::string topologyString;
+    double distanceThreshold;
     friend sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
 };
 
+
+class stopCommandPacket : public BasePacket {
+public:
+    stopCommandPacket() ;
+    friend sf::Packet& operator<<(sf::Packet& packet, const stopCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, stopCommandPacket& cmd);
+};
+
+class resumeCommandPacket : public BasePacket {
+public:
+    resumeCommandPacket();
+    friend sf::Packet& operator<<(sf::Packet& packet, const resumeCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& cmd);
+};
+
 class pingCommandPacket : public BasePacket {
 public:
-    pingCommandPacket() { type = 103; }
+    pingCommandPacket() ;
     
     friend sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, pingCommandPacket& cmd);
@@ -172,8 +188,7 @@ public:
 class pongPacket : public BasePacket {
 public:
 
-    pongPacket() 
-         { type = 104; }
+    pongPacket();
 
     friend sf::Packet& operator<<(sf::Packet& packet, const pongPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, pongPacket& cmd);
@@ -181,7 +196,7 @@ public:
 
 class restartCommandPacket : public BasePacket {
 public:
-    restartCommandPacket() { type = 105; }
+    restartCommandPacket();
 
     // Optional: could include restart mode or reuse-last-config flag
     

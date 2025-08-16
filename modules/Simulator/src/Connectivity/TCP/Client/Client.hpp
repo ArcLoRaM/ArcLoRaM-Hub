@@ -83,11 +83,14 @@ private:
 
     PacketHandler packetHandler;
 
-    // Add (private):
-bool tryConnect();               // one attempt (blocking), returns true on success
-std::chrono::seconds reconnectDelay{5};
+    bool tryConnect();               // one attempt (blocking), returns true on success
+    std::chrono::seconds reconnectDelay{5};
 
-ConnectionChanged onConnectionChanged;    // user-provided callback
+    ConnectionChanged onConnectionChanged;    // user-provided callback
+
+
+    std::atomic<bool> notConnectedLogArmed{true}; // log "not connected" only once per drop
+
 };
 
 

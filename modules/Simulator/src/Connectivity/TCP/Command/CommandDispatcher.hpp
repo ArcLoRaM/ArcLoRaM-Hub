@@ -18,9 +18,9 @@ Brief: CommandDispatcher is responsible for handling incoming commands and manag
 struct LaunchConfig {
     double distanceThreshold;
     std::string communicationMode;
-    std::string topology;
-    //optionnal for now
-    std::vector<std::string> nodeLines;
+    std::string topologyLines;
+    //idea for later:
+    //SF, BW, PathLoss Model...
 };
 
 class CommandDispatcher {

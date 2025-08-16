@@ -27,6 +27,7 @@ bool Client::tryConnect() {
     if (socket.connect(addr, serverPort) == sf::Socket::Status::Done) {
         socket.setBlocking(false);
         connected.store(true);
+        notConnectedLogArmed.store(true);
         logger.logSystem("Connected to GUI.");
         fireIfSet(onConnectionChanged, true);
         return true;
@@ -135,10 +136,12 @@ void Client::stop() {
 
 bool Client::transmit(sf::Packet& packet) {
     if (!connected.load()) {
-        logger.logSystem("****** Client is not connected to a server ******");
+        // Log only on the first failed send after a drop
+        if (notConnectedLogArmed.exchange(false)) {
+            logger.logSystem("****** Client is not connected to a server ******");
+        }
         return false;
     }
-
     std::lock_guard<std::mutex> lock(socketMutex);
     sf::Packet temp = packet; // retry unchanged packet
     sf::Socket::Status status;
@@ -149,6 +152,7 @@ bool Client::transmit(sf::Packet& packet) {
             logger.logSystem("Client disconnected during send.");
             connected.store(false);
             socket.disconnect();               // trigger reconnect loop
+            notConnectedLogArmed.store(true);   // arm
             if (onConnectionChanged) onConnectionChanged(false);
             return false;
         }
@@ -258,6 +262,7 @@ void Client::receiveLoop() {
                     connected.store(false);
                     lock.unlock();
                     socket.disconnect();        // ensure clean state for next try
+                    notConnectedLogArmed.store(true);
                     fireIfSet(onConnectionChanged, false);
                     break;                      // leave session loop -> reconnect loop
                 } else {

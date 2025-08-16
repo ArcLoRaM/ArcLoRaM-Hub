@@ -184,21 +184,58 @@ sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
 //-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
 
 //------ Constructors --------------------
-launchConfigCommandPacket::launchConfigCommandPacket(double distanceThreshold, std::string communicationMode, std::string topology)
-    : distanceThreshold(distanceThreshold), communicationMode(std::move(communicationMode)), topology(std::move(topology)) {
+launchConfigCommandPacket::launchConfigCommandPacket(double threshold, std::string tdmaMode, std::string topologyString)
+    : distanceThreshold(threshold), tdmaMode(std::move(tdmaMode)), topologyString(std::move(topologyString)) {
+    type = 100;
+}
+
+stopCommandPacket::stopCommandPacket() {
     type = 101;
 }
 
+resumeCommandPacket::resumeCommandPacket() {
+    type = 102;
+}
+
+pingCommandPacket::pingCommandPacket() {
+    type = 103;
+}
+
+pongPacket::pongPacket() {
+    type = 104;
+}
+
+restartCommandPacket::restartCommandPacket() {
+    type = 105;
+}
 
 
 //-------------------- Packet Serialization --------------------
 
 sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& lccp) {
-    return packet << lccp.type << lccp.distanceThreshold << lccp.communicationMode << lccp.topology;
+    return packet << lccp.type << lccp.distanceThreshold << lccp.tdmaMode << lccp.topologyString;
 }
 sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& lccp) {
-    return packet >> lccp.distanceThreshold >> lccp.communicationMode >> lccp.topology;
+    return packet >> lccp.distanceThreshold >> lccp.tdmaMode >> lccp.topologyString;
 }
+
+sf::Packet& operator<<(sf::Packet& packet, const stopCommandPacket& scp) {
+    return packet << scp.type;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, stopCommandPacket& scp) {
+    return packet; // Nothing to deserialize
+}
+
+sf::Packet& operator<<(sf::Packet& packet, const resumeCommandPacket& rcp) {
+    return packet << rcp.type;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& rcp) {
+    return packet; // Nothing to deserialize
+}
+
+
 sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd) {
     return packet << cmd.type;
 }
@@ -219,3 +256,5 @@ sf::Packet& operator<<(sf::Packet& packet, const pongPacket& rsp) {
 sf::Packet& operator>>(sf::Packet& packet, pongPacket& rsp) {
     return packet;
 }
+
+
