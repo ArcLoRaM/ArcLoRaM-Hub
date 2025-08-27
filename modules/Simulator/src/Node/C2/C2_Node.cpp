@@ -33,7 +33,7 @@ std::string C2_Node::initMessage() const
 void C2_Node::handleCommunication()
 {
 
-#if COMMUNICATION_PERIOD == RRC_UPLINK
+// #if COMMUNICATION_PERIOD == RRC_UPLINK
 NodeState snapshot = currentState;
 
     if (currentState == NodeState::Communicating)
@@ -72,10 +72,10 @@ NodeState snapshot = currentState;
         }
     }
 
-#endif
+// #endif
 }
 
-#if COMMUNICATION_PERIOD == RRC_BEACON
+// #if COMMUNICATION_PERIOD == RRC_BEACON
 
 bool C2_Node::canNodeReceiveMessage()
 {
@@ -375,7 +375,7 @@ bool C2_Node::canSleepFromTransmitting() { return false; }
 bool C2_Node::canSleepFromListening() { return false; }
 bool C2_Node::canSleepFromSleeping() { return false; }
 
-#elif COMMUNICATION_PERIOD == RRC_DOWNLINK
+// #elif COMMUNICATION_PERIOD == RRC_DOWNLINK
 
 bool C2_Node::canNodeReceiveMessage()
 {
@@ -616,7 +616,7 @@ bool C2_Node::canSleepFromTransmitting() { return false; }
 bool C2_Node::canSleepFromListening() { return false; }
 bool C2_Node::canSleepFromSleeping() { return false; }
 
-#elif COMMUNICATION_PERIOD == RRC_UPLINK
+// #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
 // Display------------------------------------------------------------------------------------------------------
 
@@ -1011,6 +1011,6 @@ bool C2_Node::handleDataSlotPhase()
 
 // End - Slot Strategy -------------------------------------------------------------------------------
 
-#else
-#error "Unknown COMMUNICATION_PERIOD mode"
-#endif
+// #else
+// #error "Unknown COMMUNICATION_PERIOD mode"
+// #endif

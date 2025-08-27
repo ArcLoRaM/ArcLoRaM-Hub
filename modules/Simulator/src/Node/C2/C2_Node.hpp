@@ -92,7 +92,7 @@ protected:
     bool receiveMessage(const std::vector<uint8_t> message) override;
 
     void handleCommunication() ;
-#if COMMUNICATION_PERIOD == RRC_DOWNLINK
+// #if COMMUNICATION_PERIOD == RRC_DOWNLINK
 
     bool shouldSendBeacon = false;
     std::vector<int> beaconSlots;
@@ -104,7 +104,7 @@ protected:
     // use to bridge the receive function and the transmit function
     std::optional<uint32_t> packetFinalReceiverId;
 
-#elif COMMUNICATION_PERIOD == RRC_BEACON
+// #elif COMMUNICATION_PERIOD == RRC_BEACON
 
     // This values should be a struct or an object, todo
     bool shouldSendBeacon = false;
@@ -118,7 +118,7 @@ protected:
     bool canNodeReceiveMessage();
     bool isTransmittingWhileCommunicating = false;
 
-#elif COMMUNICATION_PERIOD == RRC_UPLINK
+// #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
 
 
@@ -313,7 +313,7 @@ protected:
     std::optional<InformationFromBeaconPhase> infoFromBeaconPhase;
     // End - Struct -------------------------------------------------------------------------------------------
 
-#else
-#error "Unknown COMMUNICATION_PERIOD mode"
-#endif
+// #else
+// #error "Unknown COMMUNICATION_PERIOD mode"
+// #endif
 };
