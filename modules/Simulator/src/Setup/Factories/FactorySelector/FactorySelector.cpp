@@ -3,12 +3,12 @@
 #include "../../../Setup/Common.hpp"
 
 
-std::unique_ptr<INodeFactory> FactorySelector::getFactory(common::CommunicationMode mode,
+std::unique_ptr<INodeFactory> FactorySelector::getFactory(
                                                     Logger& logger
                                                     
                                                     )
 {
-    switch (mode)
+    switch (common::currentMode)
     {
     case common::CommunicationMode::RRC_Uplink:
         return std::make_unique<RrcUplinkNodeFactory>(logger);

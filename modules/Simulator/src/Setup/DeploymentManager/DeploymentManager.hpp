@@ -16,21 +16,24 @@ public:
                       
                       );
 
-    std::vector<std::shared_ptr<Node>> loadDeploymentFromFile(const std::string& filename);
+    // std::vector<std::shared_ptr<Node>> loadDeploymentFromFile(const std::string& filename);
+    bool loadTopologyFromString(const std::string& topology);
+
+    std::vector<std::shared_ptr<Node>> getParsedNodes();
 
 private:
     Logger& logger;
 
    
+    std::vector<std::shared_ptr<Node>> parsedNodes;
 
-    common::CommunicationMode parseModeLine(const std::string& line);
+    // common::CommunicationMode parseModeLine(const std::string& line);
 
     // Mode-agnostic dispatcher
     void parseLine(const std::string& line,
                    INodeFactory& factory,
                    std::vector<std::shared_ptr<Node>>& nodes,
-                   std::unordered_set<int>& nodeIds,
-                   common::CommunicationMode mode);
+                   std::unordered_set<int>& nodeIds);
 
     // Mode-specific parsing handlers
     void parseLineRrcUplink(const std::string& line, INodeFactory& factory,

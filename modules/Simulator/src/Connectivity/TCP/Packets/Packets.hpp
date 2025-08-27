@@ -153,7 +153,7 @@ class launchConfigCommandPacket : public BasePacket {
 
 public:
 
-    launchConfigCommandPacket(double threshold,std::string tdmaMode,std::string topologyString = "");
+    launchConfigCommandPacket(double threshold=0.0,std::string tdmaMode="",std::string topologyString="");
     std::string tdmaMode;
     std::string topologyString;
     double distanceThreshold;

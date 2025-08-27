@@ -21,12 +21,20 @@ struct C2_Node_Mesh_Parameter{
 class Seed {
 
 public:
-    Seed(std::string communicationWindow, std::string topology,Logger& logger) : 
-    communicationWindow(communicationWindow), logger(logger), 
-    topology(topology) {
+    // Seed(std::string communicationWindow, std::string topology,Logger& logger) : 
+    // communicationWindow(communicationWindow), logger(logger), 
+    // topology(topology) {
 
-        initializeNodes();
+    //     initializeNodes();
         
+    // }
+
+    Seed(std::string topology,Logger& logger) : topology(topology), logger(logger) {
+
+        if(!instantiateTopology(topology))
+        {
+            throw std::runtime_error("Failed to instantiate topology");
+        }
     }
 
     std::vector<std::shared_ptr<Node>> transferOwnership();
@@ -34,27 +42,26 @@ public:
 
 private:
     Logger& logger;
-    std::string communicationWindow;
+    // std::string communicationWindow;
     std::string topology;
     std::vector<std::shared_ptr<Node>> listNode;
 
-    int64_t  baseTime;
 
-    void initializeNodes();
+    // void initializeNodes();
+    bool instantiateTopology(std::string topology);
 
-        //TODO: there is bug: the first node must have an ID=0, (we should be able to attribute any ID to the nodes)-> I didn't check this for a long time, maybe it's not the case anymore?
-    #if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
+    // #if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
 
-    void initialize_RRC_Downlink_Line();
-    void initialize_RRC_Beacon_Line();
-    void initialize_RRC_Beacon_Mesh();
-    void initialize_RRC_Beacon_Mesh_Self_Healing();
-    #elif COMMUNICATION_PERIOD == RRC_UPLINK
+    // void initialize_RRC_Downlink_Line();
+    // void initialize_RRC_Beacon_Line();
+    // void initialize_RRC_Beacon_Mesh();
+    // void initialize_RRC_Beacon_Mesh_Self_Healing();
+    // #elif COMMUNICATION_PERIOD == RRC_UPLINK
 
-    void initialize_RRC_Uplink_Mesh();
-    void initialize_RRC_Uplink_Mesh_FromFile();
+    // void initialize_RRC_Uplink_Mesh();
+    // void initialize_RRC_Uplink_Mesh_FromFile();
 
-    void initialize_RRC_Uplink_Line();
-    void initialize_RRC_Uplink_Line_FromFile();
-    #endif
+    // void initialize_RRC_Uplink_Line();
+    // void initialize_RRC_Uplink_Line_FromFile();
+    // #endif
 };

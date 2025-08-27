@@ -9,55 +9,9 @@
 
  namespace common{
 
-
-
-
-/*
-*  Define General Parameters for the Simulation
-*   Define the Topology Desired and the Communication Period Mode in the two preprocessor Macros
-*   Some parameters specific to the communication mode and the topology are defined in the corresponding sections
-*/
-
-
-
-/*
- ------------------------------------USE CASES-----------------------------------
-There are two major components:
--the topology (position of nodes)
--the Communication Window (Ex: RRC_Beacon, RRC_Downlink, ENC_Beacon), that will dictate the classes of nodes
-
-The seed class will be used to define the topology and the communication window, automatically provisioning the required elements to show the functionnalities of the protocol
-
-
-Use cases Description:
-    For RRC:
-            -Topologies:
-                -Line
-                -Star
-                -Mesh
-
-            -Communication Window:
-                -RRC_Beacon
-                -RRC_Downlink
-                -RRC_Uplink
-    For ENC:
-            -Topologies:
-                -Star
-
-            -Communication Window:
-                -ENC_Beacon
-                -ENC_Downlink
-                -ENC_Uplink
-
-If time allows, we will consider an hybrid use case that will combine the two protocols
-
-*/
-
-
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
+//TODO: put the param below in the conf. file sent.
 constexpr const int tickIntervalForClock_ms=10; //the tick interval for the clock, the lower the more realistic but the more CPU intensive the simulation (minimum 1ms)
-constexpr const double distanceThreshold=1000; //the distance threshold for the PHY layer
-constexpr const bool visualiserConnected=true;//set false if you don't want to display the protocol
 
 //-----------------------------------------Communication Mode and  Topology-----------------------------------------
 
@@ -90,17 +44,17 @@ constexpr const bool visualiserConnected=true;//set false if you don't want to d
 
 
 
-#if TOPOLOGY == LINE
-    constexpr const char* topology = "Line";
-#elif TOPOLOGY == MESH
-    constexpr const char* topology = "Mesh";
-#elif TOPOLOGY == STAR
-    constexpr const char* topology = "Star";
-#elif TOPOLOGY == MESH_SELF_HEALING
-    constexpr const char* topology = "Mesh_Self_Healing";
-#else
-    #error "Unknown TOPOLOGY mode"
-#endif
+// #if TOPOLOGY == LINE
+//     constexpr const char* topology = "Line";
+// #elif TOPOLOGY == MESH
+//     constexpr const char* topology = "Mesh";
+// #elif TOPOLOGY == STAR
+//     constexpr const char* topology = "Star";
+// #elif TOPOLOGY == MESH_SELF_HEALING
+//     constexpr const char* topology = "Mesh_Self_Healing";
+// #else
+//     #error "Unknown TOPOLOGY mode"
+// #endif
 
 //This is the new system to transition towards a runtime driven configuration, not at compile time.
 enum class CommunicationMode {
@@ -109,24 +63,11 @@ enum class CommunicationMode {
     RRC_Uplink = 3,
     ENC_Beacon = 11,
     ENC_Downlink = 12,
-    ENC_Uplink = 13
+    ENC_Uplink = 13,
+    NotInitialized = 99
 };
 
-enum class Topology {
-    Line = 1,
-    Star = 2,
-    Mesh = 3,
-    Mesh_Self_Healing = 4
-};
-
-// Temporary compatibility adapter
-constexpr CommunicationMode getCurrentCommunicationMode() {
-    return static_cast<CommunicationMode>(COMMUNICATION_PERIOD);
-}
-
-constexpr Topology getCurrentTopology() {
-    return static_cast<Topology>(TOPOLOGY);
-}
+inline CommunicationMode currentMode = CommunicationMode::NotInitialized;
 
 
 #if COMMUNICATION_PERIOD == RRC_DOWNLINK

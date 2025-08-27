@@ -35,50 +35,11 @@ bool Client::tryConnect() {
     return false;
 }
 
-// bool Client::start() {
-//     if (!common::visualiserConnected) {
-//         logger.logSystem("****** No Visualiser Mode ******");
-//         return false;
-//     }
 
-//     // Resolve the server IP/name into an IpAddress once
-    
-//     auto addr = sf::IpAddress::LocalHost;
-//     // if (!addr) {
-//     //     logger.logSystem("****** Error: could not resolve server address ******");
-//     //     return false;
-//     // }
-
-//     socket.setBlocking(true);
-
-//     // Retry loop
-//     while (running.load() == false) { // make sure we don't start twice
-//         logger.logSystem("Attempting to connect to server...");
-
-//         if (socket.connect(addr, serverPort) == sf::Socket::Status::Done) {
-//             // Connected!
-//             socket.setBlocking(false);
-//             connected.store(true);
-//             running.store(true);
-//             logger.logSystem("Connected to GUI.");
-
-//             receiveThread = std::thread(&Client::receiveLoop, this);
-//             return true;
-//         }
-
-//         logger.logSystem("****** Error connecting to server. Retrying in 5 seconds... ******");
-//         std::this_thread::sleep_for(std::chrono::seconds(5));
-//     }
-
-//     return false; // Should only reach here if start() was called while already running
-// }
 
 
 bool Client::start() {
-    if (!common::visualiserConnected) {
-        logger.logSystem("****** No Visualiser Mode ******");
-        return false;
-    }
+    
     if (running.exchange(true)) {
         return true; // already running
     }

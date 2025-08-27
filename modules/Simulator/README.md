@@ -25,11 +25,9 @@ I've let my vscode folder to help you understand the process but you need to per
 Clone the repository, install SFML, build correctly the project and you're ready to run the protocol.
 However, you must select the mode, the topology and decide if the simulator will be connected with the visualizer or not.
 
-For that, you simply needs to reach the common.hpp file and change the number of the COMMUNICATION_PERIOD and TOPOLOGY variables.
-![image](https://github.com/user-attachments/assets/7284d9a0-f7c2-432e-a5fe-42ec557e1289)
 
 
-Don't forget to launch the visualiser before running the simulator if you decide to connect them. In the case, you don't, set the visualiserConnected variable to false. (in common.hpp)
+
 
 
 ## Improvements

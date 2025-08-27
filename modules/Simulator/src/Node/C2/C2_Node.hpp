@@ -10,38 +10,24 @@ class C2_Node : public Node
 {
 
 public:
-#if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
+// #if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
 
-    C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, std::condition_variable &dispatchCv, std::mutex &dispatchCvMutex, double batteryLevel = 0)
-        : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex, batteryLevel)
+    C2_Node(int id, Logger &logger, std::pair<int, int> coordinates)
+        : Node(id, logger, coordinates)
     {
 
         initializeTransitionMap();
         setInitialState(NodeState::Sleeping);
+
+        //Todo: make the slot manager for the other communication periods
     };
 
-    // constructor that simulates a beacon session already happened -> routes are established
-    C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, std::condition_variable &dispatchCv, std::mutex &dispatchCvMutex, double batteryLevel, int nextNodeId, int hopCount)
-        : Node(id, logger, coordinates, dispatchCv, dispatchCvMutex, batteryLevel)
-    {
 
-#if TOPOLOGY == MESH_SELF_HEALING
-        // I lack of time, so I will not provision the full initial state that should result from a beacon mode,
-        // I will simply display the route but internally, it's as "if" nothing happened. The topology using this constructor is built in a way that we don't see it.
-        // TODO: Implement this initial state: nextNodeIdInPath, basePathCost, hopCount....
-        this->nextNodeIdInPath = nextNodeId;
-
-        initializeTransitionMap();
-
-#endif
-
-        setInitialState(NodeState::Sleeping);
-    };
-#elif COMMUNICATION_PERIOD == RRC_UPLINK
+// #elif COMMUNICATION_PERIOD == RRC_UPLINK
     C2_Node(int id, Logger &logger, std::pair<int, int> coordinates,  uint16_t nextNodeIdInPath, uint8_t hopCount)
-        : Node(id, logger, coordinates), infoFromBeaconPhase{nextNodeIdInPath, hopCount} 
+        : Node(id, logger, coordinates)
     {
-
+        infoFromBeaconPhase = InformationFromBeaconPhase{nextNodeIdInPath, hopCount};
         initializeTransitionMap();
         setInitialState(NodeState::Sleeping);
         // //Display the routing if visualiser connected
@@ -67,17 +53,14 @@ public:
         }
         slotsLogMsg += "]";
 
-       //logEvent(slotsLogMsg);
 
         //The node will use the allowed category of slots to transmit
-        fixedSlotCategory = infoFromBeaconPhase.getHopCount() % 3;
+        fixedSlotCategory = infoFromBeaconPhase->getHopCount() % 3;
         nbPayloadLeft = initialnbPaylaod;
 
     };
 
-#else
-#error "Unknown COMMUNICATION_PERIOD mode"
-#endif
+// #endif
     int getClassId() const override
     {
         return 2;
@@ -327,7 +310,7 @@ protected:
 
     AckInformation ackInformation;
     RetransmissionCounterHelper retransmissionCounterHelper;
-    InformationFromBeaconPhase infoFromBeaconPhase;
+    std::optional<InformationFromBeaconPhase> infoFromBeaconPhase;
     // End - Struct -------------------------------------------------------------------------------------------
 
 #else

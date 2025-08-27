@@ -7,8 +7,10 @@ std::string C2_Node::initMessage() const
     std::string finalMsg = msg + "Class: " + std::to_string(getClassId()) + " started to run";
 
     sf::Packet positionPacketReceiver;
-    positionPacket positionPacket(nodeId, 2, coordinates, batteryLevel, infoFromBeaconPhase.getHopCount());
-    positionPacketReceiver << positionPacket;
+    positionPacket initialPacket;
+    if(infoFromBeaconPhase)    initialPacket = positionPacket(nodeId, 2, coordinates, batteryLevel, infoFromBeaconPhase->getHopCount());
+    else    initialPacket = positionPacket(nodeId, 2, coordinates, batteryLevel, -1);
+    positionPacketReceiver << initialPacket;
     logger.sendTcpPacket(positionPacketReceiver);
 
     // if (nextNodeIdInPath.has_value() && nextNodeIdInPath.value() != -1)
@@ -39,12 +41,20 @@ NodeState snapshot = currentState;
     
         if (!isACKSlot&&fixedSlotCategory == currentDataSlotCategory) //if its an DATA slot and we are awake, it means we have to transmit
         {
+
+            if(infoFromBeaconPhase){
                 isTransmittingWhileCommunicating = true;
                 buildAndTransmitDataPacket();
                 retransmissionCounterHelper.setIsExpectingAck(true);
                 logEvent("Tx Data..");
 
-                adressedPacketTransmissionDisplay(infoFromBeaconPhase.getNextNodeIdInPath(), false);
+                adressedPacketTransmissionDisplay(infoFromBeaconPhase->getNextNodeIdInPath(), false);
+            }
+            else
+            {
+                logEvent("No Routing info, cannot transmit data");
+            }
+                
 
         }
 
@@ -610,15 +620,18 @@ bool C2_Node::canSleepFromSleeping() { return false; }
 
 // Display------------------------------------------------------------------------------------------------------
 
+
+
 void C2_Node::displayRouting()
 {
-    sf::Packet routingPacketReceiver;
-    routingDecisionPacket routingPacket(nodeId, infoFromBeaconPhase.getNextNodeIdInPath(), true);
-    routingPacketReceiver << routingPacket;
-    logger.sendTcpPacket(routingPacketReceiver);
+    if(infoFromBeaconPhase)
+    {
+        sf::Packet routingPacketReceiver;
+        routingDecisionPacket routingPacket(nodeId, infoFromBeaconPhase->getNextNodeIdInPath(), true);
+        routingPacketReceiver << routingPacket;
+        logger.sendTcpPacket(routingPacketReceiver);
+    }
 
-    // Log rootingLog("Node "+std::to_string(nodeId)+" rooting with Node:"+std::to_string(nextNodeIdInPath.value()), true);
-    // logger.logMessage(rootingLog);
 }
 
 // END - Display------------------------------------------------------------------------------------------------------
@@ -640,7 +653,7 @@ void C2_Node::buildAndTransmitDataPacket(std::vector<uint8_t> payload)
 
     // prepare the fields
     std::vector<uint8_t> senderGlobalId = decimalToBytes(nodeId, common::senderGlobalIdBytesSize);                                        // Sender Global ID is 2 byte long in the simulation, 10 bits in real life
-    std::vector<uint8_t> receiverGlobalId = decimalToBytes(infoFromBeaconPhase.getNextNodeIdInPath(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
+    std::vector<uint8_t> receiverGlobalId = decimalToBytes(infoFromBeaconPhase->getNextNodeIdInPath(), common::receiverGlobalIdBytesSize); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
     std::vector<uint8_t> localIDPacket = decimalToBytes(localIDPacketCounter, common::localIDPacketBytesSize);                            // we increase the counter if we receive the ACK
 
     // Should be replaced by the parameter payload.
@@ -807,14 +820,13 @@ bool C2_Node::canCommunicateFromSleeping()
 
     // Todo: should be put into the constructor but doesn´t work, probably an optionnal not being initialized?
     //  the first state transition, we display rooting in the visualiser if applicable
-    if (common::visualiserConnected)
-    {
+    
         if (!routingDisplayed)
         {
             displayRouting();
             routingDisplayed = true;
         }
-    }
+    
 
     isACKSlot = !isACKSlot; // switch to new slot category everytime we enter a new communication window (Data or ACK slot)
 

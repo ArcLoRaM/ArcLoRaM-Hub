@@ -10,77 +10,115 @@ DeploymentManager::DeploymentManager(Logger& logger
                                      )
     : logger(logger) {}
 
-std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(const std::string& filename)
+// std::vector<std::shared_ptr<Node>> DeploymentManager::loadDeploymentFromFile(const std::string& filename)
+// {
+//     std::ifstream file(filename);
+//     if (!file.is_open()) {
+//         throw std::runtime_error("Failed to open deployment config file: " + filename);
+//     }
+
+//     std::vector<std::shared_ptr<Node>> nodes;
+//     std::unordered_set<int> nodeIds;
+//     std::unique_ptr<INodeFactory> factory = nullptr;
+//     common::CommunicationMode mode;
+
+//     std::string line;
+//     bool modeParsed = false;
+
+//     while (std::getline(file, line)) {
+//         if (line.empty() || line[0] == '#') continue;
+
+//         if (!modeParsed) {
+//             mode = parseModeLine(line);
+//             factory = FactorySelector::getFactory( logger);
+//             modeParsed = true;
+//             continue;
+//         }
+
+//         parseLine(line, *factory, nodes, nodeIds);
+//     }
+
+//     if (!modeParsed) {
+//         throw std::runtime_error("Deployment file missing mandatory MODE declaration.");
+//     }
+
+//     return nodes;
+// }
+
+bool DeploymentManager::loadTopologyFromString(const std::string &topology)
 {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        throw std::runtime_error("Failed to open deployment config file: " + filename);
-    }
+    try {
+        std::istringstream stream(topology);
 
-    std::vector<std::shared_ptr<Node>> nodes;
-    std::unordered_set<int> nodeIds;
-    std::unique_ptr<INodeFactory> factory = nullptr;
-    common::CommunicationMode mode;
+       
+        std::unordered_set<int> nodeIds;
+        if(common::currentMode == common::CommunicationMode::NotInitialized) 
+        {
+            throw std::runtime_error("Communication mode not initialized before selecting factory");
+        }
+        std::unique_ptr<INodeFactory> factory = FactorySelector::getFactory( logger);
 
-    std::string line;
-    bool modeParsed = false;
+        std::string line;
+        bool modeParsed = false;
 
-    while (std::getline(file, line)) {
-        if (line.empty() || line[0] == '#') continue;
+        while (std::getline(stream, line)) {
+            if (line.empty() || line[0] == '#') continue;
 
-        if (!modeParsed) {
-            mode = parseModeLine(line);
-            factory = FactorySelector::getFactory(mode, logger);
-            modeParsed = true;
-            continue;
+            parseLine(line, *factory, parsedNodes, nodeIds);
         }
 
-        parseLine(line, *factory, nodes, nodeIds, mode);
-    }
 
-    if (!modeParsed) {
-        throw std::runtime_error("Deployment file missing mandatory MODE declaration.");
+        return true;
+    } catch (const std::exception& ex) {
+        logger.logSystem("Error parsing deployment from string");
+        return false;
     }
-
-    return nodes;
 }
+// common::CommunicationMode DeploymentManager::parseModeLine(const std::string& line)
+// {
+//     std::istringstream iss(line);
+//     std::string token, modeString;
+//     iss >> token >> modeString;
+//     if (token != "MODE") {
+//         throw std::invalid_argument("Deployment file must start with 'MODE <ModeName>'.");
+//     }
 
-common::CommunicationMode DeploymentManager::parseModeLine(const std::string& line)
+//     if (modeString == "RRC_Uplink") return common::CommunicationMode::RRC_Uplink;
+//     if (modeString == "RRC_Downlink") return common::CommunicationMode::RRC_Downlink;
+//     if (modeString == "RRC_Beacon") return common::CommunicationMode::RRC_Beacon;
+//     if (modeString == "ENC_Uplink") return common::CommunicationMode::ENC_Uplink;
+//     if (modeString == "ENC_Downlink") return common::CommunicationMode::ENC_Downlink;
+//     if (modeString == "ENC_Beacon") return common::CommunicationMode::ENC_Beacon;
+
+//     throw std::invalid_argument("Unknown MODE specified: " + modeString);
+// }
+
+std::vector<std::shared_ptr<Node>> DeploymentManager::getParsedNodes()
 {
-    std::istringstream iss(line);
-    std::string token, modeString;
-    iss >> token >> modeString;
-    if (token != "MODE") {
-        throw std::invalid_argument("Deployment file must start with 'MODE <ModeName>'.");
-    }
-
-    if (modeString == "RRC_Uplink") return common::CommunicationMode::RRC_Uplink;
-    if (modeString == "RRC_Downlink") return common::CommunicationMode::RRC_Downlink;
-    if (modeString == "RRC_Beacon") return common::CommunicationMode::RRC_Beacon;
-    if (modeString == "ENC_Uplink") return common::CommunicationMode::ENC_Uplink;
-    if (modeString == "ENC_Downlink") return common::CommunicationMode::ENC_Downlink;
-    if (modeString == "ENC_Beacon") return common::CommunicationMode::ENC_Beacon;
-
-    throw std::invalid_argument("Unknown MODE specified: " + modeString);
+    return parsedNodes;
 }
+
+
 
 void DeploymentManager::parseLine(const std::string& line,
                                   INodeFactory& factory,
                                   std::vector<std::shared_ptr<Node>>& nodes,
-                                  std::unordered_set<int>& nodeIds,
-                                  common::CommunicationMode mode)
+                                  std::unordered_set<int>& nodeIds
+                                  )
 {
-    switch (mode) {
+    switch (common::currentMode) {
         case common::CommunicationMode::RRC_Uplink:
             parseLineRrcUplink(line, factory, nodes, nodeIds);
             break;
         case common::CommunicationMode::RRC_Downlink:
+            logger.logSystem("*********parsing Function Not Done*********");
             parseLineRrcDownlink(line, factory, nodes, nodeIds);
             break;
         case common::CommunicationMode::ENC_Uplink:
+            logger.logSystem("*********parsing Function Not Done*********");
             parseLineEncUplink(line, factory, nodes, nodeIds);
             break;
-        // etc...
+        // etc... TODO
         default:
             throw std::invalid_argument("Unsupported mode in line parsing.");
     }
@@ -139,6 +177,8 @@ void DeploymentManager::parseLineRrcUplink(const std::string& line, INodeFactory
     }
 }
 
+
+//TODO
 void DeploymentManager::parseLineRrcDownlink(const std::string& line, INodeFactory& factory,
                                              std::vector<std::shared_ptr<Node>>& nodes,
                                              std::unordered_set<int>& nodeIds)

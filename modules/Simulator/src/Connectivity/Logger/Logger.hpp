@@ -27,6 +27,7 @@ public:
     void start();
     void stop();
 
+    //TODO: Make a logError (right now uses logSystem)
     void logEvent(int nodeId, const std::string& message);
     void logSystem(const std::string& message);
 

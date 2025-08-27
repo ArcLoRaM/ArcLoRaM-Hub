@@ -7,9 +7,9 @@ void Logger::start() {
     tcpStopFlag = false;
     loggerThread = std::thread(&Logger::processLogs, this);
 
-    if (common::visualiserConnected) {
-        tcpSenderThread = std::thread(&Logger::processTcpPackets, this);
-    }
+    
+    tcpSenderThread = std::thread(&Logger::processTcpPackets, this);
+    
 }
 
 
@@ -22,7 +22,7 @@ void Logger::stop() {
     cv.notify_all();
 
     if (loggerThread.joinable()) loggerThread.join();
-    if (common::visualiserConnected && tcpSenderThread.joinable()) {
+    if ( tcpSenderThread.joinable()) {
         tcpSenderThread.join();
     }
     if (fileStream.is_open()) fileStream.close();
@@ -30,7 +30,6 @@ void Logger::stop() {
 
 //Todo: should the logger be the one sending packets? 
 void Logger::sendTcpPacket(sf::Packet packet) {
-    if (!common::visualiserConnected) return;
 
     {
         std::lock_guard<std::mutex> lock(queueMutex);
@@ -296,10 +295,7 @@ void Logger::processTcpPackets() {
             // Retry after a short wait if the visualiser is still connected
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-            if (!common::visualiserConnected) {
-                std::lock_guard<std::mutex> lock(queueMutex);
-                tcpQueue.pop(); // Drop if visualiser is no longer active
-            }
+            
         }
     }
 }
