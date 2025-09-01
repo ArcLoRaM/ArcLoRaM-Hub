@@ -17,7 +17,6 @@
 #include <sstream>
 #include <map>
 #include <atomic>
-#include "../Miscellaneous/PacketTool/PacketTool.hpp"
 #include <optional>
 #include <future>
 
@@ -34,11 +33,10 @@ std::string toString(NodeState state);
 
 //Enum representing the scheduler proposed states for the nodes
 enum class WindowNodeState{
-    
     CanTransmit,
     CanListen,
     CanSleep,
-    CanCommunicate //mixed state of CanTransmit and CanListen
+    CanCommunicate //mixed state of CanTransmit and CanListen (the nodes listen and sometimes it transmits)
 };
 
 
@@ -52,19 +50,13 @@ public:
     virtual ~Node() {
         
     }
-
-    //virtual void run()=0; //we shifted to an event driven model
     
-  
-     
     const std::vector<std::pair<int64_t, WindowNodeState>>& getActivationSchedule() const;
 
     virtual std::string initMessage() const;//default message to be logged when the node starts
 
-    //used by simulation manager
 
     //todo: do we need the bool ? why not just a void?
-    //add a message to the receiving buffer if no interference is detected, additionnal behaviour can be added in child classes
     virtual bool receiveMessage(const std::vector<uint8_t> message);
 
     //getters
@@ -80,14 +72,10 @@ public:
     void setPhyLayer(PhyLayer* phy){
         phyLayer = phy;
     }
-    
-     //add TDMA
-     void addActivation( int64_t activationTime, WindowNodeState activationState);
-             
-    
+
+    void addActivation( int64_t activationTime, WindowNodeState activationState);
     void onTimeChange(WindowNodeState proposedState);
-     virtual  int getClassId() const =0;
-    //for the moment, no parameters, later we need to add the time_ms
+    virtual  int getClassId() const =0;
     virtual void handleCommunication()=0;//we separate state transition from the communication logic, this function is called after each state transition
     static std::string stateToString(NodeState state);
     static std::string stateToString(WindowNodeState state);
@@ -122,7 +110,7 @@ protected:
         currentState = initialState;
     }
     NodeState convertWindowNodeStateToNodeState(WindowNodeState state);
-    NodeState getCurrentState() {
+    NodeState getCurrentState() const {
         
         return currentState;
     }
@@ -130,7 +118,6 @@ protected:
     
     currentState = newState;
 
-    //Todo: put the state switch here for the GUI
 }
 
 
@@ -160,6 +147,9 @@ protected:
     virtual bool canCommunicateFromCommunicating()=0;
 
   
+    virtual bool canNodeReceiveMessage()=0;
+
+
     void initializeTransitionMap();
 
 
@@ -167,11 +157,16 @@ protected:
 
 
     // Display methods
+
+    //todo: implement enum class to replace the string
     //Todo: put the other display methods (broadcast, routing, init etc.) for every mode for every class !
-    //Todo: the reception state should be a struct, not raw strings
     void adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const; // Display the transmission of a packet to a specific receiver
     // Visualiser (aka GUI) display
+    //Todo: the reception state should be a struct, not raw strings
     void receptionStateDisplay(uint16_t senderId, std::string state);
     void dropAnimationDisplay();
+
+    //the isCommunicatingAck paremeter is used in the GUI to count the energy expenditure, as it consumes more energy to send a data packet than an ack packet (different TOA)
+    //this will probably change in the future, TODO
     void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
 };

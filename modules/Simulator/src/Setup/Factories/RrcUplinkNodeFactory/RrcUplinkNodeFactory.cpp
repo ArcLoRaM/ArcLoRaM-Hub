@@ -4,6 +4,8 @@
 #include "../../../Node/C1/C1_Node.hpp"
 #include <stdexcept>
 
+using namespace common::rrc_uplink;
+
 RrcUplinkNodeFactory::RrcUplinkNodeFactory(Logger& logger)
     : logger(logger) {}
 
@@ -12,10 +14,10 @@ std::shared_ptr<C3_Node> RrcUplinkNodeFactory::createC3Node(int id, std::pair<in
 
     // TDMA setup for RRC_UPLINK mode 
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanListen);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanTransmit);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + i * durationDataWindow_ms + i *durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanListen);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + i * durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanSleep);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + (i + 1) * durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanTransmit);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + (i + 1) * durationSleepWindowSecondary_ms + (i + 1) * durationACKWindow_ms, WindowNodeState::CanSleep);
     }
 
     return node;
@@ -26,10 +28,10 @@ std::shared_ptr<C2_Node> RrcUplinkNodeFactory::createC2Node(int id, std::pair<in
 
     // TDMA setup for RRC_UPLINK mode
     for (size_t i = 0; i < common::totalNumberOfSlots; i++) {
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + i * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + i * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanSleep);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + i * common::durationACKWindow, WindowNodeState::CanCommunicate);
-        node->addActivation( (i + 1) * common::durationSleepWindowMain + (i + 1) * common::durationDataWindow + (i + 1) * common::durationSleepWindowSecondary + (i + 1) * common::durationACKWindow, WindowNodeState::CanSleep);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + i * durationDataWindow_ms + i * durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanCommunicate);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + i * durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanSleep);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + (i + 1) * durationSleepWindowSecondary_ms + i * durationACKWindow_ms, WindowNodeState::CanCommunicate);
+        node->addActivation( (i + 1) * durationSleepWindowMain_ms + (i + 1) * durationDataWindow_ms + (i + 1) * durationSleepWindowSecondary_ms + (i + 1) * durationACKWindow_ms, WindowNodeState::CanSleep);
     }
 
     return node;

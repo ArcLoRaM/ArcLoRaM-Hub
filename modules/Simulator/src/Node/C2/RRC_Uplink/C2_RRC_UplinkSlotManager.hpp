@@ -3,12 +3,12 @@
 
 #include <vector>
 
-class C2RccUplinkSlotManager {
+class C2_RRC_UplinkSlotManager {
 private:
     std::vector<int> slots;
 
 public:
-    C2RccUplinkSlotManager() = default;
+    C2_RRC_UplinkSlotManager() = default;
 
     void initializeRandomSlots(int numberOfSlots, int totalSlotsPossible);
 

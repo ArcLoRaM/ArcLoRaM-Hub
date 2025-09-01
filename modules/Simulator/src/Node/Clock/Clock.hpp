@@ -12,6 +12,7 @@
 #include <string>
 #include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include "../Node.hpp"
+#include "../../Setup/Common.hpp"
 
 
 using CallbackType = std::function<void()>;

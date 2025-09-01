@@ -34,6 +34,8 @@ int main() {
         }
     }
 
+    //Todo: signal the commandManager to stop gracefully 
+
 //---------------------------------End---------------------------------
 
     logger.stop();//logger must outlive other objects since it's passed as a reference, otherwise unpredictable behavior

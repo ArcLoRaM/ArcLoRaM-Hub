@@ -24,8 +24,8 @@ bool Seed::instantiateTopology(std::string topology)
 
     if (deploymentManager.loadTopologyFromString(topology))
     {
-        logger.logSystem("Topology instantiated with "+std::to_string(listNode.size())+" nodes");
         listNode = deploymentManager.getParsedNodes();
+        logger.logSystem("Topology instantiated with "+std::to_string(listNode.size())+" nodes");
 
         return true;
     }

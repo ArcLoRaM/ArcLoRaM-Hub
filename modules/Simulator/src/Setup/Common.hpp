@@ -49,8 +49,9 @@ enum class PacketType : uint8_t {
 
 
 //-------------------------------------------
+//Common Names share between several TDMA (communication ) mode
 inline namespace field_names {
-    inline constexpr std::string_view type = "type";
+    inline constexpr std::string_view type = "type"; //should always be placed in first position in packets
     inline constexpr std::string_view senderGlobalId = "senderGlobalId";
     inline constexpr std::string_view receiverGlobalId = "receiverGlobalId";
     inline constexpr std::string_view globalIDPacket = "globalIDPacket";
@@ -62,7 +63,7 @@ inline namespace field_names {
     inline constexpr std::string_view hashFunction = "hashFunction";
 }
 
-
+//Common Sizes share between several TDMA (communication ) mode
 inline namespace field_sizes {
     inline constexpr int type = 1;
     inline constexpr int global_id = 2;
@@ -97,7 +98,7 @@ private:
 //-------------------------------------------
 
 inline namespace rrc_downlink{
-    //For the Protocol Stack in Nodes
+    //todo rename those in something that makes more sense (dont use beacon word)
     constexpr  int minimumNbBeaconPackets=2;
     constexpr  int maximumNbBeaconPackets=4;
     constexpr  int nbSlotsPossibleForOneBeacon=10;
@@ -132,7 +133,6 @@ inline const FieldMap rrc_downlink_fields = PacketFormatBuilder{}
 
 
 inline namespace rrc_beacon{
-    //For the Protocol Stack in Nodes
     constexpr  int minimumNbBeaconPackets=2;
     constexpr  int maximumNbBeaconPackets=4;
     constexpr  int nbSlotsPossibleForOneBeacon=10;
@@ -140,20 +140,12 @@ inline namespace rrc_beacon{
     constexpr  int typePacket=0x01;
     constexpr  int timeOnAirBeacon_ms=70;
 
-    //For the Time Division Multiple Access Scheme in Seed
+
     constexpr  unsigned int lengthTransmissionWindow_ms = 1000;
     constexpr  unsigned int lengthSleepingWindow_ms = 1500;
     constexpr  unsigned int nbComWindows =40;
 
 
-
-
-    //For the Packet
-    // Define field positions and sizes in the packet
-
-    //TODO: change the index so it's a variable in the map
-    //Put every variables (index + nbBytes) of the fields as consexpr
-    //they are used in some function
     constexpr  int timeStampBytesSize=4;
     constexpr  int costFunctionBytesSize=1;
     constexpr  int hopCountBytesSize=2;

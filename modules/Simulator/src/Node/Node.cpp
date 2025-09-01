@@ -9,12 +9,6 @@ Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batte
 
 std::string Node::initMessage() const
 {
-    // retrieve the thread id
-    std::thread::id this_id = std::this_thread::get_id();
-    std::stringstream ss;
-    ss << this_id;
-    std::string threadIdStr = ss.str();
-
     return "Node " + std::to_string(nodeId) + " located at (" + std::to_string(coordinates.first) + "," + std::to_string(coordinates.second) + ")";
 }
 
