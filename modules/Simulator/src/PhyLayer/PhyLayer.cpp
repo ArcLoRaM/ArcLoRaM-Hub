@@ -69,7 +69,7 @@ void PhyLayer::registerAllNodeEvents(Clock& clk) {
     }
     logger.setNodes(nodesInfo); // Set the nodes in the logger
 
-    logger.exportCombinedSchedule(nodes, clk.getCommunicationSteps(), "output/combined_schedule.csv");
+    logger.exportCombinedSchedule(nodes, clk.getCommunicationStepsSnapshot(), "output/combined_schedule.csv");
 }
 
 // Function to get reachable nodes for all nodes

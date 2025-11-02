@@ -36,13 +36,13 @@ public:
     void enableFileOutput(const std::string& filepath);
     void setCurrentTick(uint64_t tick);
 
-void setNodes(const std::vector<NodeInfo>& nodeInfoList);
-void enableColorOutput(bool enabled);
-void exportCombinedSchedule(
-    const std::vector<std::shared_ptr<Node>>& nodes,
-    const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
-    const std::string& outputFile = "combined_schedule.csv"
-);
+    void setNodes(const std::vector<NodeInfo>& nodeInfoList);
+    void enableColorOutput(bool enabled);
+    void exportCombinedSchedule(
+        const std::vector<std::shared_ptr<Node>>& nodes,
+        const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
+        const std::string& outputFile = "combined_schedule.csv"
+    );
 
 private:
 inline static std::atomic<uint64_t> globalLogSeq{0};

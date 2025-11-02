@@ -27,7 +27,7 @@ void CommandDispatcher::onCommand(sf::Packet& packet) {
 
         case 102:
             logger.logSystem("ResumeSimulation command received.");
-            // if (resumeCallback) resumeCallback();
+            if (resumeCallback) resumeCallback();
             break;
 
         case 103:
@@ -38,6 +38,10 @@ void CommandDispatcher::onCommand(sf::Packet& packet) {
         case 105:
             logger.logSystem("RestartSimulation command received.");
             if (restartCallback) restartCallback();
+            break;
+        case 106:
+            logger.logSystem("PauseSimulation command received.");
+            if (pauseCallback) pauseCallback();
             break;
 
         default:
@@ -86,4 +90,12 @@ void CommandDispatcher::setPingCallback(PingCallback callback) {
 
 void CommandDispatcher::setRestartCallback(RestartCallback callback) {
     restartCallback = std::move(callback);
+}
+
+void CommandDispatcher::setPauseCallback(PauseCallback callback) {
+    pauseCallback = std::move(callback);
+}
+
+void CommandDispatcher::setResumeCallback(ResumeCallback callback) {
+    resumeCallback = std::move(callback);
 }

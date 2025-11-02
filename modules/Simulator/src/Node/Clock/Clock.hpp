@@ -14,61 +14,87 @@
 #include "../Node.hpp"
 #include "../../Setup/Common.hpp"
 
+#include <stop_token>     // C++20
 
 using CallbackType = std::function<void()>;
 
 
 
 class Clock {
+public:
+
+    using ms = std::chrono::milliseconds;
+
+
+explicit Clock(Logger& logger, ms tickPeriod = ms{1})
+  : logger(logger), tickPeriod(tickPeriod) {}
+
+
+    ~Clock() { stop(); }
+
+    // Lifecycle
+    void start() ;
+    void stop();
+
+    // Control
+    void pause();
+    void resume();
+    bool isPaused()  const noexcept { return paused.load(std::memory_order_relaxed); }
+    bool isRunning() const noexcept { return running.load(std::memory_order_relaxed); }
+    
+    
+    // Time (logical)
+    int64_t currentTimeInMilliseconds();
+
+
+    void scheduleStateTransition(int64_t activationTimeMs, CallbackType callback) ;
+    void scheduleCommunicationStep(int64_t timeMs, std::shared_ptr<Node> node);
+    void scheduleTransmissionStart(int64_t timeMs, CallbackType callback);
+    void scheduleTransmissionEnd(int64_t timeMs, CallbackType callback);
+
+    
+  std::multimap<int64_t, std::shared_ptr<Node>> getCommunicationStepsSnapshot() const; 
+
 
 
 private:
 
+    //thread loop
+    void run(std::stop_token stoken);
+    std::jthread clockThread;  //auto-join stop
 
+    //helpers
+    void executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, int64_t start, int64_t end);
+    void executeCommunicationInRange(std::multimap<int64_t,std::shared_ptr<Node>>& map, int64_t start, int64_t end);
 
+    //State
+    std::atomic<bool> running{false};
+    std::atomic<bool> paused{false};
+    Logger& logger;
+    mutable std::mutex clockMutex;
+    std::condition_variable_any cv;
 
-    std::atomic<bool> running;
-
-
+    //Schedules
     //use distinct multimap for every kind of events (battery depletion etc..)
     std::multimap<int64_t, CallbackType> stateTransitions; //stores the calls of onTimeChange() for each node at the activation times
                                                              //onTimeChange() will call the appropriate stateTransitionFunction
     std::multimap<int64_t, std::shared_ptr<Node>> communicationSteps;//consists of the HandleCommunication() for each node, is provisionned at the same schedule than the stateTransitions multimap
     
-    //not sure if we will use multimaps for dispatching packets, interference etc..
     std::multimap<int64_t, CallbackType> transmissionStartCallbacks;
     std::multimap<int64_t, CallbackType> transmissionEndCallbacks;      
     
     //we can add more multimaps for other events, like  special events (sudden node failure etc..)
     
-    int64_t logicalTimeMs = 0;  // Start at 0
-    const int64_t tickDurationMs = common::tickIntervalForClock_ms;                                                            
-    int64_t lastProcessedTime = 0;
+    ms tickPeriod{1};
+    int64_t tNowMs{0};                   // logical time
+    int64_t tLastMs{0};
+    unsigned int tickCount{0};
+
+    // const int64_t tickDurationMs = common::tickIntervalForClock_ms;                                                            
 
 
-    std::thread clockThread;
-    Logger& logger;
-    
-    void tick();
-    unsigned int compteurTick=0;
-
-    void executeCallbacksInRange(std::multimap<int64_t, CallbackType>& map, int64_t start, int64_t end);
-    void executeCommunicationInRange(std::multimap<int64_t,std::shared_ptr<Node>>& map, int64_t start, int64_t end);
 
 
-public:
-    Clock( Logger& logger) 
-        : running(false),logger(logger) {
-        }
-
-    void start() ;
-    void stop();
-    // Current time in milliseconds
-    int64_t currentTimeInMilliseconds() ;
-    void scheduleStateTransition(int64_t activationTime, CallbackType callback) ;
-    void scheduleCommunicationStep(int64_t time, std::shared_ptr<Node> node);
-    void scheduleTransmissionStart(int64_t time, CallbackType callback);
-    void scheduleTransmissionEnd(int64_t time, CallbackType callback);
-    const std::multimap<int64_t, std::shared_ptr<Node>>& getCommunicationSteps() const;
+   
 };
 

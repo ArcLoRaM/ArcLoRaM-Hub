@@ -29,6 +29,8 @@ public:
     using StopCallback = std::function<void()>;
     using PingCallback = std::function<void()>;
     using RestartCallback = std::function<void()>;
+    using PauseCallback = std::function<void()>;
+    using ResumeCallback = std::function<void()>;
 
     void onCommand(sf::Packet& packet);
 
@@ -38,7 +40,11 @@ public:
     void clear();
     void setPingCallback(PingCallback callback);
     void setRestartCallback(RestartCallback callback);
+    void setPauseCallback(PauseCallback callback);
+    void setResumeCallback(ResumeCallback callback);
+
 private:
+
     std::optional<LaunchConfig> pendingConfig;
     std::mutex configMutex;
     Logger& logger; // Reference to the logger for logging commands
@@ -46,4 +52,7 @@ private:
     StopCallback stopCallback;
     PingCallback pingCallback;
     RestartCallback restartCallback;
+    PauseCallback pauseCallback;
+    ResumeCallback resumeCallback;
+
 };

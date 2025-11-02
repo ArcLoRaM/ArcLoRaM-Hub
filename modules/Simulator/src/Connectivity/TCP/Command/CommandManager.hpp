@@ -32,6 +32,7 @@ private:
     void launchSimulation(const LaunchConfig& config);
     void stopSimulation();
 
+
     Logger& logger;
     Client tcpClient;
     CommandDispatcher dispatcher;

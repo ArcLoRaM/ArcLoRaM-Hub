@@ -176,6 +176,13 @@ public:
     friend sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& cmd);
 };
 
+class pauseCommandPacket : public BasePacket {
+public:
+    pauseCommandPacket();
+    friend sf::Packet& operator<<(sf::Packet& packet, const pauseCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pauseCommandPacket& cmd);
+};
+
 class pingCommandPacket : public BasePacket {
 public:
     pingCommandPacket() ;

@@ -20,7 +20,7 @@ CommandManager::CommandManager(Logger &logger_)
                                { 
                              logger.logSystem("Stop callback triggered.");
 
-                                // this->stopSimulation();
+                             // this->stopSimulation();
                              });
 
     dispatcher.setPingCallback([this]()
@@ -34,7 +34,17 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setRestartCallback([this]() {
             logger.logSystem("Restart callback triggered.");
-            this->stopSimulation();
+            // this->stopSimulation(); clock-Zstop();
+    });
+
+    dispatcher.setPauseCallback([this]() {
+        logger.logSystem("Pause callback triggered.");
+        this->clock->pause();
+    });
+
+    dispatcher.setResumeCallback([this]() {
+        logger.logSystem("Resume callback triggered.");
+        this->clock->resume();
     });
 
 
@@ -106,7 +116,7 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
     phyLayer->takeOwnership(seed.transferOwnership()); //seed memory is released safely
 
     //the clock could be renamed as the scheduler TODO
-    clock = std::make_unique<Clock>(logger);
+    clock = std::make_unique<Clock>(logger, std::chrono::milliseconds(common::tickIntervalForClock_ms));
     phyLayer->registerAllNodeEvents(*clock);
     clock->start();
     running = true;
@@ -124,7 +134,7 @@ void CommandManager::stopSimulation()
     if (clock)
     {
         clock->stop();
-        clock.reset();
+        
     }
 
     phyLayer.reset(); // Frees all node memory
