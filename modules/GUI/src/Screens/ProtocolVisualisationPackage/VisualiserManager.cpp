@@ -155,6 +155,8 @@ void VisualiserManager::setServerPanelUI()
     confFileSelectionGroup->add(confFileSelection);
     confFileSelection->setPosition({"25%", "20%"});
     confFileSelection->setSize({"20%", "6%"});
+
+    //probably worth to make a function to alleviate here todo
     confFileSelection->onPress([this]()
                                {
                                    auto targetDir = std::filesystem::path("output/topologies");
@@ -164,6 +166,28 @@ void VisualiserManager::setServerPanelUI()
                                    openFileDialog->setFileTypeFilters({{"Simulation File", {"*.simcfg"}}}, 1);
                                    openFileDialog->onFileSelect([this](const std::vector<tgui::Filesystem::Path> &paths)
                                                                 {
+                                                                if(isSimulationRunning.load()){
+
+                                                                    //TODO: stop the simulation before launching a new one !
+                                                                    //right now it pauses it ....
+                                                                //     auto warningBox = UIFactory::createMessageBox("Warning", "A simulation is currently running. Are you sure you want to select a new configuration file?");
+                                                                //         warningBox->onButtonPress([msgBox = warningBox.get()](const tgui::String &button){
+                                                                //             if(button == "NO" ){
+                                                                //                     return;
+                                                                //             } 
+                                                                //         });
+                                                                //         gui.add(warningBox);
+                                                                //     pauseResumeSimulationButton->setEnabled(false);
+                                                                //     pauseResumeSimulationButton->setText("Pause Simulation");
+
+                                                                // std::cout << "Pausing simulation..." << std::endl;
+                                                                // sf::Packet basePacket;
+                                                                // pauseCommandPacket pausePacket;
+                                                                // basePacket << pausePacket;
+                                                                // TcpServer::instance().transmitPacket(basePacket); 
+                                                                // isSimulationRunning.store(false);
+
+                                                                }
                                                                 if (!paths.empty()) {
                                                                      
                                                                     if (TopologyConfigIO::readToVisualisationState(paths[0].asString().toStdString(),topoVisuState)) {
@@ -178,9 +202,10 @@ void VisualiserManager::setServerPanelUI()
                                                                                 msgBox->getParent()->remove(msgBox->shared_from_this()); 
                                                                             } 
                                                                         });
-                                                                        gui.add(errorBox);
-
+                                                                        gui.add(errorBox);                                                                        
                                                                         startSimulationButton->setEnabled(true);
+
+
                                                                         tgui::String fileNameLabelString= "Incorrect File Selected: " + paths[0].asString();
                                                                         fileNameLabel->setText(fileNameLabelString);
                                                                     }
@@ -209,15 +234,54 @@ void VisualiserManager::setServerPanelUI()
 
                                          sf::Packet basePacket;
                                         // Construct launchConfigCommandPacket with required arguments
-                                        launchConfigCommandPacket confPacket(topoVisuState.getDistanceThreshold(), magic_enum::enum_name(topoVisuState.getTDMAMode()), topoVisuState.getTopologyLines());
+                                        //for now, we don't let the user decide on the distance threshold. Maybe later we wil
+                                        launchConfigCommandPacket confPacket(1000.0/*topoVisuState.getDistanceThreshold()*/, std::string(magic_enum::enum_name(topoVisuState.getTDMAMode())), topoVisuState.getTopologyLines());
                                         basePacket << confPacket;
                                         TcpServer::instance().transmitPacket(basePacket);
+
+                                        startSimulationButton->setEnabled(false);
+                                        isSimulationRunning.store(true);
+                                        pauseResumeSimulationButton->setText("Pause Simulation");
+                                        pauseResumeSimulationButton->setEnabled(true);
                                      });
     
     confFileSelectionGroup->add(startSimulationButton);
     startSimulationButton->setPosition({"2%", "40%"});
     startSimulationButton->setSize({"20%", "6%"});
     startSimulationButton->setEnabled(false); // Initially disabled until a file is selected
+
+    pauseResumeSimulationButton = UIFactory::createButton("Pause Simulation");
+    pauseResumeSimulationButton->onPress([this]()
+                                         {
+                                            if(isSimulationRunning.load()){
+                                             // Pause the simulation
+                                             std::cout << "Pausing simulation..." << std::endl;
+                                             sf::Packet basePacket;
+                                             pauseCommandPacket pausePacket;
+                                             basePacket << pausePacket;
+                                             TcpServer::instance().transmitPacket(basePacket);
+                                             pauseResumeSimulationButton->setText("Resume Simulation");
+                                             isSimulationRunning.store(false);
+                                            }
+                                            else{
+                                                //Resume Simulation
+                                                std::cout << "Resuming simulation..." << std::endl;
+                                                sf::Packet basePacket;
+                                                // Construct resumeSimulationCommandPacket with required arguments
+                                                resumeCommandPacket resumePacket;
+                                                basePacket << resumePacket;
+                                                TcpServer::instance().transmitPacket(basePacket);
+                                                isSimulationRunning.store(true);
+                                                pauseResumeSimulationButton->setText("Pause Simulation");
+
+                                            }
+                                            
+                                         });
+    confFileSelectionGroup->add(pauseResumeSimulationButton);
+    pauseResumeSimulationButton->setPosition({"2%", "65%"});
+    pauseResumeSimulationButton->setSize({"20%", "6%"});
+    pauseResumeSimulationButton->setEnabled(false); // Initially disabled until a simulation is running  
+
     // launch the routine that will check client-server connection
     isRoutineServerRunning.store(true);
     routineServer = std::thread(&VisualiserManager::routineServerLoop, this);

@@ -21,6 +21,8 @@
 #include "../../Network/TcpServer/ClientSession.hpp"
 #include "TopologyVisualisationState.hpp"
 
+
+
 class VisualiserManager {
 private:
     CommandSender commandSender;
@@ -109,6 +111,8 @@ private:
     std::atomic<bool> isRoutineServerRunning{false};
     tgui::Group::Ptr confFileSelectionGroup;
     tgui::Button::Ptr startSimulationButton;
+    std::atomic<bool> isSimulationRunning{false};
+    tgui::Button::Ptr pauseResumeSimulationButton;
     tgui::Label::Ptr fileNameLabel;
     void routineServerLoop();
     TopologyVisualisationState topoVisuState;

@@ -209,6 +209,9 @@ restartCommandPacket::restartCommandPacket() {
     type = 105;
 }
 
+pauseCommandPacket::pauseCommandPacket() {
+    type = 106;
+}
 
 //-------------------- Packet Serialization --------------------
 
@@ -235,6 +238,13 @@ sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& rcp) {
     return packet; // Nothing to deserialize
 }
 
+sf::Packet& operator<<(sf::Packet& packet, const pauseCommandPacket& rcp) {
+    return packet << rcp.type;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, pauseCommandPacket& rcp) {
+    return packet; // Nothing to deserialize
+}
 
 sf::Packet& operator<<(sf::Packet& packet, const pingCommandPacket& cmd) {
     return packet << cmd.type;

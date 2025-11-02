@@ -153,7 +153,7 @@ class launchConfigCommandPacket : public BasePacket {
 
 public:
 
-    launchConfigCommandPacket(double threshold,std::string tdmaMode,std::string topologyString = "");
+    launchConfigCommandPacket(double threshold=0.0,std::string tdmaMode="",std::string topologyString="");
     std::string tdmaMode;
     std::string topologyString;
     double distanceThreshold;
@@ -174,6 +174,13 @@ public:
     resumeCommandPacket();
     friend sf::Packet& operator<<(sf::Packet& packet, const resumeCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& cmd);
+};
+
+class pauseCommandPacket : public BasePacket {
+public:
+    pauseCommandPacket();
+    friend sf::Packet& operator<<(sf::Packet& packet, const pauseCommandPacket& cmd);
+    friend sf::Packet& operator>>(sf::Packet& packet, pauseCommandPacket& cmd);
 };
 
 class pingCommandPacket : public BasePacket {
