@@ -8,7 +8,7 @@
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
 #include "../../Shared/Helper.hpp"
-#include "CsvMetricWriter.hpp"
+#include "Metrics/IO/CsvMetricWriter.hpp"
 #include "../../UI/UIFactory/UIFactory.hpp"
 #include "../../Network/TcpServer/ClientSession.hpp"
 #include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
@@ -18,7 +18,7 @@
 
 //TODO: make this class more modular, it's too heavy?
 
-VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui), commandSender()
+VisualiserManager::VisualiserManager(ProtocolVisualisationState &state, tgui::Gui &gui) : state(state), gui(gui)
 
 {
 }
@@ -190,7 +190,7 @@ void VisualiserManager::setServerPanelUI()
                                                                 }
                                                                 if (!paths.empty()) {
                                                                      
-                                                                    if (TopologyConfigIO::readToVisualisationState(paths[0].asString().toStdString(),topoVisuState)) {
+                                                                    if (TopologyConfigIO::readToVisualisationState(paths[0].asString().toStdString(),topoFileState)) {
                                                                         startSimulationButton->setEnabled(true);
                                                                         tgui::String fileNameLabelString= "File Selected: " + paths[0].asString();
                                                                         fileNameLabel->setText(fileNameLabelString);
@@ -235,7 +235,7 @@ void VisualiserManager::setServerPanelUI()
                                          sf::Packet basePacket;
                                         // Construct launchConfigCommandPacket with required arguments
                                         //for now, we don't let the user decide on the distance threshold. Maybe later we wil
-                                        launchConfigCommandPacket confPacket(1000.0/*topoVisuState.getDistanceThreshold()*/, std::string(magic_enum::enum_name(topoVisuState.getTDMAMode())), topoVisuState.getTopologyLines());
+                                        launchConfigCommandPacket confPacket(1000.0/*topoFileState.getDistanceThreshold()*/, std::string(magic_enum::enum_name(topoFileState.getTDMAMode())), topoFileState.getTopologyLines());
                                         basePacket << confPacket;
                                         TcpServer::instance().transmitPacket(basePacket);
 

@@ -7,7 +7,7 @@
 #include <mutex>
 #include <memory>
 #include <SFML/System/Vector2.hpp>
-#include "../../Visualisation/Device/Device.hpp"
+#include "../../Objects/Device/Device.hpp"
 enum class EditorMode {
     Idle,
     AddingC1Node,

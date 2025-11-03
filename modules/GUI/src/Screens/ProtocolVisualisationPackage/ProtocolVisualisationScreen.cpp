@@ -71,7 +71,8 @@ void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, Scr
 
 
     //todo: undertand why it's laggy when you click back, probably not well handled memory leak...
-        auto button = UIFactory::createButton("Back", [this, actions]() {
+    //todo: don't do a button, not very aesthetic...  
+    auto button = UIFactory::createButton("Back", [this, actions]() {
             actions[0].second();
             TcpServer::instance().stop();
 

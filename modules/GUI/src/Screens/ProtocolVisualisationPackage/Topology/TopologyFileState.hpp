@@ -8,7 +8,7 @@
 #include <mutex>
 #include <memory>
 #include <SFML/System/Vector2.hpp>
-#include "../../Visualisation/Device/Device.hpp"
+#include "../../Objects/Device/Device.hpp"
 
 enum class TDMAMode {
     RRC_Uplink,
@@ -22,7 +22,15 @@ enum class TDMAMode {
 
 
 
-class TopologyVisualisationState {
+class TopologyFileState {
+
+/*
+Holds the state of the parsed topology, from the configuration file.
+This state will eventually be accomodated with simulation additional settings before being sent to the 
+simulator.
+
+*/
+
 public:
     const TDMAMode getTDMAMode()const {return currentMode; } 
     const double getDistanceThreshold() const { return distanceThreshold; }

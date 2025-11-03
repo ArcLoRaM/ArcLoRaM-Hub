@@ -5,8 +5,8 @@
 #include <memory>
 #include <cmath>
 #include "TopologyEditorState.hpp"
-#include "../../Visualisation/Device/Device.hpp"
-#include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
+#include "../../Objects/Device/Device.hpp"
+#include "../../Objects/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 

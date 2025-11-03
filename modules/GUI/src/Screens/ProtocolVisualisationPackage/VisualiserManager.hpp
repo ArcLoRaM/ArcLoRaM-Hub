@@ -8,24 +8,23 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <cmath>
-#include "../../Visualisation/Device/Device.hpp"
-#include "../../Visualisation/Animations/Arrow/Arrow.hpp"
-#include "../../Visualisation/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
-#include "../../Visualisation/Animations/PacketDrop/PacketDrop.hpp"
-#include "../../Visualisation/Animations/ReceptionIcon/ReceptionIcon.hpp"
+#include "../../Objects/Device/Device.hpp"
+#include "../../Objects/Animations/Arrow/Arrow.hpp"
+#include "../../Objects/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
+#include "../../Objects/Animations/PacketDrop/PacketDrop.hpp"
+#include "../../Objects/Animations/ReceptionIcon/ReceptionIcon.hpp"
 #include "ProtocolVisualisationState.hpp"
 #include "../../Shared/InputManager/InputManager.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include "CommandSender.hpp"
 #include "../../Network/TcpServer/ClientSession.hpp"
-#include "TopologyVisualisationState.hpp"
+#include "Topology/TopologyFileState.hpp"
+#include <thread>
 
 
 
 class VisualiserManager {
 private:
-    CommandSender commandSender;
 
     //TODO: put rooting and Devices in the state, manager should only handle interface specific to the feature ( not like redirection between pages) and animations (transmission etc..)
     // I really think it's necessary, the sooner the better 
@@ -115,7 +114,7 @@ private:
     tgui::Button::Ptr pauseResumeSimulationButton;
     tgui::Label::Ptr fileNameLabel;
     void routineServerLoop();
-    TopologyVisualisationState topoVisuState;
+    TopologyFileState topoFileState;
 
     //Network TAB
     tgui::CanvasSFML::Ptr canvas;

@@ -3,8 +3,8 @@
 #include "../../Shared/Config.hpp"
 #include <iostream>
 #include <magic_enum.hpp>
-#include "../../Visualisation/Device/Device.hpp"
-#include "CsvMetricWriter.hpp"
+#include "../../Objects/Device/Device.hpp"
+#include "Metrics/IO/CsvMetricWriter.hpp"
 #include "../../Network/TcpServer/TcpServer.hpp"
 
 
@@ -89,13 +89,6 @@ void ProtocolPacketController::handleTransmitMessagePacket(sf::Packet& packet,Pr
 
         manager.addArrow(std::move(arrow));
     }
-
-
-    //Metrics
-
-    //useles?
-    // state.energyExp += 20;
-
 
     if(!tmp.isACK) {
         state.totalDataPacketsSent++;//we only count the data packets sent, not the ACKs for the PDR (retransmissions are only for the data packets)

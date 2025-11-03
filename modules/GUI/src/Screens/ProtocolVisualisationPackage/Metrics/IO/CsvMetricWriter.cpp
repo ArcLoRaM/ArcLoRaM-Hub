@@ -1,7 +1,7 @@
 #include "CsvMetricWriter.hpp"
-#include "VisualiserManager.hpp"
-#include "ProtocolVisualisationState.hpp"
-#include "../../Visualisation/Device/Device.hpp"
+#include "../../VisualiserManager.hpp"
+#include "../../ProtocolVisualisationState.hpp"
+#include "../../../../Objects/Device/Device.hpp"
 #include <fstream>
 #include <sstream>
 #include <iomanip>

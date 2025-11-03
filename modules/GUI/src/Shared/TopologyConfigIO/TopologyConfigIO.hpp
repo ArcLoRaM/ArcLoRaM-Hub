@@ -7,8 +7,8 @@
 #include <memory>
 #include <optional>
 #include "../../Screens/TopologyEditorPackage/TopologyEditorState.hpp"
-#include "../../Screens/ProtocolVisualisationPackage/TopologyVisualisationState.hpp"
-#include "../../Visualisation/Device/Device.hpp"
+#include "../../Screens/ProtocolVisualisationPackage/Topology/TopologyFileState.hpp"
+#include "../../Objects/Device/Device.hpp"
 
 
 class TopologyConfigIO {
@@ -22,7 +22,7 @@ public:
    static bool read(const std::string& path, TopologyEditorState& state);
     static std::optional<std::string> readToString(const std::string& path);
 
-static bool readToVisualisationState(const std::string& path, TopologyVisualisationState& state);
+static bool readToVisualisationState(const std::string& path, TopologyFileState& state);
 
 private:
 

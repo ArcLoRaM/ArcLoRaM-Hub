@@ -10,9 +10,6 @@ class ProtocolPacketController : public IPacketController {
 
     //General Comment:
     //This class is creating the objects (devices, arrows....) and pass it to the manager.
-    //Fine but would be better to give this task to the manager, makes more sense, encapsulate the logic
-    //Todo: change this and from now on do that to the next screens
-
 
     private:
     //TODO:put state and manager as private members of the class, to avoid passing them as parameters
