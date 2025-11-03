@@ -6,22 +6,21 @@
 
 CommandManager::CommandManager(Logger &logger_)
     : logger(logger_),
-      tcpClient("127.0.0.1", 5000,logger_),
+      tcpClient("127.0.0.1", 5000, logger_),
       dispatcher(logger),
       running(false)
 {
 
     logger.setTcpClient(&tcpClient);
-    tcpClient.setPacketHandler([this](sf::Packet& p) {
-        dispatcher.onCommand(p);
-    });
+    tcpClient.setPacketHandler([this](sf::Packet &p)
+                               { dispatcher.onCommand(p); });
 
     dispatcher.setStopCallback([this]()
-                               { 
-                             logger.logSystem("Stop callback triggered.");
+                               {
+                                   logger.logSystem("Stop callback triggered.");
 
-                             // this->stopSimulation();
-                             });
+                                   this->stopSimulation();
+                               });
 
     dispatcher.setPingCallback([this]()
                                {
@@ -29,43 +28,50 @@ CommandManager::CommandManager(Logger &logger_)
                                     sf::Packet pongBasePacket;
                                     pongPacket pongPck;
                                     pongBasePacket << pongPck;
-                                    logger.sendTcpPacket(pongBasePacket);
-                               });
+                                    logger.sendTcpPacket(pongBasePacket); });
 
-    dispatcher.setRestartCallback([this]() {
-            logger.logSystem("Restart callback triggered.");
-            // this->stopSimulation(); clock-Zstop();
+    dispatcher.setRestartCallback([this]()
+                                  {
+        logger.logSystem("Restart callback triggered.");
+        // Step 1: Stop current simulation
+        this->stopSimulation();
+
+        // Step 2: Get the latest launch configuration (already stored)
+        auto configOpt = dispatcher.getPendingLaunchConfig();
+        if (!configOpt) {
+            logger.logSystem("No previous configuration found. Restart aborted.");
+            return;
+        }
+
+        // Step 3: Launch again with same config
+        this->launchSimulation(*configOpt);
     });
 
-    dispatcher.setPauseCallback([this]() {
+    dispatcher.setPauseCallback([this]()
+                                {
         logger.logSystem("Pause callback triggered.");
-        this->clock->pause();
-    });
+        this->clock->pause(); });
 
-    dispatcher.setResumeCallback([this]() {
+    dispatcher.setResumeCallback([this]()
+                                 {
         logger.logSystem("Resume callback triggered.");
-        this->clock->resume();
-    });
+        this->clock->resume(); });
 
-
-
-    tcpClient.setConnectionChangedCallback([this](bool up){
+    tcpClient.setConnectionChangedCallback([this](bool up)
+                                           {
     if (!up) {
         logger.logSystem("Connection lost — stopping simulation.");
         this->stopSimulation();
     } else {
         logger.logSystem("Connection established.");
         // If you want to auto-resume or re-request config, do it here.
-    }
-});
-
+    } });
 }
 
 CommandManager::~CommandManager()
 {
 
     stop();
-
 }
 
 void CommandManager::start()
@@ -98,24 +104,27 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
     sysPacket << sys;
     logger.sendTcpPacket(sysPacket);
 
-
-    
-    if (config.communicationMode == "RRC_Uplink")  common::currentMode = common::CommunicationMode::RRC_Uplink;
-    else if (config.communicationMode == "RRC_Downlink")  common::currentMode = common::CommunicationMode::RRC_Downlink;
-    else if (config.communicationMode == "RRC_Beacon")  common::currentMode = common::CommunicationMode::RRC_Beacon;
-    else if (config.communicationMode == "ENC_Uplink")  common::currentMode = common::CommunicationMode::ENC_Uplink;
-    else if (config.communicationMode == "ENC_Downlink")  common::currentMode = common::CommunicationMode::ENC_Downlink;
-    else if (config.communicationMode == "ENC_Beacon")  common::currentMode = common::CommunicationMode::ENC_Beacon;
-    else throw std::invalid_argument("Unknown MODE specified: " + config.communicationMode);
-
+    if (config.communicationMode == "RRC_Uplink")
+        common::currentMode = common::CommunicationMode::RRC_Uplink;
+    else if (config.communicationMode == "RRC_Downlink")
+        common::currentMode = common::CommunicationMode::RRC_Downlink;
+    else if (config.communicationMode == "RRC_Beacon")
+        common::currentMode = common::CommunicationMode::RRC_Beacon;
+    else if (config.communicationMode == "ENC_Uplink")
+        common::currentMode = common::CommunicationMode::ENC_Uplink;
+    else if (config.communicationMode == "ENC_Downlink")
+        common::currentMode = common::CommunicationMode::ENC_Downlink;
+    else if (config.communicationMode == "ENC_Beacon")
+        common::currentMode = common::CommunicationMode::ENC_Beacon;
+    else
+        throw std::invalid_argument("Unknown MODE specified: " + config.communicationMode);
 
     // Build simulation, TODO: add path loss model here?
     phyLayer = std::make_unique<PhyLayer>(config.distanceThreshold, logger);
     Seed seed(config.topologyLines, logger);
     // Seed seed(config.communicationMode, common::topology, logger);
-    phyLayer->takeOwnership(seed.transferOwnership()); //seed memory is released safely
+    phyLayer->takeOwnership(seed.transferOwnership()); // seed memory is released safely
 
-    //the clock could be renamed as the scheduler TODO
     clock = std::make_unique<Clock>(logger, std::chrono::milliseconds(common::tickIntervalForClock_ms));
     phyLayer->registerAllNodeEvents(*clock);
     clock->start();
@@ -127,16 +136,11 @@ void CommandManager::stopSimulation()
 {
     if (!running)
         return;
-
-    logger.logSystem("Stopping simulation...");
     running = false;
-
     if (clock)
     {
         clock->stop();
-        
     }
-
     phyLayer.reset(); // Frees all node memory
     logger.logSystem("Simulation stopped.");
 }
@@ -144,7 +148,6 @@ void CommandManager::stopSimulation()
 void CommandManager::stop()
 {
     stopSimulation();
-
 }
 
 bool CommandManager::isRunning() const
