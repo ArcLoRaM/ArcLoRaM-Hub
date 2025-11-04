@@ -203,7 +203,7 @@ bool TopologyConfigIO::read(const std::string& path, TopologyEditorState& state)
     return validateConfigFile(inFile, nullptr, &state);
 }
 
-bool TopologyConfigIO::readToVisualisationState(const std::string& path, TopologyFileState& state) {
+bool TopologyConfigIO::readToTopologyFileState(const std::string& path, TopologyFileState& state) {
     std::ifstream inFile(path);
     if (!inFile) {
         std::cerr << "Failed to open config file: " << path << "\n";

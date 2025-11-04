@@ -362,7 +362,7 @@ void TopologyEditorManager::drawRootings(tgui::CanvasSFML::Ptr canvas)
 }
 
 // delta time is useless, get rid of it todo
-void TopologyEditorManager::update(float deltaTime)
+void TopologyEditorManager::update()
 {
     for (auto &animation : broadcastAnimations)
         animation->update();

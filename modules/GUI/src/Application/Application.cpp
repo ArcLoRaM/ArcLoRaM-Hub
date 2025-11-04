@@ -84,7 +84,7 @@ void Application::run()
         float deltaTime = mainClock.restart().asSeconds();
 
         if (currentScreen) {
-            currentScreen->update(deltaTime, inputManager);
+            currentScreen->update( inputManager);
 
             window.clear();
             currentScreen->draw(window);

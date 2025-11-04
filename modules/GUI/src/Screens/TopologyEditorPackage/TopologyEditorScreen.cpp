@@ -107,13 +107,9 @@ void TopologyEditorScreen::handleEvent(InputManager& input)
 
 }
 
-void TopologyEditorScreen::update(float deltaTime, InputManager& input)
+void TopologyEditorScreen::update( InputManager& input)
 {
-
-
-    // Example: Update model visualization, nodes, links, etc.
-    //we don´t need delta time for now because there is no general animation.
-    editorManager.update(deltaTime);
+    editorManager.update();
 }
 
 

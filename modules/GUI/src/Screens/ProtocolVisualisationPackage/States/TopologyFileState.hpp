@@ -26,7 +26,7 @@ class TopologyFileState {
 
 /*
 Holds the state of the parsed topology, from the configuration file.
-This state will eventually be accomodated with simulation additional settings before being sent to the 
+This state will eventually be accomodated with  additional settings (ex: change the Routing strategy..) before being sent to the 
 simulator.
 
 */

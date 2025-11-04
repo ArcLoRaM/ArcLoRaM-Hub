@@ -20,7 +20,7 @@ public:
 
     // Overridden Screen methods
     void handleEvent(InputManager& input) override;
-    void update(float deltaTime, InputManager& input) override;
+    void update(InputManager& input) override;
     void draw(sf::RenderWindow& window) override;
 
 private:

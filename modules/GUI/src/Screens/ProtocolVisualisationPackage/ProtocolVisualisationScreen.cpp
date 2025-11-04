@@ -9,16 +9,16 @@
 
 
 ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
-    : Screen(gui),manager(state,gui),
-      networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight}))
+    : Screen(gui),visualiser(gui),
+      networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight})),packetHandler(visualiser)
 {
     auto& tcpServer = TcpServer::instance();
     tcpServer.setPacketHandler([this](sf::Packet& packet) {
-        packetController.handlePacket(packet, state, manager);
+        packetHandler.handlePacket(packet);
     });
 
     setupUI(actions);
-    manager.setupUI(networkView);
+    visualiser.setup(networkView);
     tcpServer.start(5000);
 
 
@@ -49,15 +49,14 @@ void ProtocolVisualisationScreen::handleEvent(InputManager& input)
     }
 }
 
-//todo: remove deltaTime in every update
-void ProtocolVisualisationScreen::update(float deltaTime, InputManager& input)
+void ProtocolVisualisationScreen::update( InputManager& input)
 {
-    manager.update(input);
+    visualiser.update(input);
 }
 
 void ProtocolVisualisationScreen::draw(sf::RenderWindow& window)
 {    
-    manager.draw(window, networkView, state);
+    visualiser.draw(window, networkView);
 
 }
 
@@ -87,9 +86,9 @@ void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, Scr
 void ProtocolVisualisationScreen::onResize()
 {
     updateTextSize(0.02f);  // Update text size based on new window dimensions
-    auto size =manager.canvas->getSize();
+    auto size =visualiser.getCanvas()->getSize();
     networkView.setSize(size);
     networkView.setCenter(size / 2.f);
-    manager.canvas->setView(networkView);
+    visualiser.getCanvas()->setView(networkView);
 }
 

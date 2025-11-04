@@ -10,6 +10,9 @@
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
+//TODO REFACTOR THE MANAGER, similarly to what you did in the Protocol Visualiser
+
+
 class TopologyEditorManager
 {
 
@@ -17,7 +20,7 @@ public:
     TopologyEditorManager(TopologyEditorState &state, tgui::Gui &gui);
     void setupUI(sf::View &editorView);
     void handleInput(InputManager &input);
-    void update(float deltaTime);
+    void update();
     void draw(sf::RenderWindow &window, sf::View &editorView);
     void setSelectedNode(std::optional<int> nodeId);
     std::optional<int> getSelectedNode() const;

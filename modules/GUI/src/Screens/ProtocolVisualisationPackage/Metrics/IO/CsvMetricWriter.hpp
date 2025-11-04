@@ -2,12 +2,12 @@
 
 #include <string>
 
-class VisualiserManager;
+class ProtocolVisualiser;
 class ProtocolVisualisationState;
 
 class CsvMetricWriter {
 public:
-    void writeNetworkMetricsToCsv(const std::string& filename,
-                                  const VisualiserManager& manager,
-                                  const ProtocolVisualisationState& state);
+void writeNetworkMetricsToCsv(const std::string& filename,
+                                               const ProtocolVisualiser& visualiser,
+                                               const ProtocolVisualisationState& state);
 };

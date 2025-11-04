@@ -56,7 +56,7 @@ void HomePageScreen::handleEvent(InputManager& input) {
 
 
 
-void HomePageScreen::update(float deltaTime, InputManager& input) {
+void HomePageScreen::update(InputManager& input) {
 
 }
 
