@@ -69,7 +69,7 @@ void CommandDispatcher::handleLaunchConfigCommand( sf::Packet& packet)
                              + " | Topology: " + cmd.topologyString);
 
 }
-
+    
 std::optional<LaunchConfig> CommandDispatcher::getPendingLaunchConfig() {
     std::lock_guard lock(configMutex);
     return pendingConfig;
