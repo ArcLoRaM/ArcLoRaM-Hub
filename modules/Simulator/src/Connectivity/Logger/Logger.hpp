@@ -15,6 +15,8 @@
 #include <SFML/Network.hpp> // Assuming this is available
 #include "../TCP/Client/Client.hpp" // Assuming this is available
 
+//TODO: this class is too big, make at least two: one class-one duty
+
 class Node; // Forward declaration of Node class
 
 class Logger {
@@ -43,6 +45,7 @@ public:
         const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
         const std::string& outputFile = "combined_schedule.csv"
     );
+    void resetTick();
 
 private:
 inline static std::atomic<uint64_t> globalLogSeq{0};

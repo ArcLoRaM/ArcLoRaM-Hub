@@ -54,7 +54,7 @@ bool C3_RRC_UplinkHandler::receiveMessage(C3_Node &node, const std::vector<uint8
 
         uint16_t senderId = extractBytesFromField(message, field_names::senderGlobalId, rrc_uplink_data_fields);
 
-        node.receptionStateDisplay(senderId, "notListening");
+        node.receptionStateDisplay(senderId,ReceptionState::NotListening    );
         return false;
     }
 
@@ -106,7 +106,7 @@ bool C3_RRC_UplinkHandler::receiveMessage(C3_Node &node, const std::vector<uint8
     //     logger.sendTcpPacket(stopPacketReceiver);
 
     // }
-    node.receptionStateDisplay(node.RRC_UPLINK_lastSenderId, "received");
+    node.receptionStateDisplay(node.RRC_UPLINK_lastSenderId, ReceptionState::Received);
 
     // We don't really care about the payload and the hash function at this stage of development
 

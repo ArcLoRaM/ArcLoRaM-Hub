@@ -29,7 +29,7 @@ bool C2_RRC_UplinkHandler::receiveMessage(C2_Node &node, const std::vector<uint8
     
     if (!canNodeReceiveMessage(node))
     {
-        node.receptionStateDisplay(senderId, "notListening");
+        node.receptionStateDisplay(senderId, ReceptionState::NotListening);
         return false;
     }
 
@@ -56,7 +56,7 @@ bool C2_RRC_UplinkHandler::receiveMessage(C2_Node &node, const std::vector<uint8
         node.RRC_UPLINK_ackInformation->setNewAckInformation(lastSenderId, lastLocalIdPacket);
         handleDataPacketReception(node,message, lastSenderId, lastLocalIdPacket);
         // Indicate the visualiser the packet is received and handled
-        node.receptionStateDisplay(lastSenderId, "received");
+        node.receptionStateDisplay(lastSenderId, ReceptionState::Received);
         
     }
     else if (pktType == common::PacketType::RRC_Uplink_ACK && node.RRC_UPLINK_isACKSlot)
@@ -95,7 +95,7 @@ void C2_RRC_UplinkHandler::handleAckPacketReception(C2_Node &node,uint16_t sende
         node.RRC_UPLINK_nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
         node.RRC_UPLINK_localIDPacketCounter++; // increasing the counter to indicate we send a "new" packet
         node.RRC_UPLINK_retransmissionCounterHelper->setIsExpectingAck(false);
-        node.receptionStateDisplay(senderId, "received");
+        node.receptionStateDisplay(senderId, ReceptionState::Received);
     }
     else
     {

@@ -34,7 +34,10 @@ transmitMessagePacket::transmitMessagePacket(int senderId, int receiverId, bool 
     : senderId(senderId), receiverId(receiverId), isACK(isACK) {
     type = 4;
 }
-
+endTransmissionPacket::endTransmissionPacket(int senderId, int receiverId)
+    : senderId(senderId), receiverId(receiverId) {
+    type = 11;
+}
 receiveMessagePacket::receiveMessagePacket(int senderId, int receiverId, std::string state)
     : senderId(senderId), receiverId(receiverId), state(std::move(state)) {
     type = 5;
@@ -129,6 +132,16 @@ sf::Packet& operator<<(sf::Packet& packet, const transmitMessagePacket& tmp) {
 
 sf::Packet& operator>>(sf::Packet& packet, transmitMessagePacket& tmp) {
     return packet >>  tmp.senderId >> tmp.receiverId >> tmp.isACK;
+}
+
+sf::Packet &operator<<(sf::Packet &packet, const endTransmissionPacket &etp)
+{
+    return packet << etp.type << etp.senderId << etp.receiverId;
+}
+
+sf::Packet &operator>>(sf::Packet &packet, endTransmissionPacket &etp)
+{
+    return packet >> etp.senderId >> etp.receiverId;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const receiveMessagePacket& rmp) {

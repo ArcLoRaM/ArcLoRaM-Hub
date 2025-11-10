@@ -9,6 +9,14 @@
 #include <SFML/Network/Packet.hpp>
 
 
+/*
+
+THIS CLASS SHOULD BE IDENTICAL AS THE ONE PRESENT IN THE GUI.
+THINK OF IT AS A SHARED LIBRARY BETWEEN THE TWO APPLICATIONS.
+
+*/
+
+
 // Base class for packet type identification
 class BasePacket {
 public:
@@ -82,6 +90,16 @@ public:
     transmitMessagePacket(int senderId = 0, int receiverId = 0,bool isACK=false);
     friend sf::Packet& operator<<(sf::Packet& packet, const transmitMessagePacket& tmp);
     friend sf::Packet& operator>>(sf::Packet& packet, transmitMessagePacket& tmp);
+};
+
+class endTransmissionPacket : public BasePacket {
+public:
+    int senderId;
+    int receiverId;
+
+    endTransmissionPacket(int senderId = 0, int receiverId = 0);
+    friend sf::Packet& operator<<(sf::Packet& packet, const endTransmissionPacket& etp);
+    friend sf::Packet& operator>>(sf::Packet& packet, endTransmissionPacket& etp);
 };
 
 class receiveMessagePacket : public BasePacket {

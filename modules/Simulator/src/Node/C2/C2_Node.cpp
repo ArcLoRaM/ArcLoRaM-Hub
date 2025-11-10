@@ -3,6 +3,8 @@
 #include "RRC_Uplink/C2_RRC_UplinkHandler.hpp"
 #include "RRC_Uplink/C2_RRC_UplinkSlotManager.hpp"
 
+
+//TODO: clean the comments once you have made the two others RRC Modes (Downlink+beacons), you might want to reuse parts of the code already done
 using namespace common;
 using namespace packet_tool;
 
@@ -121,7 +123,7 @@ void C2_Node::handleCommunication()
 // {
 //     if (!canNodeReceiveMessage())
 //     {
-
+            //use the new enum ReceptionState and helper in Node.hpp
 //         sf::Packet receptionStatePacketReceiver;
 //         uint16_t senderId = extractBytesFromField(message, senderGlobalId, common::rrc_beacon_fields);
 //         receiveMessagePacket receptionState(senderId, nodeId, "notListening");

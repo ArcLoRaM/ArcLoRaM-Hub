@@ -29,6 +29,13 @@ enum class NodeState {
     Communicating
 };
 
+//Should be a copy of what's in the GUI
+enum class ReceptionState {
+    Interference,
+    NotListening,
+    Received
+};
+
 std::string toString(NodeState state);
 
 //Enum representing the scheduler proposed states for the nodes
@@ -79,7 +86,19 @@ public:
     virtual void handleCommunication()=0;//we separate state transition from the communication logic, this function is called after each state transition
     static std::string stateToString(NodeState state);
     static std::string stateToString(WindowNodeState state);
-protected:
+
+    //todo: make other helpers to log events to the UI?
+    void adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const; // Display the transmission of a packet to a specific receiver
+    void endAdressedPacketTransmissionDisplay(uint16_t receiverId) const; // Display the end of transmission of a packet to a specific receiver  
+    void receptionStateDisplay(uint16_t senderId, ReceptionState state);
+    void dropAnimationDisplay();
+
+    //the isCommunicatingAck paremeter is used in the GUI to count the energy expenditure, as it consumes more energy to send a data packet than an ack packet (different TOA)
+    //this will probably change in the future, TODO
+    //TODO switch to an enum class, not string
+    void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
+
+    protected:
 
     void logEvent(const std::string& message) {
         logger.logEvent(nodeId, message);
@@ -151,22 +170,4 @@ protected:
 
 
     void initializeTransitionMap();
-
-
-
-
-
-    // Display methods
-
-    //todo: implement enum class to replace the string
-    //Todo: put the other display methods (broadcast, routing, init etc.) for every mode for every class !
-    void adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const; // Display the transmission of a packet to a specific receiver
-    // Visualiser (aka GUI) display
-    //Todo: the reception state should be a struct, not raw strings
-    void receptionStateDisplay(uint16_t senderId, std::string state);
-    void dropAnimationDisplay();
-
-    //the isCommunicatingAck paremeter is used in the GUI to count the energy expenditure, as it consumes more energy to send a data packet than an ack packet (different TOA)
-    //this will probably change in the future, TODO
-    void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
 };

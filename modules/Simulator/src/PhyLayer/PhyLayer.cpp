@@ -156,24 +156,21 @@ void PhyLayer::processTransmission(Node* sender, const std::vector<uint8_t>& mes
             windowList.push_back(newWindow);
         });
 
-        clock->scheduleTransmissionEnd(end, [this, receiver, senderId, end, message]() {
+        clock->scheduleTransmissionEnd(end, [this, receiver, sender, end, message]() {
             auto& windowList = transmissionWindowsPerReceiver[receiver];
 
             // Find and remove the correct window
             auto it = std::find_if(windowList.begin(), windowList.end(),
-                [senderId, end](const TransmissionWindow& w) {
-                    return w.senderId == senderId && w.end == end;
+                [sender, end](const TransmissionWindow& w) {
+                    return w.senderId == sender->getId() && w.end == end;
                 });
 
             if (it != windowList.end()) {
+
+                sender->endAdressedPacketTransmissionDisplay(receiver->getId());
                 if (it->isInterrupted) {
                     //The node receives nothing, we just display the interference event in the GUI
-                    //Todo: do a helper class/function/interface for all these display functions
-                    //todo: make an enum for the receive state!
-                        sf::Packet receptionStatePacketReceiver;
-                        receiveMessagePacket receptionState(senderId, receiver->getId(), "interference");
-                        receptionStatePacketReceiver << receptionState;
-                        logger.sendTcpPacket(receptionStatePacketReceiver);
+                       sender->receptionStateDisplay(sender->getId(), ReceptionState::Interference);
                 } else {
                     //The node receives the messages, he might not be listening, or not be the intended receiver but display and logic is handled internally
                     receiver->receiveMessage(message);

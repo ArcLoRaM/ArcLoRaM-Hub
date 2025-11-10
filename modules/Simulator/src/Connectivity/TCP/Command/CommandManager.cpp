@@ -75,9 +75,6 @@ CommandManager::CommandManager(Logger &logger_)
         logger.logSystem("Connection lost: stopping simulation.");
         this->stopSimulation();
     } else {
-
-        logger.logSystem("Connection established. Resetting state and waiting for new configuration.");
-
         this->dispatcher.clearConfig(); // Just in case
         std::thread([this]() {
             this->waitForLaunchConfig();
@@ -101,8 +98,9 @@ void CommandManager::start()
 
     tcpClient.start();
 
-    logger.logSystem("Waiting for launch config from GUI...");
-    waitForLaunchConfig();
+    //This is done automatically once connection with server is established
+    // logger.logSystem("Waiting for launch config from GUI...");
+    // waitForLaunchConfig();
 }
 
 void CommandManager::waitForLaunchConfig()
@@ -180,6 +178,7 @@ void CommandManager::stopSimulation()
         clock->stop();
     }
     phyLayer.reset(); // Frees all node memory
+    logger.resetTick();
 }
 
 void CommandManager::stop()

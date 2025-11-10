@@ -72,12 +72,33 @@ void Node::adressedPacketTransmissionDisplay(uint16_t receiverId, bool isAck) co
     transmitPacketReceiver << transmitPacket;
     logger.sendTcpPacket(transmitPacketReceiver);
 }
-void Node::receptionStateDisplay(uint16_t senderId, std::string state)
+void Node::endAdressedPacketTransmissionDisplay(uint16_t receiverId) const
 {
-    // TODO: put a common enum for the possible states
-
+    sf::Packet endTransmitPacketReceiver;
+    endTransmissionPacket endPacket(nodeId, receiverId);
+    endTransmitPacketReceiver << endPacket;
+    logger.sendTcpPacket(endTransmitPacketReceiver);
+}
+void Node::receptionStateDisplay(uint16_t senderId, ReceptionState state)
+{
     sf::Packet receptionStatePacketReceiver;
-    receiveMessagePacket receptionState(senderId, nodeId, state);
+
+    std::string stateStr;
+    switch (state)
+    {
+    case ReceptionState::Interference:
+        stateStr = "Interference";
+        break;
+    case ReceptionState::NotListening:
+        stateStr = "NotListening";
+        break;
+    case ReceptionState::Received:
+        stateStr = "Received";
+        break;
+    default:
+        stateStr = "unknown";
+    }
+    receiveMessagePacket receptionState(senderId, nodeId, stateStr);
     receptionStatePacketReceiver << receptionState;
     logger.sendTcpPacket(receptionStatePacketReceiver);
 }

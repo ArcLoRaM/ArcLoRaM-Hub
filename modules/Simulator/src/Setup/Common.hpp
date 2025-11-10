@@ -187,8 +187,8 @@ inline namespace rrc_uplink{
     //these variables are adapted for clarity. If we were adopting the ones that duty cycle entails us to take, would be different
     constexpr  int guardTime_ms=80; //ms, added before sending any message to simulate the guard time of the protocol and also prevent race conditions.
 
-    constexpr  int timeOnAirDataPacket_ms=100; //ms
-    constexpr  int timeOnAirAckPacket_ms=60; //ms
+    constexpr  int timeOnAirDataPacket_ms=500; //ms
+    constexpr  int timeOnAirAckPacket_ms=300; //ms
 
 
     //TODO: change the index so it's a variable in the map

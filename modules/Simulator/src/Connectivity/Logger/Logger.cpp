@@ -129,6 +129,10 @@ void Logger::exportCombinedSchedule(
     out.close();
 }
 
+void Logger::resetTick()
+{
+    currentTick=0;
+}
 
 void Logger::setTcpClient(Client* clientPtr) {
     client = clientPtr;
@@ -232,24 +236,24 @@ void Logger::processLogs() {
 
 void Logger::flushTick(uint64_t tick, const std::map<int, std::vector<std::string>>& nodeLogs) {
     std::ostringstream oss;
-if (useColor) {
-    oss << "\033[90m"; // Neutral gray
-}
-oss << "[T: " << std::setw(6) << std::setfill('0') << tick << "]";
-if (useColor) {
-    oss << "\033[0m"; // Reset after time block
-}
-oss << std::setfill(' '); // Restore fill for node labels
-
-for (const auto& node : nodes) {
-    oss << " | " << std::setw(10) << std::left << formatNodeLabel(node.id) << ": ";
-    auto it = nodeLogs.find(node.id);
-    if (it != nodeLogs.end()) {
-        oss << std::setw(columnWidth) << std::left << joinMessages(it->second, ", ");
-    } else {
-        oss << std::setw(columnWidth) << " ";
+    if (useColor) {
+        oss << "\033[90m"; // Neutral gray
     }
-}
+    oss << "[T: " << std::setw(6) << std::setfill('0') << tick << "]";
+    if (useColor) {
+        oss << "\033[0m"; // Reset after time block
+    }
+    oss << std::setfill(' '); // Restore fill for node labels
+
+    for (const auto& node : nodes) {
+        oss << " | " << std::setw(10) << std::left << formatNodeLabel(node.id) << ": ";
+        auto it = nodeLogs.find(node.id);
+        if (it != nodeLogs.end()) {
+            oss << std::setw(columnWidth) << std::left << joinMessages(it->second, ", ");
+        } else {
+            oss << std::setw(columnWidth) << " ";
+        }
+    }
 
     std::string line = oss.str();
     std::cout << line << "\n";
