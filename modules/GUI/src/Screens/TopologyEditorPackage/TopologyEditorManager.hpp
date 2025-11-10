@@ -6,7 +6,7 @@
 #include <cmath>
 #include "TopologyEditorState.hpp"
 #include "../../Objects/Device/Device.hpp"
-#include "../../Objects/Animations/BroadcastAnimation/BroadcastAnimation.hpp"
+#include "../../Objects/Animations/DynamicBroadcast/DynamicBroadcast.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -43,6 +43,6 @@ private:
 
     // broadcast animations
     void startBroadcast(const sf::Vector2f &startPosition, float duration);
-    std::vector<std::unique_ptr<BroadcastAnimation>> broadcastAnimations;
+    std::vector<std::unique_ptr<DynamicBroadcast>> broadcastAnimations;
     void drawRootings(tgui::CanvasSFML::Ptr canvas);
 };

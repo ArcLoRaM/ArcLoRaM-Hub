@@ -15,6 +15,15 @@ void ProtocolVisualiser::setup(sf::View &view)
     clientConnectionMonitor.onStatusChanged = [this](bool connected) {
         //todo: change the name?
         uiController.setServerStatus(connected);
+
+        //entering New Connection, clean start
+        if(connected){
+            deviceManager.clear();
+            routingManager.clear();
+            animationManager.clear();
+            protocolState.resetState();
+            topologyState.resetState();
+        }
     };
     clientConnectionMonitor.start();
 }

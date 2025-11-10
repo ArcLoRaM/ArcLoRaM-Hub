@@ -30,7 +30,7 @@ void UIController::setupUI(sf::View &networkView)
 
 void UIController::updateUI(ProtocolVisualisationState &state)
 {
-     communicationModeText->setText("Communication Mode: " + state.communicationMode);
+    communicationModeText->setText("Communication Mode: " + state.communicationMode);
     timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
 }
 
@@ -44,6 +44,7 @@ void UIController::setServerStatus(bool connected)
         else
         {
             hideAllSimulationControlButtons();
+
 
         }
 }
@@ -270,6 +271,8 @@ void UIController::hideAllSimulationControlButtons()
 
             tgui::String fileNameLabelString= "No File Selected";
             fileNameLabel->setText(fileNameLabelString);
+            pauseSimulationButton->setVisible(false);
+            resumeSimulationButton->setVisible(false);
 }
 
 void UIController::showSimulationStartedUI()
@@ -324,6 +327,8 @@ void UIController::showSimulationReadyToStartUI()
     confFileSelectionButton->setEnabled(true);      
     serverStatusDisconnected->setVisible(false);
     stopSimulationButton->setVisible(false);
+    startSimulationButton->setVisible(true);
+    startSimulationButton->setEnabled(true);
     restartSimulationButton->setVisible(false);
 }
 

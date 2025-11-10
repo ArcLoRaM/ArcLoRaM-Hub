@@ -1,13 +1,13 @@
-#ifndef BROADCASTANIMATION_HPP
-#define BROADCASTANIMATION_HPP
+#ifndef DYNAMICBROADCAST_HPP
+#define DYNAMICBROADCAST_HPP
 
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
-class BroadcastAnimation {
+class DynamicBroadcast {
 public:
     // Constructor
-    BroadcastAnimation(const sf::Vector2f& startPosition, float duration);
+    DynamicBroadcast(const sf::Vector2f& startPosition, float duration);
 
     // Update the animation state (time-based, no deltaTime required)
     void update();
@@ -18,11 +18,6 @@ public:
     // Check if the animation is finished
     bool isFinished() const;
 
-    // Check if the reception icon duration has completed
-    bool isReceptionFinished() const;
-
-    // Set the duration for the reception icon display
-    void setReceptionDuration(float duration);
 
 private:
     sf::CircleShape circle;     // Expanding circle shape

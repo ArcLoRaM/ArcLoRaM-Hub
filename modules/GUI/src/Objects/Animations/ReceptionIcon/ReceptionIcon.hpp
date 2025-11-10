@@ -3,27 +3,33 @@
 #include <SFML/Graphics.hpp>
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp> // TGUI header
+
+//Should be a copy of what's in the simulator code
+enum class ReceptionState {
+    Interference,
+    NotListening,
+    Received
+};
+
+
 class ReceptionIcon
 {
 
     public:
-    ReceptionIcon(const sf::Vector2f& senderPos,const sf::Vector2f& receiverPos, std::string state);
-    //void update();
+    ReceptionIcon(const sf::Vector2f& senderPos,const sf::Vector2f& receiverPos, ReceptionState state);
+
     void draw(tgui::CanvasSFML::Ptr canvas) const;
     bool isFinished() const;
 
     private:
-    std::optional <sf::Sprite> icon;  // Sprite for the reception state icon
-    sf::Texture* interferenceTexture;
-    sf::Texture* notListeningTexture;
-    sf::Texture* receivedTexture;
-
     sf::Vector2f iconPosition;
+    std::optional <sf::Sprite> icon;  // Sprite for the reception state icon
+    sf::Texture* interferenceTexture = nullptr;
+    sf::Texture* notListeningTexture = nullptr;
+    sf::Texture* receivedTexture = nullptr;
+
 
     sf::Clock receptionClock;  // Clock for the reception icon duration
 
-    bool receptionComplete;    // Flag to check if the reception is complete
-
-    sf::Vector2f getPointOnLine(const sf::Vector2f& senderPos, const sf::Vector2f& receiverPos);
-    bool loadTextures(const std::string& interferencePath, const std::string& notListeningPath, const std::string& receivedPath);
+     sf::Vector2f getPointOnLine(const sf::Vector2f& senderPos, const sf::Vector2f& receiverPos);
 };

@@ -17,6 +17,7 @@ private:
     void handleStateNodePacket(sf::Packet &packet);
     void handlePositionPacket(sf::Packet &packet);
     void handleTransmitMessagePacket(sf::Packet &packet);
+    void handleEndTransmissionPacket(sf::Packet &packet);
     void handleReceiveMessagePacket(sf::Packet &packet);
     void handleRoutingDecisionPacket(sf::Packet &packet);
     void handleBroadcastMessagePacket(sf::Packet &packet);

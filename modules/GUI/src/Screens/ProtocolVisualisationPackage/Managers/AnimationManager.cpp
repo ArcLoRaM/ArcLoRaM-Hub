@@ -3,13 +3,10 @@
 void AnimationManager::update()
 {// Update animations and their life cycle
     {
-        std::lock_guard<std::mutex> lock(mutexBroadcast);
-        for (auto &animation : broadcasts)
+        std::lock_guard<std::mutex> lock(mutexBroadcastArrow);
+        for (auto &animation : broadcastsArrows)
             animation->update();
-        broadcasts.erase(std::remove_if(broadcasts.begin(), broadcasts.end(),
-                                                 [](const std::unique_ptr<BroadcastAnimation> &animation)
-                                                 { return animation->isFinished(); }),
-                                  broadcasts.end());
+        //no delete, update only handle the pulsing, no life cycle
     }
 
 
@@ -25,17 +22,6 @@ void AnimationManager::update()
 
 
     {
-        std::lock_guard<std::mutex> lock(mutexArrow);
-        for (auto &arrow : arrows)
-            arrow->update();
-        arrows.erase(std::remove_if(arrows.begin(), arrows.end(),
-                                    [](const std::unique_ptr<Arrow> &arrow)
-                                    { return arrow->isFinished() && arrow->isReceptionFinished(); }),
-                     arrows.end());
-    }
-
-
-    {
         std::lock_guard<std::mutex> lock(mutexReception);
         receptionIcons.erase(std::remove_if(receptionIcons.begin(), receptionIcons.end(),
                                             [](const std::unique_ptr<ReceptionIcon> &icon)
@@ -46,15 +32,11 @@ void AnimationManager::update()
 
 
 void AnimationManager::draw(tgui::CanvasSFML::Ptr canvas)
-{{
-        std::lock_guard<std::mutex> lock(mutexArrow);
-        for (auto &arrow : arrows)
-            arrow->draw(canvas);
-    }
+{
 
     {
-        std::lock_guard<std::mutex> lock(mutexBroadcast);
-        for (auto &animation : broadcasts)
+        std::lock_guard<std::mutex> lock(mutexBroadcastArrow);
+        for (auto &animation : broadcastsArrows)
             animation->draw(canvas);
     }
 
@@ -71,17 +53,12 @@ void AnimationManager::draw(tgui::CanvasSFML::Ptr canvas)
     }
 }
 
-void AnimationManager::addBroadcast(const sf::Vector2f &startPosition, float duration)
-{   
-     std::lock_guard<std::mutex> lock(mutexBroadcast);
-    broadcasts.push_back(std::make_unique<BroadcastAnimation>(startPosition, duration));
 
-}
 
-void AnimationManager::addArrow(std::unique_ptr<Arrow> arrow)
+void AnimationManager::addBroadcastArrow(std::unique_ptr<BroadcastArrow> broadcastArrow)
 {
-        std::lock_guard<std::mutex> lock(mutexArrow);
-    arrows.push_back(std::move(arrow));
+        std::lock_guard<std::mutex> lock(mutexBroadcastArrow);
+    broadcastsArrows.push_back(std::move(broadcastArrow));
 }
 
 void AnimationManager::addReceptionIcon(std::unique_ptr<ReceptionIcon> icon)
@@ -96,30 +73,22 @@ void AnimationManager::addDropAnimation(std::unique_ptr<PacketDrop> drop)
     drops.push_back(std::move(drop));
 }
 
+void AnimationManager::removeBroadcastArrow(int senderId, int receiverId)
+{
+    std::lock_guard<std::mutex> lock(mutexBroadcastArrow);
+    broadcastsArrows.erase(std::remove_if(broadcastsArrows.begin(), broadcastsArrows.end(),
+                                [senderId, receiverId](const std::unique_ptr<BroadcastArrow> &broadcastArrow)
+                                { return broadcastArrow->getSenderId() == senderId && broadcastArrow->getReceiverId() == receiverId; }),
+                 broadcastsArrows.end());
+}
+
 void AnimationManager::clear()
 {
-    std::lock_guard<std::mutex> lockBroadcast(mutexBroadcast);
-    std::lock_guard<std::mutex> lockArrow(mutexArrow);
+    std::lock_guard<std::mutex> lockBroadcast(mutexBroadcastArrow);
     std::lock_guard<std::mutex> lockReception(mutexReception);
     std::lock_guard<std::mutex> lockDrop(mutexDrop);
 
-    broadcasts.clear();
-    arrows.clear();
+    broadcastsArrows.clear();
     receptionIcons.clear();
     drops.clear();
 }
-
-// void AnimationManager::changeArrowState(int senderId, int receiverId, const std::string &state)
-// {    std::lock_guard<std::mutex> lock(mutexArrow);
-//     if (state != "interference" && state != "notListening" && state != "received")
-//     {
-//         throw std::runtime_error("Error: state not recognized");
-//     }
-//     for (auto &arrow : arrows)
-//     {
-//         if (arrow->SenderId == senderId && arrow->ReceiverId == receiverId)
-//         {
-//             arrow->receptionState = state;
-//         }
-//     }
-// }

@@ -33,6 +33,7 @@ void PacketHandler::handlePacket(sf::Packet &packet)
     case 8: handleDropAnimationPacket(packet); break;
     case 9: handleRetransmissionPacket(packet); break;
     case 10: handleStopSimulationPacket(packet); break;
+    case 11: handleEndTransmissionPacket(packet); break;
 
     //server - client 
     case 104: handlePongPacket(packet);break;
@@ -87,14 +88,14 @@ void PacketHandler::handleTransmitMessagePacket(sf::Packet& packet) {
     } else {
         senderCoordinates = positions->first;
         receiverCoordinates = positions->second;
-        std::unique_ptr<Arrow> arrow;
+        std::unique_ptr<BroadcastArrow> arrow;
 
         if (tmp.isACK)
-            arrow = std::make_unique<Arrow>(senderCoordinates, receiverCoordinates, tmp.senderId, tmp.receiverId, config::ackArrowColor);
+            arrow = std::make_unique<BroadcastArrow>(senderCoordinates, receiverCoordinates, tmp.senderId, tmp.receiverId, config::ackArrowColor);
         else
-            arrow = std::make_unique<Arrow>(senderCoordinates, receiverCoordinates, tmp.senderId, tmp.receiverId, config::dataArrowColor);
+            arrow = std::make_unique<BroadcastArrow>(senderCoordinates, receiverCoordinates, tmp.senderId, tmp.receiverId, config::dataArrowColor);
 
-        visualiser.getAnimationManager().addArrow(std::move(arrow));
+        visualiser.getAnimationManager().addBroadcastArrow(std::move(arrow));
     }
 
     //Old metric system, erase if confirmed outdated
@@ -105,6 +106,14 @@ void PacketHandler::handleTransmitMessagePacket(sf::Packet& packet) {
     // }
     // else{
     //     manager.incrementTransmittingAck(tmp.senderId);    }
+
+}
+
+void PacketHandler::handleEndTransmissionPacket(sf::Packet &packet)
+{
+    endTransmissionPacket etp;
+    packet >> etp;
+    visualiser.getAnimationManager().removeBroadcastArrow(etp.senderId, etp.receiverId);
 
 }
 
@@ -196,19 +205,22 @@ void PacketHandler::handleReceiveMessagePacket(sf::Packet& packet) {
 
         std::cerr << "******Error: Receiver or Sender Not Found for Reception Animation******" << std::endl;
     } else {
-        auto icon = std::make_unique<ReceptionIcon>(positions->first, positions->second, rmp.state);
-        visualiser.getAnimationManager().addReceptionIcon(std::move(icon));
-        if(rmp.state == "received") {
-            // If the state is "received", we can assume the packet was successfully received
+        auto maybeReceptionState = magic_enum::enum_cast<ReceptionState>(rmp.state);
+        if (!maybeReceptionState) {
+            std::cerr << "Invalid reception state in receiveMessagePacket: " << rmp.state << std::endl;
+            return;
         }
+        ReceptionState receptionState = *maybeReceptionState;
+        auto icon = std::make_unique<ReceptionIcon>(positions->first, positions->second, receptionState);
+        visualiser.getAnimationManager().addReceptionIcon(std::move(icon));
     }
 
-    std::string message = "Received receiveMessagePacket: senderId=" + std::to_string(rmp.senderId) + ", receiverId=" + std::to_string(rmp.receiverId) + ", state=" + rmp.state;
-    {
-        std::lock_guard<std::mutex> lock(visualiser.getProtocolState().logMutex);
-        visualiser.getProtocolState().logMessages.push_back(message);
+    // std::string message = "Received receiveMessagePacket: senderId=" + std::to_string(rmp.senderId) + ", receiverId=" + std::to_string(rmp.receiverId) + ", state=" + rmp.state;
+    // {
+    //     std::lock_guard<std::mutex> lock(visualiser.getProtocolState().logMutex);
+    //     visualiser.getProtocolState().logMessages.push_back(message);
 
-    }
+    // }
 }
 
 void PacketHandler::handleRoutingDecisionPacket(sf::Packet& packet) {
@@ -231,20 +243,23 @@ void PacketHandler::handleRoutingDecisionPacket(sf::Packet& packet) {
 }
 
 void PacketHandler::handleBroadcastMessagePacket(sf::Packet& packet) {
-    broadcastMessagePacket bmp;
-    packet >> bmp;
+//     broadcastMessagePacket bmp;
+//     packet >> bmp;
 
-   std::optional<sf::Vector2f> senderCoordinates = visualiser.getDeviceManager().getDevicePosition(bmp.nodeId);
+//    std::optional<sf::Vector2f> senderCoordinates = visualiser.getDeviceManager().getDevicePosition(bmp.nodeId);
 
-    if (!senderCoordinates.has_value()) {
-        std::lock_guard<std::mutex> lock(visualiser.getProtocolState().logMutex);
-        visualiser.getProtocolState().logMessages.push_back("******Error: Sender Not Found for Broadcast Animation******");
-        std::cerr << "******Error: Sender Not Found for Broadcast Animation******" << std::endl;
-    } else {
-        visualiser.getAnimationManager().addBroadcast(senderCoordinates.value(), config::broadcastDuration);
-    }
+//     if (!senderCoordinates.has_value()) {
+//         std::lock_guard<std::mutex> lock(visualiser.getProtocolState().logMutex);
+//         visualiser.getProtocolState().logMessages.push_back("******Error: Sender Not Found for Broadcast Animation******");
+//         std::cerr << "******Error: Sender Not Found for Broadcast Animation******" << std::endl;
+//     } else {
+//         visualiser.getAnimationManager().addBroadcast(senderCoordinates.value(), config::broadcastDuration);
+//     }
 
-    visualiser.getProtocolState().energyExp += 20;
+//     visualiser.getProtocolState().energyExp += 20;
+
+
+std::cerr << "BroadcastMessagePacket handling is currently disabled." << std::endl;
 }
 
 void PacketHandler::handleDropAnimationPacket(sf::Packet& packet) {

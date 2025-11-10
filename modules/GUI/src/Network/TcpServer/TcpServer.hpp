@@ -55,6 +55,6 @@ private:
     //heartbeat to check if client is still connected  
     std::chrono::steady_clock::time_point lastPong{std::chrono::steady_clock::now()};
     std::chrono::steady_clock::time_point lastPing{std::chrono::steady_clock::now()};
-    const std::chrono::seconds pingInterval{5};
-    const std::chrono::seconds pongTimeout{15};
+    const std::chrono::seconds pingInterval{3};
+    const std::chrono::seconds pongTimeout{10};
 };

@@ -1,7 +1,7 @@
-#include "BroadcastAnimation.hpp"
+#include "DynamicBroadcast.hpp"
 #include "../../../Shared/Config.hpp"
 
-BroadcastAnimation::BroadcastAnimation(const sf::Vector2f& startPosition, float duration)
+DynamicBroadcast::DynamicBroadcast(const sf::Vector2f& startPosition, float duration)
     : startPosition(startPosition), duration(duration){
 
     circle.setFillColor(sf::Color(255, 255, 255, 50)); // Semi-transparent white
@@ -13,7 +13,7 @@ BroadcastAnimation::BroadcastAnimation(const sf::Vector2f& startPosition, float 
     circle.setPosition(startPosition);
 }
 
-void BroadcastAnimation::update() {
+void DynamicBroadcast::update() {
     // Calculate progress based on elapsed time
     float elapsedTime = clock.getElapsedTime().asSeconds();
     float progress = elapsedTime / duration;
@@ -31,13 +31,13 @@ void BroadcastAnimation::update() {
     circle.setOrigin(newOrigin); // Set the origin to the center of the circle
 }
 
-void BroadcastAnimation::draw(tgui::CanvasSFML::Ptr canvas) const {
+void DynamicBroadcast::draw(tgui::CanvasSFML::Ptr canvas) const {
     if (!isFinished()) {
         canvas->draw(circle); // Draw the circle on the canvas
     }
 }
 
-bool BroadcastAnimation::isFinished() const {
+bool DynamicBroadcast::isFinished() const {
     // The animation is finished if the elapsed time exceeds the duration
     return clock.getElapsedTime().asSeconds() >= duration;
 }

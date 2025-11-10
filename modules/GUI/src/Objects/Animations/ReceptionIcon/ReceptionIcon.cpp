@@ -2,7 +2,7 @@
 #include "../../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../../Shared/Config.hpp"
 #include <cmath>
-ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& receiverPos, std::string state)
+ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& receiverPos, ReceptionState state)
 {
 
     //calculate the iconPosition
@@ -13,13 +13,13 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
     notListeningTexture = &ResourceManager::getInstance().getTexture("Reception_NotListening");
     receivedTexture = &ResourceManager::getInstance().getTexture("Reception_AllGood");
    
-    if(state=="interference"){
+    if(state==ReceptionState::Interference){
         icon.emplace(*interferenceTexture);
     }
-    else if(state=="notListening"){
+    else if(state==ReceptionState::NotListening){
         icon.emplace(*notListeningTexture);
     }
-    else if(state=="received"){
+    else if(state==ReceptionState::Received){
         icon.emplace(*receivedTexture);
     }
     else{
@@ -36,7 +36,7 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
 
 void ReceptionIcon::draw(tgui::CanvasSFML::Ptr canvas) const
 {
-if(!isFinished()){
+if(!isFinished()&& icon.has_value()){
     canvas->draw(*icon);
 
 }
@@ -44,11 +44,8 @@ if(!isFinished()){
 
 bool ReceptionIcon::isFinished() const
 {       
-     if (receptionClock.getElapsedTime().asSeconds() >= config::receptionDuration) {
+    return receptionClock.getElapsedTime().asSeconds() >= config::receptionDuration;
 
-        return true;
-        }
-    return false;
 }
 
 
@@ -67,7 +64,5 @@ sf::Vector2f ReceptionIcon::getPointOnLine(const sf::Vector2f& senderPos, const 
     }
 
     // Scale the normalized direction vector by the radius
-    sf::Vector2f result = receiverPos + direction * (float)config::radiusIcon;
-
-    return result;
+    return receiverPos + direction * static_cast<float>(config::radiusIcon);
 }

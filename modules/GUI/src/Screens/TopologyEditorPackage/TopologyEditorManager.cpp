@@ -332,7 +332,7 @@ void TopologyEditorManager::resetToggleButtons()
 
 void TopologyEditorManager::startBroadcast(const sf::Vector2f &startPosition, float duration)
 {
-    auto animation = std::make_unique<BroadcastAnimation>(startPosition, duration);
+    auto animation = std::make_unique<DynamicBroadcast>(startPosition, duration);
     broadcastAnimations.push_back(std::move(animation));
 }
 
@@ -367,7 +367,7 @@ void TopologyEditorManager::update()
     for (auto &animation : broadcastAnimations)
         animation->update();
     broadcastAnimations.erase(std::remove_if(broadcastAnimations.begin(), broadcastAnimations.end(),
-                                             [](const std::unique_ptr<BroadcastAnimation> &animation)
+                                             [](const std::unique_ptr<DynamicBroadcast> &animation)
                                              { return animation->isFinished(); }),
                               broadcastAnimations.end());
 }
@@ -391,6 +391,7 @@ void TopologyEditorManager::draw(sf::RenderWindow &window, sf::View &editorView)
     canvas->setView(editorView);
     canvas->clear(tgui::Color(30, 30, 30));
 
+    
     drawRootings(canvas);
 
     for (auto &[_, device] : state.getNodes())
