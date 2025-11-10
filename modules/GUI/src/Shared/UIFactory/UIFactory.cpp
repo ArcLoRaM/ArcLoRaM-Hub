@@ -41,6 +41,15 @@ tgui::TabContainer::Ptr UIFactory::createTabContainer(const tgui::Layout2d &size
     return tabContainer;
 }
 
+tgui::BitmapButton::Ptr UIFactory::createBitmapButton(const tgui::Texture &texture, const std::string &text,const tgui::Layout2d& size)
+{
+    auto button = tgui::BitmapButton::create(text);
+    button->setSize(size);
+    button->setImage(texture);
+    if (s_theme) button->setRenderer(s_theme->getRenderer("BitmapButton"));
+    return button;
+}
+
 tgui::EditBox::Ptr UIFactory::createTypeableInput(const std::string& defaultText, const tgui::Layout2d& size) {
     auto editBox = tgui::EditBox::create();
     editBox->setSize(size);

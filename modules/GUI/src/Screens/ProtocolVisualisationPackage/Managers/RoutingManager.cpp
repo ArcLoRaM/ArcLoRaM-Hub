@@ -60,3 +60,9 @@ void RoutingManager::drawRootings(tgui::CanvasSFML::Ptr canvas)
         }
     }
 }
+
+void RoutingManager::clear()
+{
+    std::lock_guard<std::mutex> lock(mutex);
+    routingTable.clear();
+}

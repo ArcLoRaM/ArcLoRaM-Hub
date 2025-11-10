@@ -39,6 +39,9 @@ void ResourceManager::loadAll() {
     loadTexture("Reception_AllGood", "assets/Reception/allGood.png");
     loadTexture("Packet_Letter", "assets/PacketDrop/letter.png");
     loadTexture("Rooting_Button", "assets/Icons/routing.png");
+
+    loadTexture("Play_Button", "assets/UI/play.png");
+    loadTexture("Pause_Button", "assets/UI/pause.png");
     // ... add all other assets here centrally
 }
 

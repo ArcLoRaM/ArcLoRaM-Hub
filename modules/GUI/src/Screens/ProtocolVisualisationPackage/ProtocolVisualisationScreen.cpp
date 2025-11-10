@@ -1,7 +1,7 @@
 #include "ProtocolVisualisationScreen.hpp"
 #include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include "../../Shared/Config.hpp"
-#include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Shared/UIFactory/UIFactory.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "../../Network/TcpServer/TcpServer.hpp"

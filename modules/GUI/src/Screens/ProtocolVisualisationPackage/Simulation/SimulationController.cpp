@@ -41,10 +41,22 @@ void SimulationController::resumeSimulation()
 
 void SimulationController::restartSimulation()
 {
+    std::cout << "Restarting simulation..." << std::endl;
+    sf::Packet basePacket;
+    restartCommandPacket restartPacket;
+    basePacket << restartPacket;
+    TcpServer::instance().transmitPacket(basePacket);
+    running.store(true);
 }
 
 void SimulationController::stopSimulation()
 {
+    std::cout << "Stopping simulation..." << std::endl;
+    sf::Packet basePacket;
+    stopCommandPacket stopPacket;
+    basePacket << stopPacket;
+    TcpServer::instance().transmitPacket(basePacket);
+    running.store(false);
 }
 
 bool SimulationController::isRunning() const

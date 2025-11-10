@@ -2,7 +2,7 @@
 #include "../../Shared/Config.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Shared/UIFactory/UIFactory.hpp"
 
 
 HomePageScreen::HomePageScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)

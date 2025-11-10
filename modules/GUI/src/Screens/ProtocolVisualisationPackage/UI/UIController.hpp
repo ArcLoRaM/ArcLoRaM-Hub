@@ -17,15 +17,16 @@ public:
     //example: simulationStartUIChanges(), simulationPauseUIChanges()
     void setServerStatus(bool connected);
     void setFileNameLabel(const std::string& name);
-    void setPauseResumeText(const std::string& text);
 
 
     void enableStartButton(bool enabled);
-    void enablePauseResumeButton(bool enabled);
 
     // External callbacks
     std::function<void()> onStartSimulation;
-    std::function<void()> onPauseResumeSimulation;
+    std::function<void()> onStopSimulation;
+    std::function<void()> onRestartSimulation;
+    std::function<void()> onPauseSimulation;
+    std::function<void()> onResumeSimulation;
     std::function<void(const std::string& filePath)> onFileSelected;
 
 
@@ -39,18 +40,28 @@ private:
 
     void bindCallbacks();
 
-    void setNetworkPanelUI(sf::View &networkView);
+    void setClientPanelUI();
+    void setProtocolPanelUI(sf::View &networkView);
     void setLogsPanelUI();
     void setMetricsPanelUI();
-    void setServerPanelUI();
-    
+
+    void hideAllSimulationControlButtons();
+
+    void showSimulationStartedUI();
+    void showSimulationRunningUI();
+    void showSimulationPausedUI();
+    void showSimulationStoppedUI();
+    void showSimulationRestartedUI();
+    void showSimulationReadyToStartUI();
+
     tgui::Gui& gui;
     tgui::TabContainer::Ptr tabContainer;
 
-    //SERVER TAB
-    tgui::Panel::Ptr serverPanel;
+    //CLIENT TAB
+    tgui::Panel::Ptr clientPanel;
     tgui::Button::Ptr startSimulationButton;
-    tgui::Button::Ptr pauseResumeSimulationButton;
+    tgui::Button::Ptr stopSimulationButton;
+    tgui::Button::Ptr restartSimulationButton;
     tgui::Button::Ptr confFileSelectionButton;
     tgui::Group::Ptr confFileSelectionGroup;
     tgui::Label::Ptr fileNameLabel;
@@ -59,6 +70,8 @@ private:
 
 
     //Network TAB
+    tgui::Button::Ptr pauseSimulationButton;
+    tgui::Button::Ptr resumeSimulationButton;
     tgui::Panel::Ptr networkPanel;
     tgui::CanvasSFML::Ptr canvas;
     tgui::Label::Ptr communicationModeText;

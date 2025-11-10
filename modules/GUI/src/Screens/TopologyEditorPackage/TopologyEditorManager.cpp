@@ -5,7 +5,7 @@
 #include "../../Shared/Helper.hpp"
 #include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
 #include <filesystem>  // C++17
-#include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Shared/UIFactory/UIFactory.hpp"
 #include "../../Shared/Libraries/magic_enum.hpp"
 
 TopologyEditorManager::TopologyEditorManager(TopologyEditorState &state, tgui::Gui &gui)

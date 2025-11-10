@@ -1,6 +1,6 @@
 #include "UIController.hpp"
-#include "../../../UI/UIFactory/UIFactory.hpp"
-
+#include "../../../Shared/UIFactory/UIFactory.hpp"
+#include "../../../Shared/RessourceManager/RessourceManager.hpp"
 UIController::UIController(tgui::Gui &gui) : gui(gui)
 {
 }
@@ -11,13 +11,13 @@ void UIController::setupUI(sf::View &networkView)
     tabContainer->setTabsHeight(50);
     tabContainer->setPosition({"4%", "6%"});
 
-    serverPanel = tabContainer->addTab("Server");
+    clientPanel = tabContainer->addTab("Client");
     networkPanel = tabContainer->addTab("Network");
     logsPanel = tabContainer->addTab("Log");
     metricsPanel = tabContainer->addTab("Metrics");
 
-    setServerPanelUI();
-    setNetworkPanelUI(networkView);
+    setClientPanelUI();
+    setProtocolPanelUI(networkView);
     setLogsPanelUI();
     setMetricsPanelUI();
 
@@ -38,18 +38,13 @@ void UIController::setServerStatus(bool connected)
 {
     if (connected)
         {
-            serverStatusConnected->setVisible(true);
-            confFileSelectionGroup->setVisible(true);
-            serverStatusDisconnected->setVisible(false);
+            showSimulationReadyToStartUI();
+
         }
         else
         {
-            serverStatusConnected->setVisible(false);
-            confFileSelectionGroup->setVisible(false);
-            serverStatusDisconnected->setVisible(true);
-            startSimulationButton->setEnabled(false);
-            tgui::String fileNameLabelString= "No File Selected";
-            fileNameLabel->setText(fileNameLabelString);
+            hideAllSimulationControlButtons();
+
         }
 }
 
@@ -63,15 +58,6 @@ void UIController::enableStartButton(bool enabled)
     startSimulationButton->setEnabled(enabled);
 }
 
-void UIController::enablePauseResumeButton(bool enabled)
-{
-    pauseResumeSimulationButton->setEnabled(enabled);
-}
-
-void UIController::setPauseResumeText(const std::string &text)
-{
-    pauseResumeSimulationButton->setText(text);
-}
 
 void UIController::errorMessageBox(const std::string &message)
 {
@@ -90,17 +76,55 @@ void UIController::bindCallbacks()
     startSimulationButton->onPress([this]()
                                    {
         if (onStartSimulation) onStartSimulation();
-        else std::cerr << "No start simulation callback set!" << std::endl;
+        else {
+            std::cerr << "No start simulation callback set!" << std::endl;
+            return;
+        }
+            showSimulationStartedUI();
 
-        startSimulationButton->setEnabled(false);
-        pauseResumeSimulationButton->setText("Pause Simulation");
-        pauseResumeSimulationButton->setEnabled(true); });
+         });
 
-    pauseResumeSimulationButton->onPress([this]()
+    stopSimulationButton->onPress([this]()
+                                  {
+    if (onStopSimulation) onStopSimulation();
+    else {
+        std::cerr << "No stop simulation callback set!" << std::endl;
+        return;
+    }
+    showSimulationStoppedUI();
+
+
+                                  });
+
+    restartSimulationButton->onPress([this]()
+                                     {
+    if (onRestartSimulation) onRestartSimulation();
+    else {
+        std::cerr << "No restart simulation callback set!" << std::endl;
+        return;
+    }
+        showSimulationRestartedUI();
+    });
+
+    pauseSimulationButton->onPress([this]()
                                          {
-    if (onPauseResumeSimulation) onPauseResumeSimulation();
-    else std::cerr << "No pause/resume simulation callback set!" << std::endl; });
+    if (onPauseSimulation) onPauseSimulation();
+    else {
+std::cerr << "No pause simulation callback set!" << std::endl; 
+return;
+    } 
+    showSimulationPausedUI();
+                                         });
 
+    resumeSimulationButton->onPress([this]()
+                                          {
+    if (onResumeSimulation) onResumeSimulation();
+    else {
+std::cerr << "No resume simulation callback set!" << std::endl;
+return;
+    } 
+    showSimulationRunningUI();
+                                         });
 
     //Open the file Dialog
     confFileSelectionButton->onPress([this]()
@@ -132,7 +156,7 @@ void UIController::bindCallbacks()
     });
 }
 
-void UIController::setNetworkPanelUI(sf::View &networkView)
+void UIController::setProtocolPanelUI(sf::View &networkView)
 {
     canvas = tgui::CanvasSFML::create();
     canvas->setPosition({"0%", "10%"});
@@ -146,7 +170,7 @@ void UIController::setNetworkPanelUI(sf::View &networkView)
     networkPanel->add(timeText);
 
     communicationModeText = UIFactory::createLabel("Communication Mode: ");
-    communicationModeText->setPosition({"10%", "2%"});
+    communicationModeText->setPosition({"15%", "2%"});
     networkPanel->add(communicationModeText);
 
     auto buttonRouting = UIFactory::createButton("Routing");
@@ -155,6 +179,21 @@ void UIController::setNetworkPanelUI(sf::View &networkView)
     buttonRouting->onPress([this]()
                            { routingDisplayEnabled = !routingDisplayEnabled; });
     networkPanel->add(buttonRouting);
+
+    pauseSimulationButton = UIFactory::createButton("Pause");
+    pauseSimulationButton->setPosition({"70%", "2%"});
+    pauseSimulationButton->setSize({"7%", "4%"});
+    pauseSimulationButton->setEnabled(false); 
+    pauseSimulationButton->setVisible(false);
+    networkPanel->add(pauseSimulationButton);
+
+    resumeSimulationButton = UIFactory::createButton("Resume");
+    resumeSimulationButton->setPosition({"70%", "2%"});
+    resumeSimulationButton->setSize({"7%", "4%"});
+    resumeSimulationButton->setEnabled(false); 
+    resumeSimulationButton->setVisible(false);
+    networkPanel->add(resumeSimulationButton);
+
 
     auto buttonSave = UIFactory::createButton("Save");
     buttonSave->setPosition({"80%", "2%"});
@@ -220,30 +259,101 @@ void UIController::setMetricsPanelUI()
 {
 }
 
-void UIController::setServerPanelUI()
+void UIController::hideAllSimulationControlButtons()
+{
+            serverStatusConnected->setVisible(false);
+            confFileSelectionGroup->setVisible(false);
+            serverStatusDisconnected->setVisible(true);
+            startSimulationButton->setEnabled(false);
+            stopSimulationButton->setVisible(false);
+            restartSimulationButton->setVisible(false);
+
+            tgui::String fileNameLabelString= "No File Selected";
+            fileNameLabel->setText(fileNameLabelString);
+}
+
+void UIController::showSimulationStartedUI()
+{
+    startSimulationButton->setVisible(false);
+    confFileSelectionButton->setEnabled(false);
+    pauseSimulationButton->setEnabled(true);
+    pauseSimulationButton->setVisible(true);
+    stopSimulationButton->setVisible(true);
+    restartSimulationButton->setVisible(true);
+}
+
+void UIController::showSimulationRunningUI()
+{    pauseSimulationButton->setEnabled(true);
+    resumeSimulationButton->setEnabled(false);
+    pauseSimulationButton->setVisible(true);
+    resumeSimulationButton->setVisible(false);
+}
+
+void UIController::showSimulationPausedUI()
+{
+        pauseSimulationButton->setEnabled(false);
+    resumeSimulationButton->setEnabled(true);
+    pauseSimulationButton->setVisible(false);
+    resumeSimulationButton->setVisible(true);
+}
+
+void UIController::showSimulationStoppedUI()
+{
+    stopSimulationButton->setVisible(false);
+    restartSimulationButton->setVisible(false);
+    startSimulationButton->setVisible(true);
+    startSimulationButton->setEnabled(false);
+    pauseSimulationButton->setVisible(false);
+    resumeSimulationButton->setVisible(false);
+    confFileSelectionButton->setEnabled(true);
+    setFileNameLabel("No File Selected");
+}
+
+void UIController::showSimulationRestartedUI()
+{
+    startSimulationButton->setVisible(false);
+    pauseSimulationButton->setVisible(true);
+    resumeSimulationButton->setVisible(false);
+    stopSimulationButton->setVisible(true);
+}
+
+void UIController::showSimulationReadyToStartUI()
+{
+    serverStatusConnected->setVisible(true);
+    confFileSelectionGroup->setVisible(true);
+    confFileSelectionButton->setEnabled(true);      
+    serverStatusDisconnected->setVisible(false);
+    stopSimulationButton->setVisible(false);
+    restartSimulationButton->setVisible(false);
+}
+
+
+void UIController::setClientPanelUI()
 {
 
-    auto serverLabel = UIFactory::createLabel("Server");
-    serverLabel->setPosition({"2%", "2%"});
-    serverLabel->setSize({"20%", "6%"});
-    serverPanel->add(serverLabel);
+    auto clientLabel = UIFactory::createLabel("Client");
+    clientLabel->setPosition({"2%", "2%"});
+    clientLabel->setSize({"20%", "6%"});
+    clientPanel->add(clientLabel);
 
     serverStatusConnected = UIFactory::createLabel("Simulator Connected");
     serverStatusConnected->setPosition({"2%", "10%"});
-    serverPanel->add(serverStatusConnected);
+    serverStatusConnected->setVisible(false);
+    clientPanel->add(serverStatusConnected);
 
     serverStatusDisconnected = UIFactory::createLabel("Simulator disconnected...");
     serverStatusDisconnected->setPosition({"2%", "10%"});
-    serverPanel->add(serverStatusDisconnected);
-    serverStatusDisconnected->setVisible(false);
+    clientPanel->add(serverStatusDisconnected);
+
 
     confFileSelectionGroup = tgui::Group::create();
-    serverPanel->add(confFileSelectionGroup);
+    clientPanel->add(confFileSelectionGroup);
 
     auto confFileLabel = UIFactory::createLabel("Configuration File:");
     confFileSelectionGroup->add(confFileLabel);
     confFileLabel->setPosition({"2%", "20%"});
     confFileLabel->setSize({"20%", "6%"});
+    
 
     confFileSelectionButton = UIFactory::createButton("Select File");
     confFileSelectionGroup->add(confFileSelectionButton);
@@ -261,9 +371,15 @@ void UIController::setServerPanelUI()
     startSimulationButton->setSize({"20%", "6%"});
     startSimulationButton->setEnabled(false); // Initially disabled until a file is selected
 
-    pauseResumeSimulationButton = UIFactory::createButton("Pause Simulation");
-    confFileSelectionGroup->add(pauseResumeSimulationButton);
-    pauseResumeSimulationButton->setPosition({"2%", "65%"});
-    pauseResumeSimulationButton->setSize({"20%", "6%"});
-    pauseResumeSimulationButton->setEnabled(false); // Initially disabled until a simulation is running
-}
+    stopSimulationButton = UIFactory::createButton("Stop Simulation");
+    confFileSelectionGroup->add(stopSimulationButton);
+    stopSimulationButton->setPosition({"2%", "50%"});
+    stopSimulationButton->setSize({"20%", "6%"});
+
+    restartSimulationButton = UIFactory::createButton("Restart Simulation");
+    confFileSelectionGroup->add(restartSimulationButton);
+    restartSimulationButton->setPosition({"2%", "60%"});
+    restartSimulationButton->setSize({"20%", "6%"});
+
+    confFileSelectionGroup->setVisible(false);
+  }

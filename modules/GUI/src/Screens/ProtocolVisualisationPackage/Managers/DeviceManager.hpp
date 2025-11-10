@@ -26,6 +26,7 @@ public:
     bool containsDevice(int id) const;
     std::optional<std::pair<sf::Vector2f, sf::Vector2f>> getDevicesPosition(int id1, int id2) const;
 
+    void clear();
 private:
     mutable std::mutex devicesMutex;
     std::unordered_map<int, std::unique_ptr<Device>> devices;

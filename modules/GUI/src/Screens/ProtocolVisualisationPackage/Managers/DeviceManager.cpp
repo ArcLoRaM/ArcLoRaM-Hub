@@ -158,3 +158,8 @@ std::optional<std::pair<sf::Vector2f, sf::Vector2f>> DeviceManager::getDevicesPo
                           it2->second->getCenteredPosition());  
     
 }
+
+void DeviceManager::clear()
+{std::lock_guard<std::mutex> lock(devicesMutex);
+    devices.clear();
+}

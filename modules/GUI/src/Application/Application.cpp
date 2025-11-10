@@ -6,7 +6,7 @@
 #include <atomic>
 #include "../Shared/InputManager/InputManager.hpp"
 #include "../Shared/Config.hpp"
-#include "../UI/UIFactory/UIFactory.hpp"
+#include "../Shared/UIFactory/UIFactory.hpp"
 
 
 Application::Application()

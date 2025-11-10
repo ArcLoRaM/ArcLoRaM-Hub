@@ -96,6 +96,19 @@ void AnimationManager::addDropAnimation(std::unique_ptr<PacketDrop> drop)
     drops.push_back(std::move(drop));
 }
 
+void AnimationManager::clear()
+{
+    std::lock_guard<std::mutex> lockBroadcast(mutexBroadcast);
+    std::lock_guard<std::mutex> lockArrow(mutexArrow);
+    std::lock_guard<std::mutex> lockReception(mutexReception);
+    std::lock_guard<std::mutex> lockDrop(mutexDrop);
+
+    broadcasts.clear();
+    arrows.clear();
+    receptionIcons.clear();
+    drops.clear();
+}
+
 // void AnimationManager::changeArrowState(int senderId, int receiverId, const std::string &state)
 // {    std::lock_guard<std::mutex> lock(mutexArrow);
 //     if (state != "interference" && state != "notListening" && state != "received")

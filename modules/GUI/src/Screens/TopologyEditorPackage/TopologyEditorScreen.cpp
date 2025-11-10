@@ -2,7 +2,7 @@
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
 #include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
-#include "../../UI/UIFactory/UIFactory.hpp"
+#include "../../Shared/UIFactory/UIFactory.hpp"
 #include <TGUI/TGUI.hpp>  // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "../../Shared/Libraries/magic_enum.hpp"

@@ -49,15 +49,41 @@ void ProtocolVisualiser::bindUIEvents()
         simulationController.startSimulation(topologyState);
     };
 
-    uiController.onPauseResumeSimulation = [this]() {
-        if (simulationController.isRunning()) {
+    uiController.onPauseSimulation = [this]() {
+        if(simulationController.isRunning())
             simulationController.pauseSimulation();
-            uiController.setPauseResumeText("Resume Simulation");
+    };
+    
+    uiController.onResumeSimulation = [this]() {
+        if (!simulationController.isRunning()) 
+        simulationController.resumeSimulation();
+    };
 
-        } else {
-            simulationController.resumeSimulation();
-            uiController.setPauseResumeText("Pause Simulation");
-        }
+    uiController.onRestartSimulation = [this]() {
+        simulationController.restartSimulation();
+
+        // Clear existing protocol visual elements
+        animationManager.clear();
+        deviceManager.clear();
+        routingManager.clear();
+
+        //Clear the simulation state
+        protocolState.resetState();
+
+    };
+
+    uiController.onStopSimulation = [this]() {
+        if(simulationController.isRunning())
+        
+            simulationController.stopSimulation();
+                // Clear existing protocol visual elements
+        animationManager.clear();
+        deviceManager.clear();
+        routingManager.clear();
+
+        //Clear simulation state and configuration
+        protocolState.resetState();
+        topologyState.resetState();
     };
 
     uiController.onFileSelected = [this](const std::string& path) {

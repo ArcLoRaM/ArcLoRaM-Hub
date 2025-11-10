@@ -16,6 +16,8 @@ public:
 
     void setDeviceManager(DeviceManager *dm) { deviceManager = dm; }
 
+    void clear();
+
 private:
     mutable std::mutex mutex;
     std::unordered_map<int, std::unordered_set<int>> routingTable;

@@ -23,6 +23,7 @@ public:
     void addDropAnimation(std::unique_ptr<PacketDrop> drop);
     // void changeArrowState(int senderId, int receiverId, const std::string& state);
 
+    void clear();
 private:
     std::vector<std::unique_ptr<BroadcastAnimation>> broadcasts;
     std::vector<std::unique_ptr<Arrow>> arrows;

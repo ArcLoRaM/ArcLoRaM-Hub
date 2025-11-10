@@ -30,4 +30,10 @@ struct ProtocolVisualisationState {
     int totalDataPacketsSent = 0; // Total packets sent
     int retransmissions = 0;
 
+    void resetState(){
+        this->communicationMode="None";
+        this->tickNumber=0;
+        this->distanceThreshold=0.f;
+        this->energyExp=0;
+    };
 };
