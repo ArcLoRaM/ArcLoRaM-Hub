@@ -163,11 +163,6 @@ void PacketHandler::handlePositionPacket(sf::Packet& packet) {
     positionPacket pp;
     packet >> pp;
 
-    pp.coordinates.first += config::horizontalOffset;
-    pp.coordinates.second += config::verticalOffset;
-    pp.coordinates.first *= config::distanceDivider;
-    pp.coordinates.second *= config::distanceDivider;
-
 
     DeviceClass deviceClass ;
     if(pp.classNode==1) deviceClass = DeviceClass::C1;

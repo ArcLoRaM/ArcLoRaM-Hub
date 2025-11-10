@@ -31,6 +31,7 @@ private:
     sf::Clock pulseClock;
 
     void buildRings(const Style& style);
+    std::vector<uint8_t> styleAlphaCache;
 };
 
 #endif // BROADCAST_ANIMATION_HPP

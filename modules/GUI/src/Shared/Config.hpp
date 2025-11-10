@@ -23,7 +23,7 @@ namespace config {
     inline float broadcastDuration = 1.3f;//todo: remove it when start/end animation is implemented
     inline float receptionDuration = 1.0f;//todo: remove it when start/end animation is implemented
     inline float arrowDuration = 0.7f;
-    inline double radiusIcon=35.0f;
-
+    inline double radiusIcon=70.0f;
+    inline double safeZoneReceptionIcon=0.85f;
     inline float distanceThreshold = 1000.f; // Distance threshold for the broadcast animation
 }

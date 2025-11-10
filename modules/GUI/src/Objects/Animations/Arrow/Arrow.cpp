@@ -9,14 +9,14 @@ Arrow::Arrow(const sf::Vector2f& start, const sf::Vector2f& end,  int senderId, 
 
     // Setup line
     sf::Vector2f direction = end - start;
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y) * 0.95f;
-    line.setSize(sf::Vector2f(length, 7)); // Initially, the line length is 0, thickness = 7
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y) * 0.90f;
+    line.setSize(sf::Vector2f(length, 14)); // Initially, the line length and  thickness
     line.setFillColor(color);
     line.setPosition(start);
     line.setRotation(sf::degrees(calculateAngle(start, end)));
 
     // Initialize arrowhead (a triangle)
-    float arrowSize = 35.0f;
+    float arrowSize = 70.0f;
     arrowhead.setPointCount(3);
     arrowhead.setFillColor(color);
     arrowhead.setPoint(0, sf::Vector2f(0, 0));
