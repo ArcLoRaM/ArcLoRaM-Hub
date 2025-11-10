@@ -65,7 +65,7 @@ public:
 
     void setPacketHandler(PacketHandler handler);
 
-  using ConnectionChanged = std::function<void(bool up)>; // true=connected, false=disconnected
+    using ConnectionChanged = std::function<void(bool up)>; // true=connected, false=disconnected
     void setConnectionChangedCallback(ConnectionChanged cb);  
 
 private:
@@ -93,5 +93,4 @@ private:
 
 };
 
-
-    #endif // CLIENT_HPP
+#endif // CLIENT_HPP

@@ -6,7 +6,7 @@
 int main() {
 
 //---------------------------------System Initialization---------------------------------
-    //Logger
+    //Logger: serves for console logs and TCP logs to GUI
     Logger logger;
     logger.enableFileOutput("output/log_output.txt");
     logger.enableColorOutput(true); 

@@ -26,9 +26,11 @@ public:
     void start();          // Start listening and wait for config
     void stop();           // Stop listener and simulation
     bool isRunning() const;
-
+    bool initialized;
 private:
     void waitForLaunchConfig();
+    std::atomic_flag waitingForConfig = ATOMIC_FLAG_INIT;
+
     void launchSimulation(const LaunchConfig& config);
     void stopSimulation();
 

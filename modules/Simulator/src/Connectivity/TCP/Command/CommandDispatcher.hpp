@@ -35,9 +35,9 @@ public:
     void onCommand(sf::Packet& packet);
 
     std::optional<LaunchConfig> getPendingLaunchConfig(); 
-        void setStopCallback(StopCallback callback);
+    void setStopCallback(StopCallback callback);
 
-    void clear();
+    void clearConfig();
     void setPingCallback(PingCallback callback);
     void setRestartCallback(RestartCallback callback);
     void setPauseCallback(PauseCallback callback);

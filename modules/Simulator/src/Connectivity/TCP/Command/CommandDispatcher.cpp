@@ -75,7 +75,7 @@ std::optional<LaunchConfig> CommandDispatcher::getPendingLaunchConfig() {
     return pendingConfig;
 }
 
-void CommandDispatcher::clear() {
+void CommandDispatcher::clearConfig() {
     std::lock_guard lock(configMutex);
     pendingConfig.reset();
 }

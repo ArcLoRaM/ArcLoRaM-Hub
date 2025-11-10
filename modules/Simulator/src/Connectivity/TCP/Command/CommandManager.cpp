@@ -17,10 +17,16 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setStopCallback([this]()
                                {
-                                   logger.logSystem("Stop callback triggered.");
+        if(!isRunning()) return;
 
-                                   this->stopSimulation();
-                               });
+        logger.logSystem("Stop callback triggered.");
+        this->stopSimulation();
+        this->dispatcher.clearConfig();
+
+        std::thread([this]() {
+            this->waitForLaunchConfig();
+        }).detach(); 
+    });
 
     dispatcher.setPingCallback([this]()
                                {
@@ -32,6 +38,9 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setRestartCallback([this]()
                                   {
+        //Todo: when we will add a terminal condition to the simulation (such as Tmax= ...), the simulation wont be "running" but we should be able to restart it
+        if(!isRunning()) return;
+
         logger.logSystem("Restart callback triggered.");
         // Step 1: Stop current simulation
         this->stopSimulation();
@@ -49,29 +58,42 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setPauseCallback([this]()
                                 {
+        if(!isRunning()) return;
         logger.logSystem("Pause callback triggered.");
         this->clock->pause(); });
 
     dispatcher.setResumeCallback([this]()
                                  {
+                if(!isRunning()) return;
+
         logger.logSystem("Resume callback triggered.");
         this->clock->resume(); });
 
     tcpClient.setConnectionChangedCallback([this](bool up)
                                            {
     if (!up) {
-        logger.logSystem("Connection lost — stopping simulation.");
+        logger.logSystem("Connection lost: stopping simulation.");
         this->stopSimulation();
     } else {
-        logger.logSystem("Connection established.");
-        // If you want to auto-resume or re-request config, do it here.
+
+        logger.logSystem("Connection established. Resetting state and waiting for new configuration.");
+
+        this->dispatcher.clearConfig(); // Just in case
+        std::thread([this]() {
+            this->waitForLaunchConfig();
+        }).detach();
+
     } });
+
+    initialized = true;
 }
 
 CommandManager::~CommandManager()
 {
 
     stop();
+    tcpClient.stop();
+
 }
 
 void CommandManager::start()
@@ -85,13 +107,26 @@ void CommandManager::start()
 
 void CommandManager::waitForLaunchConfig()
 {
+    if (waitingForConfig.test_and_set())
+    {
+        logger.logSystem("Already waiting for configuration. Skipping duplicate wait.");
+        return;
+    }
+
+    std::thread([this]()
+                {
     std::optional<LaunchConfig> configOpt;
+    logger.logSystem("Waiting for Config....");
     while (!(configOpt = dispatcher.getPendingLaunchConfig()))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     launchSimulation(*configOpt);
+
+            waitingForConfig.clear(); // allow future calls
+        logger.logSystem("Finished waitForLaunchConfig()"); })
+        .detach();
 }
 
 void CommandManager::launchSimulation(const LaunchConfig &config)
@@ -104,6 +139,7 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
     sysPacket << sys;
     logger.sendTcpPacket(sysPacket);
 
+    //Todo: when this function grows, make a class to handle launch Config specific build
     if (config.communicationMode == "RRC_Uplink")
         common::currentMode = common::CommunicationMode::RRC_Uplink;
     else if (config.communicationMode == "RRC_Downlink")
@@ -121,11 +157,14 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
 
     // Build simulation, TODO: add path loss model here?
     phyLayer = std::make_unique<PhyLayer>(config.distanceThreshold, logger);
+    logger.logSystem("Physical Engine Created");
     Seed seed(config.topologyLines, logger);
     // Seed seed(config.communicationMode, common::topology, logger);
     phyLayer->takeOwnership(seed.transferOwnership()); // seed memory is released safely
 
+    logger.logSystem("Topology Deployed");
     clock = std::make_unique<Clock>(logger, std::chrono::milliseconds(common::tickIntervalForClock_ms));
+    logger.logSystem("Scheduler Created");
     phyLayer->registerAllNodeEvents(*clock);
     clock->start();
     running = true;
@@ -134,15 +173,13 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
 
 void CommandManager::stopSimulation()
 {
-    if (!running)
-        return;
+
     running = false;
     if (clock)
     {
         clock->stop();
     }
     phyLayer.reset(); // Frees all node memory
-    logger.logSystem("Simulation stopped.");
 }
 
 void CommandManager::stop()

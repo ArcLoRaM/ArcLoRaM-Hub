@@ -68,32 +68,6 @@ void Client::stop() {
     logger.logSystem("Disconnected from GUI.");
 }
 
-// bool Client::transmit( sf::Packet& packet) {
-//     if (!connected.load()) {
-//         logger.logSystem("****** Client is not connected to a server ******");
-//         return false;
-//     }
-
-//     std::lock_guard<std::mutex> lock(socketMutex);
-//     sf::Socket::Status status;
-//     sf::Packet temp = packet; // copy in case we retry
-
-//     do {
-//         status = socket.send(temp);
-//         if (status == sf::Socket::Status::Disconnected) {
-//             logger.logSystem("Client disconnected during send.");
-//             connected.store(false);
-//             running.store(false);
-//             return false;
-//         }
-//         else if (status != sf::Socket::Status::Done && status != sf::Socket::Status::Partial) {
-//             logger.logSystem("****** Error sending packet ******");
-//             return false;
-//         }
-//     } while (status == sf::Socket::Status::Partial);
-
-//     return true;
-// }
 
 bool Client::transmit(sf::Packet& packet) {
     if (!connected.load()) {
@@ -138,55 +112,6 @@ void Client::setConnectionChangedCallback(ConnectionChanged cb) {
     onConnectionChanged = std::move(cb);
 }
 
-
-// void Client::receiveLoop() {
-//     while (running.load()) {
-
-//         // If not connected (initially or after a drop), try to connect here
-//         while (running.load() && !connected.load()) {
-//             logger.logSystem("Attempting to reconnect...");
-//             if (tryConnect()) break;
-//             logger.logSystem("Reconnect failed. Retrying in 5 seconds...");
-//             std::this_thread::sleep_for(reconnectDelay);
-//         }
-//         if (!running.load()) break; // stop() called
-
-//         // We are connected here: build a fresh selector for this session
-//         sf::SocketSelector selector;
-//         selector.add(socket);
-
-//         // Inner loop: process this connection until it drops
-//         while (running.load() && connected.load()) {
-//             if (!selector.wait(sf::milliseconds(100)))
-//                 continue; // idle tick
-
-//             std::unique_lock<std::mutex> lock(socketMutex);
-//             if (selector.isReady(socket)) {
-//                 sf::Packet packet;
-//                 sf::Socket::Status status = socket.receive(packet);
-
-//                 if (status == sf::Socket::Status::Done) {
-//                     auto cb = packetHandler; // copy under lock
-//                     lock.unlock();           // release before user code
-//                     if (cb) cb(packet);
-//                 } else if (status == sf::Socket::Status::Disconnected) {
-//                     // Mark as disconnected and break to the reconnect loop
-//                     logger.logSystem("Server disconnected. Entering reconnect loop.");
-//                     connected.store(false);
-//                     // socket is safe to reuse after disconnect() or connect() call
-//                     socket.disconnect(); // ensure clean state
-//                     lock.unlock();
-//                     break; // exit inner loop -> outer loop will reconnect
-//                 } else {
-//                     // Other errors; you can log if you want
-//                     // logger.logSystem("Receive error: " + std::to_string(static_cast<int>(status)));
-//                     // keep the session; selector will keep ticking
-//                 }
-//             }
-//         }
-//         // loop continues; if connected==false, outer loop retries
-//     }
-// }
 
 
 void Client::receiveLoop() {
@@ -233,4 +158,5 @@ void Client::receiveLoop() {
             }
         }
     }
+    logger.logSystem("Client receive loop exited.");
 }
