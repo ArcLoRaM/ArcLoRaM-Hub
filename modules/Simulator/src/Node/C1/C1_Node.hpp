@@ -9,7 +9,7 @@ public :
     : Node(id, logger, coordinates) {
 
             initializeTransitionMap();
-            setInitialState(NodeState::Sleeping);
+            setCurrentState(NodeState::Sleeping);
     };
 
     int getClassId() const  override{

@@ -5,7 +5,6 @@
 #include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include <unordered_set>
 #include "../ModeHandler.hpp"
-#include "../../Setup/Common.hpp"
 
 using namespace common;
 
@@ -21,20 +20,29 @@ public:
 
     int getClassId() const override
     {
-        return 3;
+        return static_cast<int>(nodeClass);
     }
     std::string initMessage() const override;
 
-    void setHandler(std::unique_ptr<ModeHandler<C3_Node>> h)
-    {
-        modeHandler = std::move(h);
-    }
+    // Register a handler for a specific mode
+template<typename HandlerType>
+void registerModeHandler(TdmaMode mode, std::unique_ptr<HandlerType> handler) {
+    static_assert(std::is_base_of_v<ModeHandler<C3_Node>, HandlerType>, 
+                  "HandlerType must derive from ModeHandler<C3_Node>");
+    modeHandlers[mode] = std::move(handler);
+    logEvent("Registered handler for mode: " + std::to_string(static_cast<int>(mode)));
+}
 
-    // todo: make this function const?
+// todo: make this function const?
     bool canNodeReceiveMessage() override;
 
 protected:
-    std::unique_ptr<ModeHandler<C3_Node>> modeHandler;
+    // Map of mode -> handler
+    std::map<TdmaMode, std::unique_ptr<ModeHandler<C3_Node>>> modeHandlers;
+    
+    // Get the current active handler based on blueprint's current mode
+
+    ModeHandler<C3_Node>* getCurrentHandler();
     bool canTransmitFromListening() override;
     bool canTransmitFromSleeping() override;
     bool canTransmitFromTransmitting() override;
@@ -70,9 +78,10 @@ protected:
 
     // RRC_UPLINK
 
+    //TODO: better to make a "using NodeID as uint16_t" for clarity
     bool RRC_UPLINK_shouldReplyACK = false;
     uint16_t RRC_UPLINK_lastSenderId;
     uint16_t RRC_UPLINK_lastLocalIDPacket;
-
+    //TODO: int? not uint16_t?
     std::unordered_map<int, std::unordered_set<int>> RRC_UPLINK_receivedPacketsId; // Map to store received packets by sender ID
 };

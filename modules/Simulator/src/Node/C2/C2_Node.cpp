@@ -11,43 +11,15 @@ using namespace packet_tool;
 C2_Node::C2_Node(int id, Logger &logger, std::pair<int, int> coordinates)
     : Node(id, logger, coordinates)
 {
-    switch (currentMode)
-    {
-    case CommunicationMode::RRC_Uplink:
-        setHandler(std::make_unique<C2_RRC_UplinkHandler>());
-        break;
-    // case CommunicationMode::RRC_Beacon:
-    //     setHandler(std::make_unique<C2_RRC_BeaconHandler>());
-    //     break;
-    // case CommunicationMode::RRC_Downlink:
-    //     setHandler(std::make_unique<C2_RRC_DownlinkHandler>());
-    //     break;
-    default:
-        throw std::runtime_error("C2_Node initialized with unsupported communication mode");
-    }
+    nodeClass = NodeClass::C2;
     initializeTransitionMap();
-    setInitialState(NodeState::Sleeping);
+    setCurrentState(NodeState::Sleeping);
 };
 
 C2_Node::C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, uint16_t nextNodeIdInPath, uint8_t hopCount)
     : Node(id, logger, coordinates)
 {
-
-    // Todo: make a public function for mode selection like void adoptModeBehavior();
-    switch (currentMode)
-    {
-    case CommunicationMode::RRC_Uplink:
-        setHandler(std::make_unique<C2_RRC_UplinkHandler>());
-        break;
-    // case CommunicationMode::RRC_Beacon:
-    //     setHandler(std::make_unique<C2_RRC_BeaconHandler>());
-    //     break;
-    // case CommunicationMode::RRC_Downlink:
-    //     setHandler(std::make_unique<C2_RRC_DownlinkHandler>());
-    //     break;
-    default:
-        throw std::runtime_error("C2_Node initialized with unsupported communication mode");
-    }
+    nodeClass = NodeClass::C2;
 
     RRC_UPLINK_infoFromBeaconPhase = std::make_unique<InformationFromBeaconPhase>(nextNodeIdInPath, hopCount);
     RRC_UPLINK_slotManager = std::make_unique<C2_RRC_UplinkSlotManager>();
@@ -55,7 +27,7 @@ C2_Node::C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, uint16
     RRC_UPLINK_retransmissionCounterHelper = std::make_unique<RetransmissionCounterHelper>();
 
     initializeTransitionMap();
-    setInitialState(NodeState::Sleeping);
+    setCurrentState(NodeState::Sleeping);
 
     // decide which slots among the  speci will actually be possible DATA and modulo slots actually used to transmit information
     RRC_UPLINK_slotManager->initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlotsPerModuloNode);
@@ -78,7 +50,11 @@ C2_Node::C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, uint16
     RRC_UPLINK_fixedSlotCategory = RRC_UPLINK_infoFromBeaconPhase->getHopCount() % 3;
     RRC_UPLINK_nbPayloadLeft = RRC_UPLINK_initialnbPayload;
 };
+
 C2_Node::~C2_Node() = default;
+
+
+
 
 std::string C2_Node::initMessage() const
 {
@@ -98,9 +74,21 @@ std::string C2_Node::initMessage() const
     return finalMsg;
 }
 
-void C2_Node::handleCommunication()
-{
-    modeHandler->handleCommunication(*this);
+ModeHandler<C2_Node>* C2_Node::getCurrentHandler() {
+    if (!blueprint) {
+        throw std::runtime_error("Node " + std::to_string(nodeId) + " has no blueprint set");
+    }
+    
+    int64_t currentTime = getCurrentTime();
+    TdmaMode currentMode = blueprint->getCurrentMode(currentTime);
+    
+    auto it = modeHandlers.find(currentMode);
+    if (it == modeHandlers.end()) {
+        throw std::runtime_error("Node " + std::to_string(nodeId) + 
+                                 " has no handler for mode: " + std::to_string(static_cast<int>(currentMode)));
+    }
+    
+    return it->second.get();
 }
 
 // #if COMMUNICATION_PERIOD == RRC_BEACON
@@ -627,111 +615,79 @@ void C2_Node::RRC_UPLINK_displayRouting()
     }
 }
 
-// TODO: move this to modeHandler??
-bool C2_Node::canNodeReceiveMessage()
-{
-    return modeHandler->canNodeReceiveMessage(*this);
+// Delegate all state transitions to current handler
+bool C2_Node::canTransmitFromListening() {
+    return getCurrentHandler()->canTransmitFromListening(*this);
 }
 
-bool C2_Node::receiveMessage(const std::vector<uint8_t> message)
-{
-    return modeHandler->receiveMessage(*this, message);
+bool C2_Node::canTransmitFromSleeping() {
+    return getCurrentHandler()->canTransmitFromSleeping(*this);
 }
 
-// State Transitions ---------------------------------------------------------------------------------
-bool C2_Node::canCommunicateFromSleeping()
-{
-    return modeHandler->canCommunicateFromSleeping(*this);
+bool C2_Node::canTransmitFromTransmitting() {
+    return getCurrentHandler()->canTransmitFromTransmitting(*this);
 }
 
-bool C2_Node::canSleepFromCommunicating()
-{
-    return modeHandler->canSleepFromCommunicating(*this);
+bool C2_Node::canTransmitFromCommunicating() {
+    return getCurrentHandler()->canTransmitFromCommunicating(*this);
 }
 
-bool C2_Node::canSleepFromSleeping()
-{
-    return modeHandler->canSleepFromSleeping(*this);
+bool C2_Node::canListenFromTransmitting() {
+    return getCurrentHandler()->canListenFromTransmitting(*this);
 }
 
-bool C2_Node::canCommunicateFromTransmitting()
-{
-    return modeHandler->canCommunicateFromTransmitting(*this);
-}
-bool C2_Node::canCommunicateFromListening()
-{
-    return modeHandler->canCommunicateFromListening(*this);
-}
-bool C2_Node::canCommunicateFromCommunicating()
-{
-    return modeHandler->canCommunicateFromCommunicating(*this);
-}
-bool C2_Node::canTransmitFromListening()
-{
-    return modeHandler->canTransmitFromListening(*this);
-}
-bool C2_Node::canTransmitFromSleeping()
-{
-    return modeHandler->canTransmitFromSleeping(*this);
-}
-bool C2_Node::canTransmitFromTransmitting()
-{
-    return modeHandler->canTransmitFromTransmitting(*this);
-}
-bool C2_Node::canTransmitFromCommunicating()
-{
-    return modeHandler->canTransmitFromCommunicating(*this);
-}
-bool C2_Node::canListenFromTransmitting()
-{
-    return modeHandler->canListenFromTransmitting(*this);
-}
-bool C2_Node::canListenFromSleeping()
-{
-    return modeHandler->canListenFromSleeping(*this);
-}
-bool C2_Node::canListenFromListening()
-{
-    return modeHandler->canListenFromListening(*this);
-}
-bool C2_Node::canListenFromCommunicating()
-{
-    return modeHandler->canListenFromCommunicating(*this);
-}
-bool C2_Node::canSleepFromTransmitting()
-{
-    return modeHandler->canSleepFromTransmitting(*this);
-}
-bool C2_Node::canSleepFromListening()
-{
-    return modeHandler->canSleepFromListening(*this);
+bool C2_Node::canListenFromSleeping() {
+    return getCurrentHandler()->canListenFromSleeping(*this);
 }
 
-// End - State Transitions ---------------------------------------------------------------------------------
+bool C2_Node::canListenFromListening() {
+    return getCurrentHandler()->canListenFromListening(*this);
+}
 
-// Slot Strategy ----------------------------------------------------------------------------------
-// bool C2_Node::handleAckSlotPhase()
-// {
-//     bool output = false;
-//     if (ackInformation.shouldReplyAck())
-//     {
+bool C2_Node::canListenFromCommunicating() {
+    return getCurrentHandler()->canListenFromCommunicating(*this);
+}
 
-//         // we have an ACK to send
-//         isTransmittingWhileCommunicating = true;
-//         buildAndTransmitAckPacket();
-//         output = true;
-//     }
-//     else if (retransmissionCounterHelper.getIsExpectingAck())
-//     {
-//         // the node is expecting an ACK, so it will wake up to listen
-//         output = true;
-//     }
+bool C2_Node::canSleepFromTransmitting() {
+    return getCurrentHandler()->canSleepFromTransmitting(*this);
+}
 
-//     return output;
-// }
+bool C2_Node::canSleepFromListening() {
+    return getCurrentHandler()->canSleepFromListening(*this);
+}
 
-// End - Slot Strategy -------------------------------------------------------------------------------
+bool C2_Node::canSleepFromSleeping() {
+    return getCurrentHandler()->canSleepFromSleeping(*this);
+}
 
-// #else
-// #error "Unknown COMMUNICATION_PERIOD mode"
-// #endif
+bool C2_Node::canSleepFromCommunicating() {
+    return getCurrentHandler()->canSleepFromCommunicating(*this);
+}
+
+bool C2_Node::canCommunicateFromTransmitting() {
+    return getCurrentHandler()->canCommunicateFromTransmitting(*this);
+}
+
+bool C2_Node::canCommunicateFromListening() {
+    return getCurrentHandler()->canCommunicateFromListening(*this);
+}
+
+bool C2_Node::canCommunicateFromSleeping() {
+    return getCurrentHandler()->canCommunicateFromSleeping(*this);
+}
+
+bool C2_Node::canCommunicateFromCommunicating() {
+    return getCurrentHandler()->canCommunicateFromCommunicating(*this);
+}
+
+void C2_Node::handleCommunication() {
+    getCurrentHandler()->handleCommunication(*this);
+}
+
+bool C2_Node::receiveMessage(const std::vector<uint8_t> message) {
+    return getCurrentHandler()->receiveMessage(*this, message);
+}
+
+bool C2_Node::canNodeReceiveMessage() {
+    return getCurrentHandler()->canNodeReceiveMessage(*this);
+}

@@ -23,6 +23,7 @@ class Logger {
 public:
     struct NodeInfo {
     int id;
+    //TODO: use the enum class in NodeEnums.hpp?
     int cls; // 1 = E-Nod, 2 = Relay, 3 = GtWay
 };
 

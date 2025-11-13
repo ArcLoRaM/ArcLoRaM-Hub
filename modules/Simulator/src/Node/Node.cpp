@@ -3,7 +3,7 @@
 #include "../PhyLayer/PhyLayer.hpp"
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batteryLevel)
-    : nodeId(id), running(true), logger(logger), coordinates(coordinates), batteryLevel(batteryLevel)
+    : nodeId(id), logger(logger), coordinates(coordinates), batteryLevel(batteryLevel)
 {
    }
 
@@ -12,15 +12,7 @@ std::string Node::initMessage() const
     return "Node " + std::to_string(nodeId) + " located at (" + std::to_string(coordinates.first) + "," + std::to_string(coordinates.second) + ")";
 }
 
-std::string toString(NodeState state) {
-    switch (state) {
-        case NodeState::Transmitting:   return "Transmitting";
-        case NodeState::Listening:      return "Listening";
-        case NodeState::Sleeping:       return "Sleeping";
-        case NodeState::Communicating:  return "Communicating";
-        default:                        return "Unknown";
-    }
-}
+
 
 void Node::initializeTransitionMap()
 {
@@ -124,9 +116,7 @@ void Node::nodeStateDisplay(std::string state, std::optional<bool> isCommunicati
     statePacketReceiver << statePacket;
     logger.sendTcpPacket(statePacketReceiver);
 }
-const std::vector<std::pair<int64_t, WindowNodeState>>& Node::getActivationSchedule() const {
-    return activationSchedule;
-}
+
 
 NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state)
 {
@@ -145,71 +135,25 @@ NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state)
     }
 }
 
-void Node::addActivation(int64_t activationTime, WindowNodeState activationState)
-{
-    // add a new activation time and state to the schedule
-    activationSchedule.emplace_back(activationTime, activationState);
-}
+void Node::onTimeChange(WindowNodeState proposedState) {
+    auto key = std::make_pair(proposedState, currentState);
 
-void Node::onTimeChange(WindowNodeState proposedState)
-{
-
-  
-        auto key = std::make_pair(proposedState, currentState);
-
-        // Check if there is a registered transition function for the proposed and current state
-        auto it = stateTransitions.find(key);
-        if (it != stateTransitions.end()) {
-
-            // Call the transition function (condition function)
-            if (it->second()) {
-                
-             } else {
-                logEvent("Failed Transition:"+stateToString(currentState)+" to "+stateToString(proposedState) );
-                //logger.logMessage(failedTransitionLog);
-            }
+    auto it = stateTransitions.find(key);
+    if (it != stateTransitions.end()) {
+        if (it->second()) {
+            // Transition succeeded - schedule next one
+            scheduleNextTransition();
         } else {
-            logEvent("No state transition rule found: from " + stateToString(currentState) + " to " + stateToString(proposedState));
-        } 
-        
-}
-
-// todo: wiht Magic Enum, you dont need this anymore
-std::string Node::stateToString(NodeState state)
-{
-    switch (state)
-    {
-    case NodeState::Communicating:
-        return " Communicating";
-    case NodeState::Transmitting:
-        return " Transmiting";
-    case NodeState::Listening:
-        return " Listening";
-    case NodeState::Sleeping:
-        return " Sleeping";
-    default:
-        return "Unknown";
+            logEvent("Failed Transition: " + stateToString(currentState) + 
+                    " to " + windowStateToString(proposedState));
+        }
+    } else {
+        logEvent("No state transition rule found: from " + stateToString(currentState) + 
+                " to " + windowStateToString(proposedState));
     }
 }
 
-std::string Node::stateToString(WindowNodeState state)
-{
-    switch (state)
-    {
-    case WindowNodeState::CanTransmit:
-        return "Transmit";
-    case WindowNodeState::CanListen:
-        return " Listen";
-    case WindowNodeState::CanCommunicate:
-        return " Communicate";
-    case WindowNodeState::CanSleep:
-        return " Sleep";
-    default:
-        return "Unknown";
-    }
-}
 
-//TODO: change std::chrono::milliseconds to int64_t for consistency
 // simulate the reception of a message, including potential interferences
 bool Node::receiveMessage(const std::vector<uint8_t> message)
 {
@@ -226,4 +170,72 @@ void Node::addMessageToTransmit(const std::vector<uint8_t>& message, int64_t air
 }
 
 
+
+
+
+void Node::setScheduleBlueprint(std::shared_ptr<IScheduleBlueprint> bp) {
+    if (!bp) {
+        throw std::invalid_argument("Cannot set null blueprint");
+    }
+    blueprint = bp;
+}
+
+int64_t Node::getCurrentTime() const {
+    if (!phyLayer) {
+        throw std::runtime_error("PhyLayer not set for Node " + std::to_string(nodeId));
+    }
+    return phyLayer->getClock()->currentTimeInMilliseconds();
+}
+
+void Node::scheduleNextTransition() {
+    if (!blueprint) {
+        throw std::runtime_error("Node " + std::to_string(nodeId) + " has no blueprint set");
+    }
+    
+    if (!phyLayer) {
+        throw std::runtime_error("PhyLayer not set for Node " + std::to_string(nodeId));
+    }
+    
+    int64_t currentTime = getCurrentTime();
+    
+    // Try to get next transition from blueprint
+    auto nextTime = blueprint->tryGetNextTransitionTime(currentTime, nodeClass);
+    
+    if (!nextTime.has_value()) {
+        // No pattern defined for current mode - node is in free scheduling mode
+        logEvent("Entering free scheduling mode - no pattern defined");
+        return;
+    }
+    
+    // Get the state at the next transition time
+    auto nextState = blueprint->tryGetStateAt(*nextTime, nodeClass);
+    
+    if (!nextState.has_value()) {
+        throw std::runtime_error("Blueprint returned transition time but no state - inconsistent");
+    }
+    
+    // Schedule the transition via PhyLayer's clock
+    phyLayer->scheduleStateTransition(*nextTime, [this, nextState = *nextState]() {
+        this->onTimeChange(nextState);
+    });
+    // Schedule handleCommunication() at the same time
+    phyLayer->getClock()->scheduleCommunicationStep(*nextTime, shared_from_this());
+}
+
+void Node::scheduleCustomTransition(int64_t absoluteTime, WindowNodeState state) {
+    if (!phyLayer) {
+        throw std::runtime_error("PhyLayer not set for Node " + std::to_string(nodeId));
+    }
+    
+    if (absoluteTime <= getCurrentTime()) {
+        throw std::invalid_argument("Cannot schedule transition in the past or at current time");
+    }
+    
+    phyLayer->scheduleStateTransition(absoluteTime, [this, state]() {
+        this->onTimeChange(state);
+    });
+    
+    logEvent("Custom transition scheduled at " + std::to_string(absoluteTime) + 
+             " to " + windowStateToString(state));
+}
 

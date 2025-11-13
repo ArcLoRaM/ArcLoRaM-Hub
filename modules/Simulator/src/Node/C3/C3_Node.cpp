@@ -4,22 +4,9 @@
 C3_Node::C3_Node(int id, Logger &logger, std::pair<int, int> coordinates)
     : Node(id, logger, coordinates)
 {
-    switch (currentMode)
-    {
-    case CommunicationMode::RRC_Uplink:
-        setHandler(std::make_unique<C3_RRC_UplinkHandler>());
-        break;
-    // case CommunicationMode::RRC_Beacon:
-    //     setHandler(std::make_unique<C2_RRC_BeaconHandler>());
-    //     break;
-    // case CommunicationMode::RRC_Downlink:
-    //     setHandler(std::make_unique<C2_RRC_DownlinkHandler>());
-    //     break;
-    default:
-        throw std::runtime_error("C3_Node initialized with unsupported communication mode");
-    }
+    nodeClass = NodeClass::C3;
     initializeTransitionMap();
-    setInitialState(NodeState::Sleeping);
+    setCurrentState(NodeState::Sleeping);
 };
 
 std::string C3_Node::initMessage() const
@@ -37,11 +24,25 @@ std::string C3_Node::initMessage() const
     return finalMsg;
 }
 
-void C3_Node::handleCommunication()
-{
 
-    modeHandler->handleCommunication(*this);
+
+ModeHandler<C3_Node>* C3_Node::getCurrentHandler() {
+    if (!blueprint) {
+        throw std::runtime_error("Node " + std::to_string(nodeId) + " has no blueprint set");
+    }
+    
+    int64_t currentTime = getCurrentTime();
+    TdmaMode currentMode = blueprint->getCurrentMode(currentTime);
+    
+    auto it = modeHandlers.find(currentMode);
+    if (it == modeHandlers.end()) {
+        throw std::runtime_error("Node " + std::to_string(nodeId) + 
+                                 " has no handler for mode: " + std::to_string(static_cast<int>(currentMode)));
+    }
+    
+    return it->second.get();
 }
+
 
 // -------------------- RRC_BEACON
 
@@ -266,83 +267,79 @@ void C3_Node::handleCommunication()
 //     bool C3_Node::canCommunicateFromCommunicating(){return false;}
 
 // -------------------------------- RRC_UPLINK
-
-bool C3_Node::receiveMessage(const std::vector<uint8_t> message)
-{
-    return modeHandler->receiveMessage(*this, message);
-}
-bool C3_Node::canNodeReceiveMessage()
-{
-    return modeHandler->canNodeReceiveMessage(*this);
+// Delegate all state transitions to current handler
+bool C3_Node::canTransmitFromListening() {
+    return getCurrentHandler()->canTransmitFromListening(*this);
 }
 
-bool C3_Node::canListenFromSleeping()
-{
-    return modeHandler->canListenFromSleeping(*this);
-}
-bool C3_Node::canSleepFromListening()
-{
-
-    return modeHandler->canSleepFromListening(*this);
+bool C3_Node::canTransmitFromSleeping() {
+    return getCurrentHandler()->canTransmitFromSleeping(*this);
 }
 
-bool C3_Node::canSleepFromTransmitting()
-{
-    return modeHandler->canSleepFromTransmitting(*this);
+bool C3_Node::canTransmitFromTransmitting() {
+    return getCurrentHandler()->canTransmitFromTransmitting(*this);
 }
 
-bool C3_Node::canTransmitFromSleeping()
-{
-    return modeHandler->canTransmitFromSleeping(*this);
+bool C3_Node::canTransmitFromCommunicating() {
+    return getCurrentHandler()->canTransmitFromCommunicating(*this);
 }
 
-// Unauthorized transition in this mode.
-bool C3_Node::canTransmitFromTransmitting()
-{
-    return modeHandler->canTransmitFromTransmitting(*this);
-}
-bool C3_Node::canTransmitFromCommunicating()
-{
-    return modeHandler->canTransmitFromCommunicating(*this);
-}
-bool C3_Node::canTransmitFromListening()
-{
-    return modeHandler->canTransmitFromListening(*this);
-}
-bool C3_Node::canListenFromTransmitting()
-{
-    return modeHandler->canListenFromTransmitting(*this);
-}
-bool C3_Node::canListenFromListening()
-{
-    return modeHandler->canListenFromListening(*this);
+bool C3_Node::canListenFromTransmitting() {
+    return getCurrentHandler()->canListenFromTransmitting(*this);
 }
 
-bool C3_Node::canListenFromCommunicating()
-{
-    return modeHandler->canListenFromCommunicating(*this);
+bool C3_Node::canListenFromSleeping() {
+    return getCurrentHandler()->canListenFromSleeping(*this);
 }
-bool C3_Node::canSleepFromSleeping()
-{
-    return modeHandler->canSleepFromSleeping(*this);
+
+bool C3_Node::canListenFromListening() {
+    return getCurrentHandler()->canListenFromListening(*this);
 }
-bool C3_Node::canSleepFromCommunicating()
-{
-    return modeHandler->canSleepFromCommunicating(*this);
+
+bool C3_Node::canListenFromCommunicating() {
+    return getCurrentHandler()->canListenFromCommunicating(*this);
 }
-bool C3_Node::canCommunicateFromTransmitting()
-{
-    return modeHandler->canCommunicateFromTransmitting(*this);
+
+bool C3_Node::canSleepFromTransmitting() {
+    return getCurrentHandler()->canSleepFromTransmitting(*this);
 }
-bool C3_Node::canCommunicateFromListening()
-{
-    return modeHandler->canCommunicateFromListening(*this);
+
+bool C3_Node::canSleepFromListening() {
+    return getCurrentHandler()->canSleepFromListening(*this);
 }
-bool C3_Node::canCommunicateFromSleeping()
-{
-    return modeHandler->canCommunicateFromSleeping(*this);
+
+bool C3_Node::canSleepFromSleeping() {
+    return getCurrentHandler()->canSleepFromSleeping(*this);
 }
-bool C3_Node::canCommunicateFromCommunicating()
-{
-    return modeHandler->canCommunicateFromCommunicating(*this);
+
+bool C3_Node::canSleepFromCommunicating() {
+    return getCurrentHandler()->canSleepFromCommunicating(*this);
+}
+
+bool C3_Node::canCommunicateFromTransmitting() {
+    return getCurrentHandler()->canCommunicateFromTransmitting(*this);
+}
+
+bool C3_Node::canCommunicateFromListening() {
+    return getCurrentHandler()->canCommunicateFromListening(*this);
+}
+
+bool C3_Node::canCommunicateFromSleeping() {
+    return getCurrentHandler()->canCommunicateFromSleeping(*this);
+}
+
+bool C3_Node::canCommunicateFromCommunicating() {
+    return getCurrentHandler()->canCommunicateFromCommunicating(*this);
+}
+
+void C3_Node::handleCommunication() {
+    getCurrentHandler()->handleCommunication(*this);
+}
+
+bool C3_Node::receiveMessage(const std::vector<uint8_t> message) {
+    return getCurrentHandler()->receiveMessage(*this, message);
+}
+
+bool C3_Node::canNodeReceiveMessage() {
+    return getCurrentHandler()->canNodeReceiveMessage(*this);
 }

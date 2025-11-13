@@ -7,7 +7,7 @@
 #include <mutex>
 #include "../../Logger/Logger.hpp"  
 #include <functional>
-
+#include "../../../TDMA/TDMAEnums.hpp"
 
 /*
 Brief: CommandDispatcher is responsible for handling incoming commands and managing the launch configuration.  
@@ -17,8 +17,8 @@ Brief: CommandDispatcher is responsible for handling incoming commands and manag
 
 struct LaunchConfig {
     double distanceThreshold;
-    std::string communicationMode;
     std::string topologyLines;
+    ScenarioType scenarioType;
     //idea for later:
     //SF, BW, PathLoss Model...
 };

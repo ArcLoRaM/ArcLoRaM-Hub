@@ -74,59 +74,62 @@ void Logger::exportCombinedSchedule(
     const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
     const std::string& outputFile)
 {
-    // Map: timestamp -> nodeId -> info
-    std::map<int64_t, std::map<int, std::string>> scheduleTable;
+    // // Map: timestamp -> nodeId -> info
+    // std::map<int64_t, std::map<int, std::string>> scheduleTable;
 
-    // 1. Collect state transitions
-    for (const auto& node : nodes) {
-        int nodeId = node->getId();
-        for (const auto& [time, state] : node->getActivationSchedule()) {
-            scheduleTable[time][nodeId] = Node::stateToString(state);
-        }
-    }
+    // // 1. Collect state transitions
+    // for (const auto& node : nodes) {
+    //     int nodeId = node->getId();
+    //     for (const auto& [time, state] : node->getActivationSchedule()) {
+    //         scheduleTable[time][nodeId] = Node::stateToString(state);
+    //     }
+    // }
 
-    // 2. Collect communication steps
-    for (const auto& [time, nodePtr] : communicationSteps) {
-        if (!nodePtr) continue;
-        int nodeId = nodePtr->getId();
-        auto& entry = scheduleTable[time][nodeId];
-        if (!entry.empty()) {
-            entry += "+Comm";
-        } else {
-            entry = "Comm";
-        }
-    }
+    // // 2. Collect communication steps
+    // for (const auto& [time, nodePtr] : communicationSteps) {
+    //     if (!nodePtr) continue;
+    //     int nodeId = nodePtr->getId();
+    //     auto& entry = scheduleTable[time][nodeId];
+    //     if (!entry.empty()) {
+    //         entry += "+Comm";
+    //     } else {
+    //         entry = "Comm";
+    //     }
+    // }
 
-    // 3. Write to CSV
-    std::ofstream out(outputFile);
-    if (!out.is_open()) {
-        std::cerr << "Failed to open " << outputFile << "\n";
-        return;
-    }
+    // // 3. Write to CSV
+    // std::ofstream out(outputFile);
+    // if (!out.is_open()) {
+    //     std::cerr << "Failed to open " << outputFile << "\n";
+    //     return;
+    // }
 
-    // Header
-    out << "Timestamp";
-    for (const auto& node : nodes) {
-        out << ",Node " << node->getId();
-    }
-    out << "\n";
+    // // Header
+    // out << "Timestamp";
+    // for (const auto& node : nodes) {
+    //     out << ",Node " << node->getId();
+    // }
+    // out << "\n";
 
-    // Rows
-    for (const auto& [time, nodeMap] : scheduleTable) {
-        out << time;
-        for (const auto& node : nodes) {
-            int id = node->getId();
-            auto it = nodeMap.find(id);
-            if (it != nodeMap.end()) {
-                out << "," << it->second;
-            } else {
-                out << ",";
-            }
-        }
-        out << "\n";
-    }
+    // // Rows
+    // for (const auto& [time, nodeMap] : scheduleTable) {
+    //     out << time;
+    //     for (const auto& node : nodes) {
+    //         int id = node->getId();
+    //         auto it = nodeMap.find(id);
+    //         if (it != nodeMap.end()) {
+    //             out << "," << it->second;
+    //         } else {
+    //             out << ",";
+    //         }
+    //     }
+    //     out << "\n";
+    // }
 
-    out.close();
+    // out.close();
+
+
+    logSystem("WARNING: exportCombinedSchedule not implemented ");
 }
 
 void Logger::resetTick()

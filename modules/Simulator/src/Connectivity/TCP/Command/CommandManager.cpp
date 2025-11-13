@@ -123,47 +123,30 @@ void CommandManager::waitForLaunchConfig()
     launchSimulation(*configOpt);
 
             waitingForConfig.clear(); // allow future calls
-        logger.logSystem("Finished waitForLaunchConfig()"); })
+         })
         .detach();
 }
 
 void CommandManager::launchSimulation(const LaunchConfig &config)
 {
-    logger.logSystem("Configuration received. Launching simulation...");
-
-    // Notify GUI of system parameters, information is sent back as a security check TODO
-    sf::Packet sysPacket;
-    systemPacket sys(config.distanceThreshold, config.communicationMode);
-    sysPacket << sys;
-    logger.sendTcpPacket(sysPacket);
-
-    //Todo: when this function grows, make a class to handle launch Config specific build
-    if (config.communicationMode == "RRC_Uplink")
-        common::currentMode = common::CommunicationMode::RRC_Uplink;
-    else if (config.communicationMode == "RRC_Downlink")
-        common::currentMode = common::CommunicationMode::RRC_Downlink;
-    else if (config.communicationMode == "RRC_Beacon")
-        common::currentMode = common::CommunicationMode::RRC_Beacon;
-    else if (config.communicationMode == "ENC_Uplink")
-        common::currentMode = common::CommunicationMode::ENC_Uplink;
-    else if (config.communicationMode == "ENC_Downlink")
-        common::currentMode = common::CommunicationMode::ENC_Downlink;
-    else if (config.communicationMode == "ENC_Beacon")
-        common::currentMode = common::CommunicationMode::ENC_Beacon;
-    else
-        throw std::invalid_argument("Unknown MODE specified: " + config.communicationMode);
+    logger.logSystem("Launching simulation...");
 
     // Build simulation, TODO: add path loss model here?
     phyLayer = std::make_unique<PhyLayer>(config.distanceThreshold, logger);
     logger.logSystem("Physical Engine Created");
-    Seed seed(config.topologyLines, logger);
-    // Seed seed(config.communicationMode, common::topology, logger);
+
+    // Create seed with scenario
+    Seed seed(config.topologyLines, config.scenarioType, logger);
+
     phyLayer->takeOwnership(seed.transferOwnership()); // seed memory is released safely
 
     logger.logSystem("Topology Deployed");
     clock = std::make_unique<Clock>(logger, std::chrono::milliseconds(common::tickIntervalForClock_ms));
     logger.logSystem("Scheduler Created");
-    phyLayer->registerAllNodeEvents(*clock);
+
+    //kickstarts blueprint-based scheduling:
+    phyLayer->registerAllNodeFirstEvent(*clock);
+
     clock->start();
     running = true;
     logger.logSystem("Simulation started.");

@@ -1,23 +1,25 @@
 #include "FactorySelector.hpp"
 #include "../../../Connectivity/Logger/Logger.hpp"
 #include "../../../Setup/Common.hpp"
+#include "../SimonV1Factory/SimonV1Factory.hpp"
 
-
-std::unique_ptr<INodeFactory> FactorySelector::getFactory(
-                                                    Logger& logger
-                                                    
+std::unique_ptr<INodeFactory> FactorySelector::getFactory(ScenarioType scenario,
+                                                    Logger& logger                 
                                                     )
 {
-    switch (common::currentMode)
-    {
-    case common::CommunicationMode::RRC_Uplink:
-        return std::make_unique<RrcUplinkNodeFactory>(logger);
-
-    // Later add other factories:
-    // case CommunicationMode::RRC_Downlink:
-    //     return std::make_unique<RrcDownlinkNodeFactory>(...);
-
-    default:
-        throw std::invalid_argument("Unsupported or unimplemented communication mode.");
+    switch (scenario) {
+        case ScenarioType::SimonV1:
+            return std::make_unique<SimonV1Factory>(logger);
+        
+        // case ScenarioType::SimonV2:
+        //     return std::make_unique<SimonV2Factory>(logger);
+        
+        // case ScenarioType::NinaV1:
+        //     return std::make_unique<NinaV1Factory>(logger);
+        
+        default:
+            throw std::invalid_argument("Unsupported scenario type: " + 
+                                       std::to_string(static_cast<int>(scenario)));
     }
+
 }

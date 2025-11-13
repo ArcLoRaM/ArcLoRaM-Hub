@@ -10,7 +10,7 @@
 class INodeFactory {
 public:
     virtual std::shared_ptr<C3_Node> createC3Node(int id, std::pair<int, int> coordinates) = 0;
-    virtual std::shared_ptr<C2_Node> createC2Node(int id, std::pair<int, int> coordinates, int nextHop, int hopCount) = 0;
+    virtual std::shared_ptr<C2_Node> createC2Node(int id, std::pair<int, int> coordinates, std::optional<int> nextHop = std::nullopt, std::optional<int> hopCount = std::nullopt) = 0;
     virtual std::shared_ptr<C1_Node> createC1Node(int id, std::pair<int, int> coordinates) = 0;
 
     virtual ~INodeFactory() = default;

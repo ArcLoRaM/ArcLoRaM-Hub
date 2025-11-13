@@ -11,10 +11,6 @@
 
 // -------------------- Constructors --------------------
 
-systemPacket::systemPacket(double distanceThreshold, std::string mode)
-    : distanceThreshold(distanceThreshold), mode(std::move(mode)) {
-    type = 0;
-}
 
 tickPacket::tickPacket(int tickNb) : tickNb(tickNb) {
     type = 1;
@@ -72,13 +68,6 @@ stopSimulationPacket::stopSimulationPacket(int nodeId) : nodeId(nodeId) {
 
 //TODO: put const where you can =?
 
-sf::Packet& operator<<(sf::Packet& packet, const systemPacket& sp) {
-    return packet << sp.type << sp.distanceThreshold << sp.mode;
-}
-
-sf::Packet& operator>>(sf::Packet& packet, systemPacket& sp) {
-    return packet >>  sp.distanceThreshold >> sp.mode;
-}
 
 sf::Packet& operator<<(sf::Packet& packet, const tickPacket& tp) {
     return packet << tp.type << tp.tickNb;
@@ -197,8 +186,8 @@ sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
 //-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
 
 //------ Constructors --------------------
-launchConfigCommandPacket::launchConfigCommandPacket(double threshold, std::string tdmaMode, std::string topologyString)
-    : distanceThreshold(threshold), tdmaMode(std::move(tdmaMode)), topologyString(std::move(topologyString)) {
+launchConfigCommandPacket::launchConfigCommandPacket(double threshold,  std::string topologyString,int scenarioType)
+    : distanceThreshold(threshold), topologyString(std::move(topologyString)), scenarioType(scenarioType) {
     type = 100;
 }
 
@@ -229,10 +218,10 @@ pauseCommandPacket::pauseCommandPacket() {
 //-------------------- Packet Serialization --------------------
 
 sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& lccp) {
-    return packet << lccp.type << lccp.distanceThreshold << lccp.tdmaMode << lccp.topologyString;
+    return packet << lccp.type << lccp.distanceThreshold << lccp.topologyString << lccp.scenarioType;
 }
 sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& lccp) {
-    return packet >> lccp.distanceThreshold >> lccp.tdmaMode >> lccp.topologyString;
+    return packet >> lccp.distanceThreshold >> lccp.topologyString >> lccp.scenarioType;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const stopCommandPacket& scp) {

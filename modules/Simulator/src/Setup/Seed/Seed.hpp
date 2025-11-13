@@ -10,26 +10,14 @@
 #include "../../Node/C2/C2_Node.hpp"
 #include "../../Node/C1/C1_Node.hpp"
 
+#include "../../TDMA/TDMAEnums.hpp"
 
-
-struct C2_Node_Mesh_Parameter{
-    std::pair<int,int> coordinates;
-    unsigned int hopCount;
-    uint16_t nextNodeIdInPath;
-};
 
 class Seed {
 
 public:
-    // Seed(std::string communicationWindow, std::string topology,Logger& logger) : 
-    // communicationWindow(communicationWindow), logger(logger), 
-    // topology(topology) {
 
-    //     initializeNodes();
-        
-    // }
-
-    Seed(std::string topology,Logger& logger) : topology(topology), logger(logger) {
+    Seed(std::string topology,ScenarioType scenario,Logger& logger) : topology(topology), logger(logger), scenario(scenario) {
 
         if(!instantiateTopology(topology))
         {
@@ -39,29 +27,13 @@ public:
 
     std::vector<std::shared_ptr<Node>> transferOwnership();
   
-
+    // Get the blueprint created by the factory (for logging/debugging if needed)
+    std::shared_ptr<IScheduleBlueprint> getBlueprint() const { return blueprint; }
 private:
     Logger& logger;
-    // std::string communicationWindow;
     std::string topology;
+    ScenarioType scenario;
     std::vector<std::shared_ptr<Node>> listNode;
-
-
-    // void initializeNodes();
     bool instantiateTopology(std::string topology);
-
-    // #if COMMUNICATION_PERIOD == RRC_DOWNLINK || COMMUNICATION_PERIOD == RRC_BEACON
-
-    // void initialize_RRC_Downlink_Line();
-    // void initialize_RRC_Beacon_Line();
-    // void initialize_RRC_Beacon_Mesh();
-    // void initialize_RRC_Beacon_Mesh_Self_Healing();
-    // #elif COMMUNICATION_PERIOD == RRC_UPLINK
-
-    // void initialize_RRC_Uplink_Mesh();
-    // void initialize_RRC_Uplink_Mesh_FromFile();
-
-    // void initialize_RRC_Uplink_Line();
-    // void initialize_RRC_Uplink_Line_FromFile();
-    // #endif
+    std::shared_ptr<IScheduleBlueprint> blueprint;
 };

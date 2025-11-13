@@ -9,32 +9,9 @@
  namespace common{
 
 //-----------------------------------------GENERAL PARAMETERS-----------------------------------------
-//TODO: put the param below in the conf. file sent.
-//TODO: suggested improvement for time duration:
-/*
-Define your own "tick" duration type
-using Tick = std::chrono::duration<int, std::milli>; // 1 tick = 1ms
-inline constexpr Tick tickInterval = 10ms;
 
-
-Now, you can define durations in terms of your virtual tick system:
-
-Tick guardTime = 50ms;
-Tick sleepWindow = 1500ms;
-*/
 constexpr  int tickIntervalForClock_ms=10; //the tick interval for the clock, the lower the more realistic but the more CPU intensive the simulation (minimum 1ms)
 
-//-------------------------------------------
-enum class CommunicationMode {
-    RRC_Beacon = 1,
-    RRC_Downlink = 2,
-    RRC_Uplink = 3,
-    ENC_Beacon = 11,
-    ENC_Downlink = 12,
-    ENC_Uplink = 13,
-    NotInitialized = 99
-};
-inline CommunicationMode currentMode = CommunicationMode::NotInitialized;
 
 //-------------------------------------------
 

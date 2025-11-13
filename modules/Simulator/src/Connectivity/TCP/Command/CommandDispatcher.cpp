@@ -52,21 +52,21 @@ void CommandDispatcher::onCommand(sf::Packet& packet) {
 
 void CommandDispatcher::handleLaunchConfigCommand( sf::Packet& packet)
 {
-            launchConfigCommandPacket cmd;
+            launchConfigCommandPacket cmd(0.0,"",0);
             packet >> cmd;
 
             {
                 std::lock_guard lock(configMutex);
                 pendingConfig = LaunchConfig{
                     cmd.distanceThreshold,
-                    cmd.tdmaMode,
-                    cmd.topologyString
+                    cmd.topologyString,
+                    static_cast<ScenarioType>(cmd.scenarioType)
                 };
             }
 
-            logger.logSystem("Received launch config. Mode: " + cmd.tdmaMode
+            logger.logSystem("Scenario: " + std::to_string(cmd.scenarioType)
                              + " | Threshold: " + std::to_string(cmd.distanceThreshold)
-                             + " | Topology: " + cmd.topologyString);
+                             );
 
 }
     

@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <iostream>
 #include <thread>
 #include <queue>
@@ -19,38 +17,13 @@
 #include <atomic>
 #include <optional>
 #include <future>
-
-
-// Enum representing possible states for nodes
-enum class NodeState {
-    Transmitting,
-    Listening,
-    Sleeping,
-    Communicating
-};
-
-//Should be a copy of what's in the GUI
-enum class ReceptionState {
-    Interference,
-    NotListening,
-    Received
-};
-
-std::string toString(NodeState state);
-
-//Enum representing the scheduler proposed states for the nodes
-enum class WindowNodeState{
-    CanTransmit,
-    CanListen,
-    CanSleep,
-    CanCommunicate //mixed state of CanTransmit and CanListen (the nodes listen and sometimes it transmits)
-};
-
+#include "NodeEnums.hpp"
+#include "../TDMA/IScheduleBlueprint.hpp"
 
 class PhyLayer; // Forward declaration of PhyLayer class to avoid circular dependency
 
 
-class Node {
+class Node : public std::enable_shared_from_this<Node> {
 public:
 
     Node(int id, Logger& logger,std::pair<int, int> coordinates, double batteryLevel=2.0);
@@ -58,7 +31,6 @@ public:
         
     }
     
-    const std::vector<std::pair<int64_t, WindowNodeState>>& getActivationSchedule() const;
 
     virtual std::string initMessage() const;//default message to be logged when the node starts
 
@@ -80,14 +52,11 @@ public:
         phyLayer = phy;
     }
 
-    void addActivation( int64_t activationTime, WindowNodeState activationState);
     void onTimeChange(WindowNodeState proposedState);
     virtual  int getClassId() const =0;
     virtual void handleCommunication()=0;//we separate state transition from the communication logic, this function is called after each state transition
-    static std::string stateToString(NodeState state);
-    static std::string stateToString(WindowNodeState state);
 
-    //todo: make other helpers to log events to the UI?
+    //todo: make other helpers to log events to the UI? TODO: move all of these functions to another class, one class per concern
     void adressedPacketTransmissionDisplay(uint16_t receiverId,bool isAck) const; // Display the transmission of a packet to a specific receiver
     void endAdressedPacketTransmissionDisplay(uint16_t receiverId) const; // Display the end of transmission of a packet to a specific receiver  
     void receptionStateDisplay(uint16_t senderId, ReceptionState state);
@@ -98,16 +67,29 @@ public:
     //TODO switch to an enum class, not string
     void nodeStateDisplay(std::string state, std::optional<bool> isCommunicatingAck);
 
+//TDMA
+    // Blueprint configuration
+    void setScheduleBlueprint(std::shared_ptr<IScheduleBlueprint> bp);
+    
+    // Schedule the next state transition based on blueprint
+    void scheduleNextTransition();
+    
+    // Allow nodes to schedule arbitrary future events (for dynamic strategies)
+    void scheduleCustomTransition(int64_t absoluteTime, WindowNodeState state);
+    
+    // Query current simulation time
+    int64_t getCurrentTime() const;
+
     protected:
+    std::shared_ptr<IScheduleBlueprint> blueprint;
 
     void logEvent(const std::string& message) {
         logger.logEvent(nodeId, message);
     }
     double batteryLevel=3.0;
-
+     NodeClass nodeClass= NodeClass::NotInitialized;
     std::pair<int, int> coordinates ={0,0};//in meters (x,y)
     int nodeId;
-    bool running;
     Logger& logger;
 
     PhyLayer* phyLayer = nullptr; // Pointer to the PhyLayer instance, can be set later
@@ -118,16 +100,11 @@ public:
     void addMessageToTransmit(const std::vector<uint8_t>& message, int64_t airtimeMs);
 
 
-
-    //---------------------------------------TDMA-------------------------------------
-    std::vector<std::pair<int64_t, WindowNodeState>> activationSchedule; // the list of proposed node state (window State) by the scheduler at a given time
     NodeState currentState; // the actual state of the node
     // Transition rules using functions for complex conditions: link a proposed state/current State with a callback that will check conditions and eventually change current state and perform actions
     std::map<std::pair<WindowNodeState, NodeState>,  std::function<bool()>> stateTransitions;
       
-    void setInitialState(NodeState initialState) {
-        currentState = initialState;
-    }
+
     NodeState convertWindowNodeStateToNodeState(WindowNodeState state);
     NodeState getCurrentState() const {
         
@@ -138,8 +115,6 @@ public:
     currentState = newState;
 
 }
-
-
 
     //we need to define in child classes the state machine
     //convention for the name of the methods:

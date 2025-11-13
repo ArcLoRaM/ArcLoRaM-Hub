@@ -31,21 +31,27 @@ C2_Node(int id, Logger& logger, std::pair<int, int> coordinates);
 //  RRC_UPLINK
 C2_Node(int id, Logger &logger, std::pair<int, int> coordinates,  uint16_t nextNodeIdInPath, uint8_t hopCount);
    
-// todo: return enum class instead?
     int getClassId() const override
     {
-        return 2;
+        return static_cast<int>(nodeClass);
     }
 
     std::string initMessage() const override;
 
     
-    void setHandler(std::unique_ptr<ModeHandler<C2_Node>> h) {
-            modeHandler = std::move(h);
-        }
+    template<typename HandlerType>
+    void registerModeHandler(TdmaMode mode, std::unique_ptr<HandlerType> handler) {
+        static_assert(std::is_base_of_v<ModeHandler<C2_Node>, HandlerType>, 
+                    "HandlerType must derive from ModeHandler<C2_Node>");
+        modeHandlers[mode] = std::move(handler);
+        logEvent("Registered handler for mode: " + std::to_string(static_cast<int>(mode)));
+    }
 protected:
+    // Map of mode -> handler
+    std::map<TdmaMode, std::unique_ptr<ModeHandler<C2_Node>>> modeHandlers;
     
-    std::unique_ptr<ModeHandler<C2_Node>> modeHandler;
+    // Get the current active handler based on blueprint's current mode
+    ModeHandler<C2_Node>* getCurrentHandler();   
 
     bool canTransmitFromListening()override;
     bool canTransmitFromSleeping()override;
@@ -86,7 +92,7 @@ protected:
 
 ////----------------------------------------RRC_BEACON //----------------------------------------
 
-    // This values should be a struct or an object, todo
+    // This values should be a struct or an object, todo and dont have uint8_t but rather an using as..
     bool RRC_BEACON_shouldSendBeacon = false;
     std::optional<uint8_t> RRC_BEACON_hopCount;
     std::optional<uint32_t> RRC_BEACON_lastTimeStampReceived;
@@ -119,9 +125,9 @@ protected:
 
     //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
     uint8_t RRC_UPLINK_nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
-    uint8_t RRC_UPLINK_initialnbPayload = 2; // initial number of payload
+    uint8_t RRC_UPLINK_initialnbPayload = 30; // initial number of payload
 
-
+//There are states for the slot strategy (so should be a separate class renamed depending on the strategy used)(such as SimonV1..) and state inherent to node mode (like size queue...)
     // Slot Strategy ---------------------------------------------------------------------------------------
     //todo: could make a proper struct for that
     bool RRC_UPLINK_isACKSlot = true;
@@ -129,7 +135,7 @@ protected:
     uint8_t RRC_UPLINK_fixedSlotCategory;
 
     // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
-    using PacketID = uint16_t;
+    using PacketID = uint16_t; //do this for every packets / custom state node 
     using SenderID = uint16_t;
     using PacketList = std::vector<PacketID>;                 
     using PacketMap = std::unordered_map<SenderID, PacketList>; 

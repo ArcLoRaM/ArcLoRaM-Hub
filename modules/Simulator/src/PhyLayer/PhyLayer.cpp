@@ -17,15 +17,9 @@ void PhyLayer::takeOwnership(std::vector<std::shared_ptr<Node>> nodes)
    reachableNodesPerNode = getReachableNodesForAllNodes();
 
     for(std::shared_ptr<Node> node : nodes){
-    
-       
         logger.logEvent(node->getId(), node->initMessage());
-
         node->setPhyLayer(this); // Set the PhyLayer for each node
     }
-
-
-
 }
 
 void PhyLayer::registerNode(std::shared_ptr<Node> node) {
@@ -53,23 +47,28 @@ std::vector<std::shared_ptr<Node>> PhyLayer::getReachableNodesForNode(const std:
     return reachable;
 }
 
-void PhyLayer::registerAllNodeEvents(Clock& clk) {
+void PhyLayer::registerAllNodeFirstEvent(Clock& clk) {
 
     clock = &clk; // Set the clock for scheduling events
     std::vector<Logger::NodeInfo> nodesInfo;
+    
     for (const auto& ptrNode : nodes) {
-        for (const auto& [activationTime, windowNodeState] : ptrNode->getActivationSchedule()) {
-            clk.scheduleStateTransition(activationTime, [ptrNode, windowNodeState]() {
-                ptrNode->onTimeChange(windowNodeState);
-            });
-
-            clk.scheduleCommunicationStep(activationTime, ptrNode);
-        }
+        // Kickstart the blueprint-based scheduling chain
+        // Each node will schedule its next transition, which will schedule the next, etc.
+        ptrNode->scheduleNextTransition();
+        
         nodesInfo.push_back({ptrNode->getId(), ptrNode->getClassId()});
     }
-    logger.setNodes(nodesInfo); // Set the nodes in the logger
+    
+    logger.setNodes(nodesInfo);
+}
 
-    logger.exportCombinedSchedule(nodes, clk.getCommunicationStepsSnapshot(), "output/combined_schedule.csv");
+void PhyLayer::scheduleStateTransition(int64_t time, CallbackType callback)
+{
+    if (!clock) {
+        throw std::runtime_error("Clock not set in PhyLayer");
+    }
+    clock->scheduleStateTransition(time, std::move(callback));
 }
 
 // Function to get reachable nodes for all nodes

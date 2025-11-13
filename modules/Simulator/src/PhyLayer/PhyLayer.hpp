@@ -22,8 +22,12 @@ public:
 
     // Function to get reachable nodes for a specific node
     std::vector<std::shared_ptr<Node>> getReachableNodesForNode(const std::shared_ptr<Node>& node);
-void registerAllNodeEvents(Clock& clk);
+void registerAllNodeFirstEvent(Clock& clk);
 
+    Clock* getClock() const { 
+
+        return clock; }
+        void scheduleStateTransition(int64_t time, CallbackType callback);
 
 private:
 
