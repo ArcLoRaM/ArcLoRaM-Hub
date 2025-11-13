@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../../Network/Packets/Packets.hpp"
-#include "../States/ProtocolVisualisationState.hpp"
 #include "../ProtocolVisualiser.hpp"
 
 class PacketHandler
@@ -12,7 +11,6 @@ public:
     void handlePacket(sf::Packet &packet);
 
 private:
-    void handleSystemPacket(sf::Packet &packet);
     void handleTickPacket(sf::Packet &packet);
     void handleStateNodePacket(sf::Packet &packet);
     void handlePositionPacket(sf::Packet &packet);

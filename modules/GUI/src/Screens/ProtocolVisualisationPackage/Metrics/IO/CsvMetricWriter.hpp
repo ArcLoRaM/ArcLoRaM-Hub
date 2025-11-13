@@ -3,11 +3,11 @@
 #include <string>
 
 class ProtocolVisualiser;
-class ProtocolVisualisationState;
+class SimulationConfiguration;
 
 class CsvMetricWriter {
 public:
 void writeNetworkMetricsToCsv(const std::string& filename,
                                                const ProtocolVisualiser& visualiser,
-                                               const ProtocolVisualisationState& state);
+                                               const SimulationConfiguration& state);
 };

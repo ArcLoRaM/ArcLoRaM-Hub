@@ -1,6 +1,9 @@
 #include "UIController.hpp"
 #include "../../../Shared/UIFactory/UIFactory.hpp"
 #include "../../../Shared/RessourceManager/RessourceManager.hpp"
+#include "../../Shared/Libraries/magic_enum.hpp"
+#include "../States/SimulationConfiguration.hpp"
+
 UIController::UIController(tgui::Gui &gui) : gui(gui)
 {
 }
@@ -28,7 +31,7 @@ void UIController::setupUI(sf::View &networkView)
     gui.add(tabContainer);
 }
 
-void UIController::updateUI(ProtocolVisualisationState &state)
+void UIController::updateUI(LiveNetworkState &state)
 {
     communicationModeText->setText("Communication Mode: " + state.communicationMode);
     timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
@@ -126,6 +129,15 @@ return;
     } 
     showSimulationRunningUI();
                                          });
+
+    scenarioTypeComboBox->onItemSelect([this](const tgui::String &item)
+                                      {
+        if (onScenarioTypeChanged) onScenarioTypeChanged(scenarioTypeComboBox->getSelectedItemIndex());
+        else {
+            std::cerr << "No scenario type changed callback set!" << std::endl;
+            return;
+        }
+                                      });                                     
 
     //Open the file Dialog
     confFileSelectionButton->onPress([this]()
@@ -283,6 +295,7 @@ void UIController::showSimulationStartedUI()
     pauseSimulationButton->setVisible(true);
     stopSimulationButton->setVisible(true);
     restartSimulationButton->setVisible(true);
+    scenarioTypeComboBox->setEnabled(false);
 }
 
 void UIController::showSimulationRunningUI()
@@ -304,6 +317,7 @@ void UIController::showSimulationStoppedUI()
 {
     stopSimulationButton->setVisible(false);
     restartSimulationButton->setVisible(false);
+    scenarioTypeComboBox->setEnabled(true);
     startSimulationButton->setVisible(true);
     startSimulationButton->setEnabled(false);
     pauseSimulationButton->setVisible(false);
@@ -369,6 +383,17 @@ void UIController::setClientPanelUI()
     fileNameLabel->setPosition({"25%", "15%"});
     fileNameLabel->setSize({"50%", "6%"});
     confFileSelectionGroup->add(fileNameLabel);
+
+    scenarioTypeComboBox = UIFactory::createEnumComboBox({"20%", "6%"});
+    confFileSelectionGroup->add(scenarioTypeComboBox);
+    scenarioTypeComboBox->setPosition({"2%", "30%"});
+        // Add each enum value by name
+    for (auto mode : magic_enum::enum_values<ScenarioType>())
+    {
+        std::string label = std::string(magic_enum::enum_name(mode));
+        scenarioTypeComboBox->addItem(label);
+    }
+    scenarioTypeComboBox->setSelectedItemByIndex(0); // Select the first item by default
 
     startSimulationButton = UIFactory::createButton("Start Simulation");
     confFileSelectionGroup->add(startSimulationButton);

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <atomic>
-#include "../States/TopologyFileState.hpp"
+#include "../States/SimulationConfiguration.hpp"
 
 class SimulationController {
 public:
-    void startSimulation(const TopologyFileState& config);
+    void startSimulation(const SimulationConfiguration& config);
     void pauseSimulation();
     void resumeSimulation();
     void restartSimulation();

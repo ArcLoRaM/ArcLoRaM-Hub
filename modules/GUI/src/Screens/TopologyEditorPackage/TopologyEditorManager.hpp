@@ -27,7 +27,6 @@ public:
 
     // to do: make getter and setView
     tgui::CanvasSFML::Ptr canvas;
-    tgui::ComboBox::Ptr modeDropdown;
 
 private:
     std::optional<int> selectedNodeId;

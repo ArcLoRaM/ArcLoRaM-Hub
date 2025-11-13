@@ -1,5 +1,5 @@
 #include "CsvMetricWriter.hpp"
-#include "../../States/ProtocolVisualisationState.hpp"
+#include "../../States/SimulationConfiguration.hpp"
 #include"../../ProtocolVisualiser.hpp"
 #include "../../../../Objects/Device/Device.hpp"
 #include <fstream>
@@ -12,7 +12,7 @@
 
 void CsvMetricWriter::writeNetworkMetricsToCsv(const std::string& filename,
                                                const ProtocolVisualiser& visualiser,
-                                               const ProtocolVisualisationState& state) {
+                                               const SimulationConfiguration& state) {
     // std::ofstream out(filename);
     // if (!out.is_open()) {
     //     throw std::runtime_error("Failed to open file: " + filename);

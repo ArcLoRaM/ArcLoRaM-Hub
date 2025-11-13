@@ -68,6 +68,9 @@ void ProtocolVisualiser::bindUIEvents()
         simulationController.resumeSimulation();
     };
 
+    uiController.onScenarioTypeChanged = [this](const int scenarioId) {
+        topologyState.setScenarioType(static_cast<ScenarioType>(scenarioId));
+    };
     uiController.onRestartSimulation = [this]() {
         simulationController.restartSimulation();
 
@@ -124,7 +127,7 @@ void ProtocolVisualiser::bindUIEvents()
         }
 
         if(!path.empty()){
-            if (TopologyConfigIO::readToTopologyFileState(path,topologyState)) {
+            if (TopologyConfigIO::readTopologyConfig(path,topologyState)) {
                 uiController.enableStartButton(true);
                 uiController.setFileNameLabel("File Selected: " + path);
             }

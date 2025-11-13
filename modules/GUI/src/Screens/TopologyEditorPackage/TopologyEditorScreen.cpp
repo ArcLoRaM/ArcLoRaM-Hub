@@ -34,9 +34,7 @@ TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, Sc
         if (!paths.empty()) {
             if(TopologyConfigIO::read(paths[0].asString().toStdString(), editorState)){
                 auto currentMode = editorState.getTopologyMode();
-                std::string label = std::string(magic_enum::enum_name(currentMode));
-                if (editorManager.modeDropdown->contains(label)) editorManager.modeDropdown->setSelectedItem(label);
-                   
+                std::string label = std::string(magic_enum::enum_name(currentMode));                   
             }
             else{
                 auto errorBox = UIFactory::createMessageBox("Error", "Failed to load topology configuration.");

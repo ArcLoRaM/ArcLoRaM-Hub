@@ -5,14 +5,14 @@
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
-#include "../States/ProtocolVisualisationState.hpp"
+#include "../States/LiveNetworkState.hpp"
 class UIController {
 public:
     UIController(tgui::Gui& gui);
 
     void setupUI(sf::View& networkView);
 
-    void updateUI(ProtocolVisualisationState& state);
+    void updateUI(LiveNetworkState& state);
     //Probably better to make functions that correspond to workflow instead of manually setting each element
     //example: simulationStartUIChanges(), simulationPauseUIChanges()
     void setServerStatus(bool connected);
@@ -27,6 +27,7 @@ public:
     std::function<void()> onRestartSimulation;
     std::function<void()> onPauseSimulation;
     std::function<void()> onResumeSimulation;
+    std::function<void(const int scenarioId)> onScenarioTypeChanged;
     std::function<void(const std::string& filePath)> onFileSelected;
 
 
@@ -67,6 +68,7 @@ private:
     tgui::Label::Ptr fileNameLabel;
     tgui::Label::Ptr serverStatusConnected;
     tgui::Label::Ptr serverStatusDisconnected;
+    tgui::ComboBox::Ptr scenarioTypeComboBox;
 
 
     //Network TAB

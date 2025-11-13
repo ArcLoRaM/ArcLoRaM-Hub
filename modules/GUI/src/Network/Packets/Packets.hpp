@@ -28,19 +28,6 @@ public:
 
 //TELEMETRY PACKETS
 
-
-
-// Packet class declarations
-class systemPacket : public BasePacket {
-public:
-    double distanceThreshold;
-    std::string mode;
-
-    systemPacket(double distanceThreshold = 100, std::string mode = "error");
-    friend sf::Packet& operator<<(sf::Packet& packet, const systemPacket& sp);
-    friend sf::Packet& operator>>(sf::Packet& packet, systemPacket& sp);
-};
-
 class tickPacket : public BasePacket {
 public:
     int tickNb;
@@ -171,10 +158,11 @@ class launchConfigCommandPacket : public BasePacket {
 
 public:
 
-    launchConfigCommandPacket(double threshold=0.0,std::string tdmaMode="",std::string topologyString="");
-    std::string tdmaMode;
+    launchConfigCommandPacket(double threshold,std::string topologyString,int scenarioType);
+    
     std::string topologyString;
     double distanceThreshold;
+    int scenarioType;
     friend sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
 };

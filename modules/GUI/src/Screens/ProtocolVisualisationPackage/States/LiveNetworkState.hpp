@@ -7,13 +7,11 @@
 
 /*
 Holds live information about the ongoing simulation.
-Thought as being complementary of the TopologyFile State.
-
-this+ topologyFileState + SimulatorEngine = reproducible simulation
-
 */
 
-struct ProtocolVisualisationState {
+
+
+struct LiveNetworkState {
     std::string communicationMode = "None";
     //Todo: do we need to protec the states with mutexes? all of them?
     int tickNumber = 0;

@@ -8,39 +8,58 @@
 #include <vector>
 #include <algorithm>
 
-
+//TODO: when we will add C1, we need to adapt the write funciton
 // Helper function to compute nextHop and hopCount for a node toward any C3
 std::optional<std::pair<int, int>> TopologyConfigIO::computeRoutingInfo(
     int startId,
     const std::unordered_map<int, std::unordered_set<int>>& routings,
     const std::unordered_map<int, std::unique_ptr<Device>>& nodes)
 {
+    auto it = routings.find(startId);
+    
+    // Starting node has no routing
+    if (it == routings.end() || it->second.empty()) {
+        return std::make_pair(-1, 0);
+    }
+    
     int current = startId;
     int hopCount = 0;
     int nextHop = 0;
     std::unordered_set<int> visited;
 
     while (true) {
+        // Cycle detection
         if (visited.count(current)) {
             std::cerr << "Cycle detected in routing path starting from node " << startId << ".\n";
             return std::nullopt;
         }
-
         visited.insert(current);
-        auto it = routings.find(current);
-        if (it == routings.end() || it->second.empty()) {
-            const auto& dev = nodes.at(current);
-            if (dev->getClass() == DeviceClass::C3) {
-                return std::make_pair(nextHop, hopCount);
-            } else {
-                std::cerr << "Dead-end routing: Node " << current << " is not a C3 and has no outgoing route.\n";
-                return std::nullopt;
-            }
-        }
-        if (it->second.size() != 1) {
+        
+        it = routings.find(current);
+        
+        // Ambiguous routing
+        if (it != routings.end() && it->second.size() != 1) {
             std::cerr << "Ambiguous routing: Node " << current << " has " << it->second.size() << " outgoing routes.\n";
             return std::nullopt;
         }
+        
+        const auto& dev = nodes.at(current);
+        
+        // Reached C3
+        if (dev->getClass() == DeviceClass::C3) {
+            if (it != routings.end() && !it->second.empty()) {
+                std::cerr << "Error: C3 node " << current << " has routing configured.\n";
+                return std::nullopt;
+            }
+            return std::make_pair(nextHop, hopCount);
+        }
+        
+        // No routing on intermediate/current node - return what we have so far
+        if (it == routings.end() || it->second.empty()) {
+            return std::make_pair(nextHop, hopCount);
+        }
+        
+        // Follow the route
         int next = *it->second.begin();
         if (hopCount == 0) {
             nextHop = next;
@@ -48,51 +67,56 @@ std::optional<std::pair<int, int>> TopologyConfigIO::computeRoutingInfo(
         hopCount++;
         current = next;
     }
-
 }
-
-
-
-
-bool TopologyConfigIO::write(const std::string& path,
-    const std::unordered_map<int, std::unique_ptr<Device>>& nodes,
-    const std::unordered_map<int, std::unordered_set<int>>& routings,
-    TopologyMode mode)
+bool TopologyConfigIO::write(const std::string &path, const std::unordered_map<int, std::unique_ptr<Device>> &nodes, const std::unordered_map<int, std::unordered_set<int>> &routings)
 {
-    bool hasC3=false;
-
+    // PHASE 1: VALIDATION
+    bool hasC3 = false;
+    
+    for (const auto& [id, device] : nodes) {
+        const auto cls = device->getClass();
+        
+        if (cls == DeviceClass::C3) {
+            hasC3 = true;
+        } else {
+            // Validate routing for non-C3 nodes
+            auto routingInfo = TopologyConfigIO::computeRoutingInfo(id, routings, nodes);
+            if (!routingInfo) {
+                std::cerr << "RRC_Uplink Mode Requirement Error: Unable to compute routing info for node " << id << "\n";
+                return false;
+            }
+        }
+    }
+    
+    if (!hasC3) {
+        std::cerr << "Error: No C3 node found in topology.\n";
+        return false;
+    }
+    
+    // PHASE 2: WRITE (only if validation passed)
     std::ofstream outFile(path);
     if (!outFile) {
         std::cerr << "Failed to open config file: " << path << "\n";
         return false;
     }
 
-    std::string modeStr=std::string(magic_enum::enum_name(mode));
-    if (modeStr.empty()) {
-        std::cerr << "Invalid topology mode: " << modeStr << "\n";
-        return false;
-    }
-    outFile << "MODE " << modeStr << "\n";
-
     for (const auto& [id, device] : nodes) {
         const auto cls = device->getClass();
         const auto pos = device->getCenteredPosition();
-
-        if (cls == DeviceClass::C3) hasC3=true;
 
         outFile << "NODE " << id << " "
                 << std::string(magic_enum::enum_name(cls)) << " "
                 << static_cast<int>(pos.x) << " "
                 << static_cast<int>(pos.y);
-        // Skip C3 routing logic
-        if (mode == TopologyMode::RRC_Uplink && cls != DeviceClass::C3) {
+        
+        if (cls != DeviceClass::C3) {
             auto routingInfo = TopologyConfigIO::computeRoutingInfo(id, routings, nodes);
-            if (!routingInfo) {
-                std::cerr << "RRC_Uplink Mode Requirement Error: Unable to compute routing info for node " << id << "\n";
-                return false;
-            }
+            // We already validated, so this should always succeed
             auto [nextHop, hopCount] = *routingInfo;
-            outFile << " nextHop=" << nextHop << " hopCount=" << hopCount;
+            
+            if (nextHop != -1) {
+                outFile << " nextHop=" << nextHop << " hopCount=" << hopCount;
+            }
         }
         outFile << "\n";
     }
@@ -100,99 +124,12 @@ bool TopologyConfigIO::write(const std::string& path,
     outFile.close();
     std::cout << "Topology configuration written to " << path << "\n";
 
-    return hasC3; // Return true if at least one C3 was found
+    return true;
 }
 
 
-
-// bool TopologyConfigIO::read(const std::string& path, TopologyEditorState& state) {
-//     std::ifstream inFile(path);
-//     if (!inFile) {
-//         std::cerr << "Failed to open config file: " << path << "\n";
-//         return false;
-//     }
-
-//     state.resetState();
-
-//     std::string line;
-//     TopologyMode mode;
-//     std::unordered_map<int, int> nextHopMap;
-//     bool foundMode = false;
-
-//     auto trim = [](std::string s) {
-//         s.erase(0, s.find_first_not_of(" \t\r\n"));
-//         s.erase(s.find_last_not_of(" \t\r\n") + 1);
-//         return s;
-//     };
-
-//     while (std::getline(inFile, line)) {
-//         line = trim(line);
-//         if (line.empty() || line[0] == '#')
-//             continue;
-
-//         std::istringstream iss(line);
-//         std::string keyword;
-//         iss >> keyword;
-
-//         if (keyword == "MODE") {
-//             std::string modeStr;
-//             iss >> modeStr;
-//             auto parsed = magic_enum::enum_cast<TopologyMode>(modeStr);
-//             if (!parsed) {
-//                 std::cerr << "Invalid topology mode: " << modeStr << "\n";
-//                 return false;
-//             }
-//             mode = *parsed;
-//             state.setTopologyMode(mode);
-//             foundMode = true;
-//         }
-
-//         else if (keyword == "NODE") {
-//             int id, x, y;
-//             std::string classStr;
-//             if (!(iss >> id >> classStr >> x >> y)) {
-//                 std::cerr << "Invalid NODE entry: " << line << "\n";
-//                 return false;
-//             }
-
-//             auto parsedClass = magic_enum::enum_cast<DeviceClass>(classStr);
-//             if (!parsedClass) {
-//                 std::cerr << "Invalid device class: " << classStr << "\n";
-//                 return false;
-//             }
-
-//             auto device = std::make_unique<Device>(id, *parsedClass, sf::Vector2f{float(x), float(y)}, 100.f);
-//             state.nodes[id] = std::move(device);
-//             state.nodeCounter = std::max(state.nodeCounter, id);
-
-//             std::string token;
-//             while (iss >> token) {
-//                 if (token.rfind("nextHop=", 0) == 0) {
-//                     int nextHop = std::stoi(token.substr(8));
-//                     nextHopMap[id] = nextHop;
-//                 }
-//             }
-//         }
-
-//         else {
-//             std::cerr << "Unknown directive: " << keyword << "\n";
-//         }
-//     }
-
-//     if (mode == TopologyMode::RRC_Uplink) {
-//         for (const auto& [from, to] : nextHopMap) {
-//             if (!state.nodes.count(from) || !state.nodes.count(to)) {
-//                 std::cerr << "Invalid nextHop reference: " << from << " -> " << to << "\n";
-//                 return false;
-//             }
-//             state.routings[from].insert(to);
-//         }
-//     }
-
-//     return foundMode;
-// }
-
-bool TopologyConfigIO::read(const std::string& path, TopologyEditorState& state) {
+bool TopologyConfigIO::read(const std::string &path, TopologyEditorState &state)
+{
     std::ifstream inFile(path);
     if (!inFile) {
         std::cerr << "Failed to open config file: " << path << "\n";
@@ -203,7 +140,7 @@ bool TopologyConfigIO::read(const std::string& path, TopologyEditorState& state)
     return validateConfigFile(inFile, nullptr, &state);
 }
 
-bool TopologyConfigIO::readToTopologyFileState(const std::string& path, TopologyFileState& state) {
+bool TopologyConfigIO::readTopologyConfig(const std::string& path, SimulationConfiguration& state) {
     std::ifstream inFile(path);
     if (!inFile) {
         std::cerr << "Failed to open config file: " << path << "\n";
@@ -233,28 +170,10 @@ bool TopologyConfigIO::readToTopologyFileState(const std::string& path, Topology
         std::string keyword;
         iss >> keyword;
 
-        if (keyword == "MODE") {
-            std::string modeStr;
-            iss >> modeStr;
-
-            auto parsed = magic_enum::enum_cast<TDMAMode>(modeStr);
-            if (!parsed) {
-                std::cerr << "Invalid TDMAMode: " << modeStr << "\n";
-                return false;
-            }
-
-            state.setTDMAMode(*parsed);
-            foundTDMA = true;
-        } else {
+        
             // Treat all non-MODE lines as topology text
             topologyBuffer << originalLine << "\n";
         }
-    }
-
-    if (!foundTDMA) {
-        std::cerr << "Missing or invalid MODE directive.\n";
-        return false;
-    }
 
     state.setTopologyLines(topologyBuffer.str());
     return true;
@@ -295,19 +214,7 @@ bool TopologyConfigIO::validateConfigFile(std::istream& in, std::string* outText
         std::string keyword;
         iss >> keyword;
 
-        if (keyword == "MODE") {
-            std::string modeStr;
-            iss >> modeStr;
-            auto parsed = magic_enum::enum_cast<TopologyMode>(modeStr);
-            if (!parsed) {
-                std::cerr << "Invalid topology mode: " << modeStr << "\n";
-                return false;
-            }
-            mode = *parsed;
-            if (outState) outState->setTopologyMode(mode);
-            foundMode = true;
-        }
-        else if (keyword == "NODE") {
+        if (keyword == "NODE") {
             int id, x, y;
             std::string classStr;
             if (!(iss >> id >> classStr >> x >> y)) {

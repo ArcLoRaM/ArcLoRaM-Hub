@@ -8,8 +8,8 @@
 #include "Managers/DeviceManager.hpp"
 #include "Simulation/SimulationController.hpp"
 #include "../../Network/Client/ClientConnectionMonitor.hpp"
-#include "States/ProtocolVisualisationState.hpp"
-#include "States/TopologyFileState.hpp"
+#include "States/LiveNetworkState.hpp"
+#include "States/SimulationConfiguration.hpp"
 
 
 class ProtocolVisualiser {
@@ -23,13 +23,13 @@ public:
     DeviceManager& getDeviceManager() { return deviceManager; }
     RoutingManager& getRoutingManager() { return routingManager; }
     AnimationManager& getAnimationManager() { return animationManager; }
-    ProtocolVisualisationState& getProtocolState() { return protocolState; }
+    LiveNetworkState& getProtocolState() { return protocolState; }
 
     tgui::CanvasSFML::Ptr getCanvas() { return uiController.getCanvas(); }
 private:
     tgui::Gui& gui;
-    ProtocolVisualisationState protocolState;
-    TopologyFileState topologyState;
+    LiveNetworkState protocolState;
+    SimulationConfiguration topologyState;
 
     UIController uiController;
     AnimationManager animationManager;

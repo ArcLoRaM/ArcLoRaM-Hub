@@ -20,31 +20,6 @@ void TopologyEditorManager::setupUI( sf::View &editorView)
     coordLabel->setPosition({"40%", "2%"});
     gui.add(coordLabel);
 
-    // Create a ComboBox for TopologyMode selection
-    modeDropdown = UIFactory::createEnumComboBox({"15%", "5%"});
-    modeDropdown->setPosition({"9%", "2%"});
-
-    // Add each enum value by name
-    for (auto mode : magic_enum::enum_values<TopologyMode>())
-    {
-        std::string label = std::string(magic_enum::enum_name(mode));
-        modeDropdown->addItem(label, label);
-    }
-
-    modeDropdown->onItemSelect([this]
-                           {
-        resetToggleButtons();
-        auto selected = modeDropdown->getSelectedItem();
-         if (auto modeOpt = magic_enum::enum_cast<TopologyMode>(selected.toStdString())) {
-            state.setTopologyMode(*modeOpt);
-             std::cout << "Selected mode: " << selected.toStdString() << std::endl;
-         } });
-
-    modeDropdown->onFocus([this]
-                           {
-        resetToggleButtons();
-                           });
-    gui.add(modeDropdown);
 
     auto saveButton = UIFactory::createButton("Save",[this]{
         resetToggleButtons();
@@ -59,16 +34,6 @@ void TopologyEditorManager::setupUI( sf::View &editorView)
             return;
         }
 
-        if((modeDropdown->getSelectedItem()).empty()) {
-            auto errorBox = UIFactory::createMessageBox("Error", "Please select a topology mode.");
-            errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
-                if(button == "OK" ){
-                    msgBox->getParent()->remove(msgBox->shared_from_this()); 
-                } 
-            });
-            gui.add(errorBox);
-            return;
-        }
 
 
         //TODO: put more check control on the topology (tree type for RRC Uplink, at least one C3....), no circle rooting...
@@ -90,8 +55,8 @@ void TopologyEditorManager::setupUI( sf::View &editorView)
         dialog->setFileTypeFilters({ {"Simulation File", {"*.simcfg"}} }, 0);
       //convert "2%" to pixels based on window height
         dialog->onFileSelect([this](const tgui::String& filePath) {
-            if(!TopologyConfigIO::write(filePath.toStdString(), state.getNodes(), state.getRoutings(), state.getTopologyMode())){
-                auto errorBox = UIFactory::createMessageBox("Incorrect Topology", "An Invalid file was created");
+            if(!TopologyConfigIO::write(filePath.toStdString(), state.getNodes(), state.getRoutings())){
+                auto errorBox = UIFactory::createMessageBox("Incorrect Topology", "No File was created");
                 errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
                 if(button == "OK" ){
                     msgBox->getParent()->remove(msgBox->shared_from_this()); 

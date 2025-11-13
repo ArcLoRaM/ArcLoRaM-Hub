@@ -3,14 +3,14 @@
 #include "../../Network/TcpServer/TcpServer.hpp"
 #include "../../Shared/Libraries/magic_enum.hpp"
 
-void SimulationController::startSimulation(const TopologyFileState &config)
+void SimulationController::startSimulation(const SimulationConfiguration &config)
 {
     std::cout << "Starting simulation..." << std::endl;
     sf::Packet basePacket;
 
     // Construct launchConfigCommandPacket with required arguments
-    // for now, we don't let the user decide on the distance threshold. Maybe later we wil
-    launchConfigCommandPacket confPacket(1000.0 /*topoFileState.getDistanceThreshold()*/, std::string(magic_enum::enum_name(config.getTDMAMode())), config.getTopologyLines());
+    // for now, we don't let the user decide on the distance threshold. 
+    launchConfigCommandPacket confPacket(1000.0 /*config.getDistanceThreshold()*/, config.getTopologyLines(),static_cast<int>(config.getScenarioType()));
     basePacket << confPacket;
     TcpServer::instance().transmitPacket(basePacket);
     running.store(true);

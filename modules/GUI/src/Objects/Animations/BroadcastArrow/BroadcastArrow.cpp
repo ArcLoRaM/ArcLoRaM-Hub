@@ -13,8 +13,8 @@ BroadcastArrow::BroadcastArrow(const sf::Vector2f& start,
     style.radius =config::distanceThreshold;
     style.baseColor = sf::Color::White;
     style.maxOpacity = 35;
-    style.ringCount = 10;
-    style.outlineThickness = 0.2f;
+    style.ringCount = 20;
+    style.outlineThickness = 0.0f;
     style.pulsing = true;
 
     broadcast = std::make_unique<StaticBroadcast>(start, style);

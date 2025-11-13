@@ -10,19 +10,16 @@
 #include <SFML/System/Vector2.hpp>
 #include "../../Objects/Device/Device.hpp"
 
-enum class TDMAMode {
-    RRC_Uplink,
-    RRC_Downlink,
-    RRC_Beacon,
-    ENC_Downlink,
-    ENC_Uplink,
-    ENC_Beacon,
-    No_Mode
+
+//Scenario types should be in ascending order
+//ex; sce1=1, sce2=2, etc or will cause mismatch in scenario selection
+enum class ScenarioType {
+    SimonV1=0
 };
 
 
 
-class TopologyFileState {
+class SimulationConfiguration {
 
 /*
 Holds the state of the parsed topology, from the configuration file.
@@ -32,13 +29,10 @@ simulator.
 */
 
 public:
-    const TDMAMode getTDMAMode()const {return currentMode; } 
     const double getDistanceThreshold() const { return distanceThreshold; }
     const std::string& getTopologyLines() const { return topologyLines; }
 
-    void setTDMAMode(TDMAMode newMode) {
-        currentMode = newMode;
-    }
+
 
     void setDistanceThreshold(double newThreshold) {
         distanceThreshold = newThreshold;
@@ -50,19 +44,22 @@ public:
 
     void resetState()
     {
-        currentMode = TDMAMode::No_Mode; // Default mode
         distanceThreshold = 0.0; // Default distance threshold
         topologyLines.clear();
     };
 
+    void setScenarioType(ScenarioType type) {
+        scenarioType = type;
+    }
+    ScenarioType getScenarioType() const {
+        return scenarioType;
+    }
 
     
     
 private:
-    
-
-    TDMAMode currentMode;
-    double distanceThreshold; // Default distance threshold
+        double distanceThreshold; // Default distance threshold
     std::string topologyLines;
+    ScenarioType scenarioType = ScenarioType::SimonV1;
 };
 

@@ -7,7 +7,7 @@
 #include <memory>
 #include <optional>
 #include "../../Screens/TopologyEditorPackage/TopologyEditorState.hpp"
-#include "../../Screens/ProtocolVisualisationPackage/States/TopologyFileState.hpp"
+#include "../../Screens/ProtocolVisualisationPackage/States/SimulationConfiguration.hpp"
 #include "../../Objects/Device/Device.hpp"
 
 
@@ -16,13 +16,13 @@ public:
     // Write current topology to a file
     static bool write(const std::string& path,
                       const std::unordered_map<int, std::unique_ptr<Device>>& nodes,
-                      const std::unordered_map<int, std::unordered_set<int>>& routings,
-                      TopologyMode mode);
+                      const std::unordered_map<int, std::unordered_set<int>>& routings
+                      );
     // Placeholder for future extension
    static bool read(const std::string& path, TopologyEditorState& state);
     static std::optional<std::string> readToString(const std::string& path);
 
-static bool readToTopologyFileState(const std::string& path, TopologyFileState& state);
+static bool readTopologyConfig(const std::string& path, SimulationConfiguration& state);
 
 private:
 

@@ -22,7 +22,6 @@ void PacketHandler::handlePacket(sf::Packet &packet)
     switch (packetType) {
 
     //Protocol actions
-    case 0: handleSystemPacket(packet); break;
     case 1: handleTickPacket(packet); break;
     case 2: handleStateNodePacket(packet); break;
     case 3: handlePositionPacket(packet); break;
@@ -53,15 +52,6 @@ void PacketHandler::handlePongPacket(sf::Packet &packet)
 }
 
 
-void PacketHandler::handleSystemPacket(sf::Packet& packet) {
-
-    //old serialization way
-    systemPacket sp;
-    packet >> sp.distanceThreshold >> sp.mode;
-    //missing the distance threshold. For the moment it's manually set
-   visualiser.getProtocolState().communicationMode = sp.mode;
-
-}
 
 void PacketHandler::handleTickPacket(sf::Packet& packet) {
     tickPacket tp;
