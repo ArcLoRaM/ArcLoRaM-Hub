@@ -13,39 +13,39 @@ void CommandDispatcher::onCommand(sf::Packet& packet) {
 
     switch (type) {
         case 100: {
-            logger.logSystem("Configuration received.");
+            logger.logDebug("Configuration received.");
             handleLaunchConfigCommand(packet);                
             break;
         }
 
         case 101:
-            logger.logSystem("StopSimulation command received.");
+            logger.logDebug("StopSimulation command received.");
             if (stopCallback) {
                 stopCallback();
             }
             break;
 
         case 102:
-            logger.logSystem("ResumeSimulation command received.");
+            logger.logDebug("ResumeSimulation command received.");
             if (resumeCallback) resumeCallback();
             break;
 
         case 103:
-            // logger.logSystem("Ping command received.");
+            //Too many pings can flood the log, so better not log this
             if (pingCallback) pingCallback();
             break;
 
         case 105:
-            logger.logSystem("RestartSimulation command received.");
+            logger.logDebug("RestartSimulation command received.");
             if (restartCallback) restartCallback();
             break;
         case 106:
-            logger.logSystem("PauseSimulation command received.");
+            logger.logDebug("PauseSimulation command received.");
             if (pauseCallback) pauseCallback();
             break;
 
         default:
-            logger.logSystem("Unknown command type received: " + std::to_string(type));
+            logger.logError("Unknown command type received: " + std::to_string(type));
             break;
     }
 }
@@ -64,9 +64,10 @@ void CommandDispatcher::handleLaunchConfigCommand( sf::Packet& packet)
                 };
             }
 
-            logger.logSystem("Scenario: " + std::to_string(cmd.scenarioType)
+            logger.logInfo("Scenario: " + std::to_string(cmd.scenarioType)
                              + " | Threshold: " + std::to_string(cmd.distanceThreshold)
                              );
+            logger.logDebug("Topology:\n" + cmd.topologyString);
 
 }
     

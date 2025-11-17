@@ -73,7 +73,7 @@ bool Client::transmit(sf::Packet& packet) {
     if (!connected.load()) {
         // Log only on the first failed send after a drop
         if (notConnectedLogArmed.exchange(false)) {
-            logger.logSystem("****** Client is not connected to a server ******");
+            logger.logError("****** Client is not connected to a server ******");
         }
         return false;
     }
@@ -84,7 +84,7 @@ bool Client::transmit(sf::Packet& packet) {
     do {
         status = socket.send(temp);
         if (status == sf::Socket::Status::Disconnected) {
-            logger.logSystem("Client disconnected during send.");
+            logger.logError("Client disconnected during send.");
             connected.store(false);
             socket.disconnect();               // trigger reconnect loop
             notConnectedLogArmed.store(true);   // arm
@@ -92,7 +92,7 @@ bool Client::transmit(sf::Packet& packet) {
             return false;
         }
         if (status != sf::Socket::Status::Done && status != sf::Socket::Status::Partial) {
-            logger.logSystem("****** Error sending packet ******");
+            logger.logError("****** Error sending packet ******");
             return false;
         }
     } while (status == sf::Socket::Status::Partial);
@@ -120,7 +120,7 @@ void Client::receiveLoop() {
         while (running.load() && !connected.load()) {
             logger.logSystem("Attempting to connect to server...");
             if (tryConnect()) break;
-            logger.logSystem("****** Error connecting to server. Retrying in 5 seconds... ******");
+            logger.logError("****** Error connecting to server. Retrying in 5 seconds... ******");
             std::this_thread::sleep_for(reconnectDelay);
         }
         if (!running.load()) break;
@@ -144,7 +144,6 @@ void Client::receiveLoop() {
                     lock.unlock();           // avoid deadlocks
                     if (cb) cb(packet);
                 } else if (status == sf::Socket::Status::Disconnected) {
-                    logger.logSystem("Server disconnected.");
                     connected.store(false);
                     lock.unlock();
                     socket.disconnect();        // ensure clean state for next try
@@ -153,10 +152,9 @@ void Client::receiveLoop() {
                     break;                      // leave session loop -> reconnect loop
                 } else {
                     // Optional: log other errors
-                    // logger.logSystem("Receive error: " + std::to_string(static_cast<int>(status)));
+                    // logger.logError("Receive error: " + std::to_string(static_cast<int>(status)));
                 }
             }
         }
     }
-    logger.logSystem("Client receive loop exited.");
 }

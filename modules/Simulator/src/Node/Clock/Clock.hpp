@@ -16,6 +16,8 @@
 
 #include <stop_token>     // C++20
 
+class MetricsAggregator; // Forward declaration
+
 using CallbackType = std::function<void()>;
 
 
@@ -52,7 +54,9 @@ explicit Clock(Logger& logger, ms tickPeriod = ms{1})
     void scheduleTransmissionStart(int64_t timeMs, CallbackType callback);
     void scheduleTransmissionEnd(int64_t timeMs, CallbackType callback);
 
-    
+    // Metrics integration
+    void setMetricsAggregator(MetricsAggregator* aggregator) { metricsAggregator = aggregator; }
+
   std::multimap<int64_t, std::shared_ptr<Node>> getCommunicationStepsSnapshot() const; 
 
 
@@ -73,6 +77,9 @@ private:
     Logger& logger;
     mutable std::mutex clockMutex;
     std::condition_variable_any cv;
+
+    // Metrics
+    MetricsAggregator* metricsAggregator = nullptr;
 
     //Schedules
     //use distinct multimap for every kind of events (battery depletion etc..)

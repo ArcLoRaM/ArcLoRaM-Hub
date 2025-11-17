@@ -2,6 +2,8 @@
 #include "../../../Setup/Common.hpp"
 #include "../../../Miscellaneous/Utilities/Utilities.hpp"
 #include "C2_RRC_UplinkSlotManager.hpp"
+#include "../../../Metrics/MetricsAggregator.hpp"
+#include "../../../Metrics/NodeMetrics.hpp"
 
 using namespace packet_tool;
 using namespace common;
@@ -83,6 +85,20 @@ void C2_RRC_UplinkHandler::handleDataPacketReception(C2_Node &node,const std::ve
         packetList.push_back(packetId);
         // TODO: it's a simulation, in real implementation, we should save the message and add it to a buffer
         node.RRC_UPLINK_nbPayloadLeft++;
+
+        // === METRICS: Track received packet for forwarding ===
+        if (node.metricsAggregator) {
+            // Look up the globalId of the received packet
+            GlobalPacketID receivedGlobalId = node.metricsAggregator->lookupGlobalPacketId(
+                senderId,
+                packetId
+            );
+
+            if (receivedGlobalId != 0) {
+                // Add to forwarding queue so we know to use recordPacketForwarded when transmitting
+                node.RRC_UPLINK_forwardingQueue.push(receivedGlobalId);
+            }
+        }
     }
 }
 
@@ -91,6 +107,20 @@ void C2_RRC_UplinkHandler::handleAckPacketReception(C2_Node &node,uint16_t sende
     // is it the Ack packet we were waiting for?
     if (packetId == node.RRC_UPLINK_localIDPacketCounter)
     {
+        // === METRICS: Track ACK reception ===
+        if (node.metricsAggregator && node.metrics) {
+            // Lookup the global packet ID from (nodeId, localId)
+            GlobalPacketID globalId = node.metricsAggregator->lookupGlobalPacketId(
+                node.getId(),
+                packetId
+            );
+
+            if (globalId != 0) {  // 0 means not found
+                // Record ACK reception for PDR tracking
+                node.metrics->recordAckReception(globalId, node.getCurrentTime());
+            }
+        }
+
         // we received the ACK for the last packet we sent
         node.RRC_UPLINK_nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
         node.RRC_UPLINK_localIDPacketCounter++; // increasing the counter to indicate we send a "new" packet
@@ -223,6 +253,13 @@ bool C2_RRC_UplinkHandler::canCommunicateFromSleeping(C2_Node &node) {
         // Node can only act when its fixed category matches the current simulation slot category
         if (node.RRC_UPLINK_fixedSlotCategory == node.RRC_UPLINK_currentDataSlotCategory)
         {
+            // Refill slots if we've exhausted them but still have payloads to send
+            if (!node.RRC_UPLINK_slotManager->hasSlots() && node.RRC_UPLINK_nbPayloadLeft > 0)
+            {
+                node.RRC_UPLINK_slotManager->initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlotsPerModuloNode);
+                node.logEvent("RefillSlots");
+            }
+
             // the node has the opportunity to transmit data
             if (node.RRC_UPLINK_slotManager->canTransmitNow() && node.RRC_UPLINK_nbPayloadLeft > 0)
             {
@@ -325,6 +362,49 @@ void C2_RRC_UplinkHandler::buildAndTransmitDataPacket(C2_Node &node, std::vector
     appendVector(dataPacket, payloadPacket);
     appendVector(dataPacket, hashFunction);
 
+    // === METRICS: Track packet transmission ===
+    if (node.metricsAggregator && node.metrics) {
+        // Assign global packet ID
+        GlobalPacketID globalId = node.metricsAggregator->assignGlobalPacketId();
+
+        // Register mapping: (nodeId, localId) -> globalId for ACK correlation
+        node.metricsAggregator->registerPacketKey(
+            node.getId(),
+            node.RRC_UPLINK_localIDPacketCounter,
+            globalId
+        );
+
+        // Record packet transmission in node metrics (unified PDR tracking)
+        node.metrics->recordPacketTransmission(
+            globalId,
+            node.RRC_UPLINK_infoFromBeaconPhase->getNextNodeIdInPath(),
+            node.getCurrentTime()
+        );
+
+        // Record in global aggregator for latency tracking
+        // Check if this is a forwarded packet or originated
+        if (!node.RRC_UPLINK_forwardingQueue.empty()) {
+            // This is a forwarded packet - pop the received globalId and link them
+            GlobalPacketID receivedGlobalId = node.RRC_UPLINK_forwardingQueue.front();
+            node.RRC_UPLINK_forwardingQueue.pop();
+
+            node.metricsAggregator->recordPacketForwarded(
+                node.getId(),
+                receivedGlobalId,
+                globalId,
+                node.getCurrentTime()
+            );
+        } else {
+            // This is an originated packet
+            node.metricsAggregator->recordPacketOriginated(
+                node.getId(),
+                globalId,
+                node.getCurrentTime()
+            );
+        }
+    }
+    //Todo: add an else statement and a warning
+    
     // virtualization of the Transmit() from Physical Layer
     node.addMessageToTransmit(dataPacket, common::rrc_uplink::timeOnAirDataPacket_ms);
 }

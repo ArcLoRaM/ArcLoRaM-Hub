@@ -22,6 +22,14 @@ void PhyLayer::takeOwnership(std::vector<std::shared_ptr<Node>> nodes)
     }
 }
 
+void PhyLayer::setMetricsAggregatorForAllNodes(MetricsAggregator* aggregator) {
+    for (auto& node : nodes) {
+        node->setMetricsAggregator(aggregator);
+        // Now that aggregator is set, initialize metrics (which will register with aggregator)
+        node->initializeMetrics();
+    }
+}
+
 void PhyLayer::registerNode(std::shared_ptr<Node> node) {
     if (node == nullptr) {
     throw std::invalid_argument("Cannot register a nullptr node");
@@ -80,13 +88,13 @@ std::unordered_map<int,std::vector<std::shared_ptr<Node>>> PhyLayer::getReachabl
         }   
         allReachableNodes[node->getId()]= (getReachableNodesForNode(node));
     }
-    logger.logSystem("All reachable nodes calculated:");
+    logger.logInfo("All reachable nodes calculated:");
     for (const auto& [key, value] : allReachableNodes) {
         std::string msg = "Node " + std::to_string(key) + " can reach: ";
         for (const auto& reachableNode : value) {
             msg += std::to_string(reachableNode->getId()) + " ";
         }
-        logger.logSystem(msg);
+        logger.logInfo(msg);
     }
     return allReachableNodes;
 }

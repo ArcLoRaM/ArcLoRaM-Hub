@@ -6,14 +6,19 @@
 #include <unordered_map>
 #include <memory>
 #include <cstdint>
-#include "../Node/Node.hpp" 
+#include "../Node/Node.hpp"
 #include "../Node/Clock/Clock.hpp"
+
+class MetricsAggregator; // Forward declaration
 
 class PhyLayer {
 public:
     PhyLayer(double distanceThreshold,Logger& logger);
 
     void takeOwnership(std::vector<std::shared_ptr<Node>> nodes);
+
+    // Set MetricsAggregator for all nodes (called after takeOwnership)
+    void setMetricsAggregatorForAllNodes(MetricsAggregator* aggregator);
 
     int getNbNodes() const { return nodes.size(); };
 

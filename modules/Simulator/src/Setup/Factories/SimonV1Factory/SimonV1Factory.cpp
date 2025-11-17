@@ -52,8 +52,8 @@ void SimonV1Factory::configureBlueprint() {
     // C1 nodes: no pattern defined for RRC modes (they sleep)
     // Don't call setPatternForMode for C1 - they'll be in free scheduling mode (which means sleep)
     
-    logger.logSystem("SimonV1 blueprint configured:");
-    logger.logSystem(blueprint->getScheduleDescription());
+    logger.logInfo("SimonV1 blueprint configured:");
+    logger.logInfo(blueprint->getScheduleDescription());
 }
 
 std::shared_ptr<C3_Node> SimonV1Factory::createC3Node(int id, std::pair<int, int> coordinates) {

@@ -11,32 +11,42 @@ DeploymentManager::DeploymentManager(Logger& logger
     : logger(logger) {}
 
 
-bool DeploymentManager::loadTopologyFromString(ScenarioType scenario, const std::string &topology)
+bool DeploymentManager::loadTopologyFromString(ScenarioType scenario, const std::string& topology)
 {
+    std::istringstream stream(topology);
+    std::unordered_set<int> nodeIds;
+    std::unique_ptr<INodeFactory> factory;
+
     try {
-        std::istringstream stream(topology);
-
-       
-        std::unordered_set<int> nodeIds;
-
-        std::unique_ptr<INodeFactory> factory = FactorySelector::getFactory(scenario, logger);
-
-        std::string line;
-        bool modeParsed = false;
-
-        while (std::getline(stream, line)) {
-            if (line.empty() || line[0] == '#') continue;
-
-            parseLine(line, *factory, parsedNodes, nodeIds);
-        }
-
-
-        return true;
+        factory = FactorySelector::getFactory(scenario, logger);
     } catch (const std::exception& ex) {
-        logger.logSystem("Error parsing deployment from string");
+        logger.logCritical("Failed to get factory for scenario: " + std::string(ex.what()));
         return false;
     }
+
+    std::string line;
+    int lineNumber = 0;
+
+    while (std::getline(stream, line)) {
+        ++lineNumber;
+
+        // Skip empty lines and comments
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+
+        try {
+            parseLine(line, *factory, parsedNodes, nodeIds);
+        } catch (const std::exception& ex) {
+            logger.logCritical("Error parsing line " + std::to_string(lineNumber) + ": " + line);
+            logger.logCritical("Reason: " + std::string(ex.what()));
+            return false;
+        }
+    }
+
+    return true;
 }
+
 
 
 std::vector<std::shared_ptr<Node>> DeploymentManager::getParsedNodes()
@@ -45,26 +55,7 @@ std::vector<std::shared_ptr<Node>> DeploymentManager::getParsedNodes()
 }
 
 
-
-void DeploymentManager::parseLine(const std::string& line,
-                                  INodeFactory& factory,
-                                  std::vector<std::shared_ptr<Node>>& nodes,
-                                  std::unordered_set<int>& nodeIds
-                                  )
-{
-
-
-//   todo: make a parse Line versatile that instantiate everything depending on the node line,
-//   check if other parameters such as distnace treshold are not included here 
-//   think long term: what could be present in the config file that messes up with this?
-//   are there going to be a lof of optional initialization variable for the nodes?
-//   question: how can we make sure that an incorrect topology (ex: a missing nextId or hop count) is declared as incompatible with certain scenarios? ex: simonV1 -> start by RRC_Uplink, assumption is beacon phase happened before so there needs ot be these nextId and hop count __cpp_variable_templates 
-    
-//     should it be done in the GUI, here? somewhere else?;
-
-
-
-    // std::istringstream iss(line);
+// std::istringstream iss(line);
     // std::string token;
     // iss >> token;
 
@@ -113,11 +104,20 @@ void DeploymentManager::parseLine(const std::string& line,
     // }
 
 
+void DeploymentManager::parseLine(const std::string& line,
+                                  INodeFactory& factory,
+                                  std::vector<std::shared_ptr<Node>>& nodes,
+                                  std::unordered_set<int>& nodeIds
+                                  )
+{
+    
+
 std::istringstream iss(line);
     std::string token;
     iss >> token;
 
     if (token != "NODE") {
+        logger.logCritical("Invalid line: must start with NODE.");
         throw std::invalid_argument("Invalid line: must start with NODE.");
     }
 
@@ -126,6 +126,7 @@ std::istringstream iss(line);
     iss >> id >> type >> x >> y;
 
     if (nodeIds.count(id)) {
+        logger.logCritical("Duplicate node ID detected: " + std::to_string(id));
         throw std::invalid_argument("Duplicate node ID detected: " + std::to_string(id));
     }
     nodeIds.insert(id);
@@ -140,16 +141,28 @@ std::istringstream iss(line);
         std::string param;
         while (iss >> param) {
             auto delimiterPos = param.find('=');
-            if (delimiterPos == std::string::npos) {
+            if (delimiterPos == std::string::npos || delimiterPos == param.size() - 1) {
+                logger.logCritical("Invalid parameter format: " + param);
                 throw std::invalid_argument("Invalid parameter format: " + param);
             }
-            auto key = param.substr(0, delimiterPos);
-            auto value = std::stoi(param.substr(delimiterPos + 1));
 
+            auto key = param.substr(0, delimiterPos);
+            auto valueStr = param.substr(delimiterPos + 1);
+
+            int value;
+            try {
+                value = std::stoi(valueStr);
+            } catch (const std::exception& e) {
+                logger.logCritical("Invalid integer value in parameter: " + param);
+                throw;
+            }
+
+            
             if (key == "nextHop") nextHop = value;
             else if (key == "hopCount") hopCount = value;
             else {
-                logger.logSystem("Warning: Unknown parameter '" + key + "' for C2 node.");
+
+                logger.logWarning("Unknown parameter '" + key + "' for C2 node.");
             }
         }
 
@@ -157,9 +170,11 @@ std::istringstream iss(line);
     }
     else if (type == "C1") {
         // nodes.push_back(factory.createC1Node(id, {x, y}));
+        logger.logCritical("C1 nodes are not supported yet");
         throw std::invalid_argument("C1 nodes are not supported yet");
     }
     else {
+        logger.logCritical("Unknown node type: " + type);
         throw std::invalid_argument("Unknown node type: " + type);
     }
 }

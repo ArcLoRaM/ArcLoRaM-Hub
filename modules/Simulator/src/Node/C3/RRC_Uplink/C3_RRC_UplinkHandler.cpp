@@ -1,5 +1,7 @@
 #include "C3_RRC_UplinkHandler.hpp"
 #include "../../../Miscellaneous/Utilities/Utilities.hpp"
+#include "../../../Metrics/MetricsAggregator.hpp"
+#include "../../../Metrics/NodeMetrics.hpp"
 
 using namespace common;
 using namespace packet_tool;
@@ -107,6 +109,25 @@ bool C3_RRC_UplinkHandler::receiveMessage(C3_Node &node, const std::vector<uint8
 
     // }
     node.receptionStateDisplay(node.RRC_UPLINK_lastSenderId, ReceptionState::Received);
+
+    // === METRICS: Track packet delivery to C3 (triggers end-to-end latency calculation) ===
+    if (node.metricsAggregator) {
+        // Lookup global packet ID from sender's (nodeId, localId)
+        GlobalPacketID globalId = node.metricsAggregator->lookupGlobalPacketId(
+            node.RRC_UPLINK_lastSenderId,
+            node.RRC_UPLINK_lastLocalIDPacket
+        );
+
+        if (globalId != 0) {  // 0 means not found
+            // Notify aggregator that packet reached C3
+            // This triggers latency calculation for ALL nodes in the forwarding path
+            node.metricsAggregator->recordPacketDeliveredToC3(
+                globalId,
+                node.getCurrentTime()
+            );
+        }
+        
+    }
 
     // We don't really care about the payload and the hash function at this stage of development
 

@@ -9,6 +9,7 @@
 #include "Connectivity/Logger/Logger.hpp"
 #include "Node/Clock/Clock.hpp"
 #include "PhyLayer/PhyLayer.hpp"
+#include "Metrics/MetricsAggregator.hpp"
 
 
 /*
@@ -39,8 +40,10 @@ private:
     Client tcpClient;
     CommandDispatcher dispatcher;
     std::atomic<bool> running;
+
+    // Simulation components (destruction order matters!)
+    std::unique_ptr<MetricsAggregator> metricsAggregator;
     std::unique_ptr<Clock> clock;
     std::unique_ptr<PhyLayer> phyLayer;
 
-    
 };

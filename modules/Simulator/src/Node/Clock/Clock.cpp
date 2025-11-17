@@ -1,4 +1,6 @@
 #include "Clock.hpp"
+#include "../../Metrics/MetricsAggregator.hpp"
+#include "../../Metrics/MetricsConfig.hpp"
 #include <barrier>
 void Clock::start(){
         
@@ -61,7 +63,13 @@ void Clock::run(std::stop_token st) {
 
             executeCallbacksInRange(transmissionStartCallbacks,  start, end);
             executeCallbacksInRange(transmissionEndCallbacks,    start, end);
-            
+
+        // === METRICS: Periodic sampling ===
+        if (metricsAggregator &&
+            tickCount % MetricsConfig::DEFAULT_SAMPLING_INTERVAL_TICKS == 0) {
+            metricsAggregator->sampleAllNodes(end);
+        }
+
         {
             std::scoped_lock lk(clockMutex);
             tLastMs = end;
@@ -107,6 +115,8 @@ void Clock::pause() {
 void Clock::resume() {
     {
         std::scoped_lock lk(clockMutex);
+        logger.logSystem("Clock resumed.");
+
         if (!running.load()) return;
         paused.store(false);
     }

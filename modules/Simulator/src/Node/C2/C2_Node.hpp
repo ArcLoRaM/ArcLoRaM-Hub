@@ -3,6 +3,8 @@
 #include "../../Setup/Common.hpp"
 #include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include "../ModeHandler.hpp"
+#include "../../Metrics/MetricsTypes.hpp"
+#include <queue>
 
 //RRC_Uplink
 class C2_RRC_UplinkHandler; // forward declaration
@@ -125,7 +127,7 @@ protected:
 
     //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
     uint8_t RRC_UPLINK_nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
-    uint8_t RRC_UPLINK_initialnbPayload = 30; // initial number of payload
+    uint8_t RRC_UPLINK_initialnbPayload = 3; // initial number of payload
 
 //There are states for the slot strategy (so should be a separate class renamed depending on the strategy used)(such as SimonV1..) and state inherent to node mode (like size queue...)
     // Slot Strategy ---------------------------------------------------------------------------------------
@@ -135,11 +137,15 @@ protected:
     uint8_t RRC_UPLINK_fixedSlotCategory;
 
     // Packet MAP: we need the packet Map to not forward already forwarded data packet (ack can be lost which leads to retransmission of the same Data packet)
-    using PacketID = uint16_t; //do this for every packets / custom state node 
+    using PacketID = uint16_t; //do this for every packets / custom state node
     using SenderID = uint16_t;
-    using PacketList = std::vector<PacketID>;                 
-    using PacketMap = std::unordered_map<SenderID, PacketList>; 
-    PacketMap RRC_UPLINK_packetsMap; 
+    using PacketList = std::vector<PacketID>;
+    using PacketMap = std::unordered_map<SenderID, PacketList>;
+    PacketMap RRC_UPLINK_packetsMap;
+
+    // Forwarding queue: Track globalIds of received packets waiting to be forwarded
+    // This enables proper multi-hop latency tracking via recordPacketForwarded()
+    std::queue<GlobalPacketID> RRC_UPLINK_forwardingQueue;
 
     std::unique_ptr<C2_RRC_UplinkSlotManager> RRC_UPLINK_slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)
 

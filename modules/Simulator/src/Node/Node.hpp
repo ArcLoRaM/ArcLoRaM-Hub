@@ -21,15 +21,15 @@
 #include "../TDMA/IScheduleBlueprint.hpp"
 
 class PhyLayer; // Forward declaration of PhyLayer class to avoid circular dependency
+class NodeMetrics; // Forward declaration
+class MetricsAggregator; // Forward declaration
 
 
 class Node : public std::enable_shared_from_this<Node> {
 public:
 
     Node(int id, Logger& logger,std::pair<int, int> coordinates, double batteryLevel=2.0);
-    virtual ~Node() {
-        
-    }
+    virtual ~Node(); // Declared here, defined in .cpp to handle unique_ptr<NodeMetrics> deletion
     
 
     virtual std::string initMessage() const;//default message to be logged when the node starts
@@ -51,6 +51,13 @@ public:
     void setPhyLayer(PhyLayer* phy){
         phyLayer = phy;
     }
+
+    void setMetricsAggregator(MetricsAggregator* aggregator){
+        metricsAggregator = aggregator;
+    }
+
+    // Initialize metrics (called after metricsAggregator is set)
+    void initializeMetrics();
 
     void onTimeChange(WindowNodeState proposedState);
     virtual  int getClassId() const =0;
@@ -86,6 +93,7 @@ public:
     void logEvent(const std::string& message) {
         logger.logEvent(nodeId, message);
     }
+
     double batteryLevel=3.0;
      NodeClass nodeClass= NodeClass::NotInitialized;
     std::pair<int, int> coordinates ={0,0};//in meters (x,y)
@@ -94,6 +102,9 @@ public:
 
     PhyLayer* phyLayer = nullptr; // Pointer to the PhyLayer instance, can be set later
 
+    // Metrics tracking
+    std::unique_ptr<NodeMetrics> metrics;
+    MetricsAggregator* metricsAggregator = nullptr;
 
     //methods
     //the node adds a message to the transmitting buffer and notifies the simulation manager
@@ -110,11 +121,7 @@ public:
         
         return currentState;
     }
-   void setCurrentState(NodeState newState) {
-    
-    currentState = newState;
-
-}
+    void setCurrentState(NodeState state);
 
     //we need to define in child classes the state machine
     //convention for the name of the methods:

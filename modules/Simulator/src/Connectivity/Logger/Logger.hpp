@@ -1,94 +1,71 @@
 
-
 #pragma once
 
 #include <string>
 #include <vector>
-#include <thread>
-#include <mutex>
-#include <queue>
-#include <condition_variable>
-#include <map>
-#include <fstream>
-#include <variant>
-#include <iostream>
-#include <SFML/Network.hpp> // Assuming this is available
-#include "../TCP/Client/Client.hpp" // Assuming this is available
+#include <memory>
+#include "LogProcessor.hpp"
+#include "TcpSender.hpp"
+#include "LogSeverity.hpp"
+#include <SFML/Network.hpp>
+#include "../TCP/Client/Client.hpp"
 
-//TODO: this class is too big, make at least two: one class-one duty
+class Node; // Forward declaration
 
-class Node; // Forward declaration of Node class
-
+/**
+ * Logger - Unified entry point for logging and TCP transmission
+ *
+ * This class acts as a facade that coordinates:
+ * - LogProcessor: Handles console/file logging with severity levels
+ * - TcpSender: Handles TCP packet transmission
+ */
 class Logger {
 public:
-    struct NodeInfo {
-    int id;
-    //TODO: use the enum class in NodeEnums.hpp?
-    int cls; // 1 = E-Nod, 2 = Relay, 3 = GtWay
-};
+    using NodeInfo = LogProcessor::NodeInfo;
 
+    Logger();
+    ~Logger() = default;
+
+    // Lifecycle management
     void start();
     void stop();
 
-    //TODO: Make a logError (right now uses logSystem)
+    // ===== LOGGING API =====
+    // Node event logging (tick-based)
     void logEvent(int nodeId, const std::string& message);
+
+    // Severity-based logging
+    void logDebug(const std::string& message);
+    void logInfo(const std::string& message);
+    void logWarning(const std::string& message);
+    void logError(const std::string& message);
+    void logCritical(const std::string& message);
     void logSystem(const std::string& message);
 
+    // Generic severity logging
+    void log(LogSeverity severity, const std::string& message);
+
+    // Tick management
+    void setCurrentTick(uint64_t tick);
+    void resetTick();
+
+    // ===== TCP API =====
     void sendTcpPacket(sf::Packet packet);
     void setTcpClient(Client* clientPtr);
-    void enableFileOutput(const std::string& filepath);
-    void setCurrentTick(uint64_t tick);
 
+    // ===== CONFIGURATION =====
+    void enableFileOutput(const std::string& filepath);
     void setNodes(const std::vector<NodeInfo>& nodeInfoList);
     void enableColorOutput(bool enabled);
+
+    // Legacy/deprecated - to be removed or reimplemented
     void exportCombinedSchedule(
         const std::vector<std::shared_ptr<Node>>& nodes,
         const std::multimap<int64_t, std::shared_ptr<Node>>& communicationSteps,
         const std::string& outputFile = "combined_schedule.csv"
     );
-    void resetTick();
 
 private:
-inline static std::atomic<uint64_t> globalLogSeq{0};
-    struct LogEntry {
-        uint64_t tick;
-        int nodeId;
-        std::string message;
-    };
-
-    struct SystemLog {
-        std::string message;
-    };
-
-std::string formatNodeLabel(int nodeId);
-    bool useColor = false;            // toggle for color output
-std::vector<NodeInfo> nodes;
-
-    using LogVariant = std::variant<LogEntry, SystemLog>;
-
-    void processLogs();
-    void flushTick(uint64_t tick, const std::map<int, std::vector<std::string>>& nodeLogs);
-    std::string joinMessages(const std::vector<std::string>& messages, const std::string& delimiter);
-
-    std::queue<LogVariant> logQueue;
-    std::queue<sf::Packet> tcpQueue;
-
-    std::mutex queueMutex;
-    std::condition_variable cv;
-    bool stopFlag = false;
-    std::thread loggerThread;
-
-    std::ofstream fileStream;
-    size_t columnWidth = 25;
-
-    Client* client = nullptr; // external TCP client
-
-    uint64_t currentTick = 0;
-    std::map<int, std::vector<std::string>> pendingNodeLogs;
-
-    //TCP
-    std::thread tcpSenderThread;
-    void processTcpPackets();
-
-    bool tcpStopFlag = false;
+    std::unique_ptr<LogProcessor> logProcessor;
+    std::unique_ptr<TcpSender> tcpSender;
 };

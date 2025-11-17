@@ -1,18 +1,39 @@
 #include "Node.hpp"
 #include "../Connectivity/TCP/Packets/Packets.hpp"
 #include "../PhyLayer/PhyLayer.hpp"
+#include "../Metrics/NodeMetrics.hpp"
+#include "../Metrics/MetricsAggregator.hpp"
 // if this becomes too messy, think about creating an object to populate the node
 Node::Node(int id, Logger &logger, std::pair<int, int> coordinates, double batteryLevel)
     : nodeId(id), logger(logger), coordinates(coordinates), batteryLevel(batteryLevel)
 {
    }
 
+Node::~Node() {
+    // Destructor defined here to allow unique_ptr<NodeMetrics> to properly destruct
+    // with complete type (NodeMetrics is forward-declared in header)
+}
+
 std::string Node::initMessage() const
 {
     return "Node " + std::to_string(nodeId) + " located at (" + std::to_string(coordinates.first) + "," + std::to_string(coordinates.second) + ")";
 }
 
+void Node::initializeMetrics()
+{
+    // Create NodeMetrics instance (called from child constructors after nodeClass is set)
+    if (!metrics) {
+        metrics = std::make_unique<NodeMetrics>(nodeId, nodeClass,logger);
 
+        // Register with MetricsAggregator if available
+        if (metricsAggregator) {
+            metricsAggregator->registerNodeMetrics(metrics.get());
+        }
+        else {
+            logger.logWarning("Node " + std::to_string(nodeId) + ": MetricsAggregator not set, metrics will not be tracked globally.");
+        }
+    }
+}
 
 void Node::initializeTransitionMap()
 {
@@ -133,6 +154,16 @@ NodeState Node::convertWindowNodeStateToNodeState(WindowNodeState state)
     default:
         throw std::invalid_argument("Invalid WindowNodeState for conversion");
     }
+}
+
+   void Node::setCurrentState(NodeState state) {
+    // Notify metrics of state change before updating
+    if (metrics && phyLayer) {
+        // Only notify metrics if PhyLayer is set (i.e., node is fully initialized)
+        metrics->onStateChange(state, getCurrentTime());
+    }
+
+    currentState = state;
 }
 
 void Node::onTimeChange(WindowNodeState proposedState) {

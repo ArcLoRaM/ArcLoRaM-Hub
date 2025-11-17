@@ -18,8 +18,6 @@ CommandManager::CommandManager(Logger &logger_)
     dispatcher.setStopCallback([this]()
                                {
         if(!isRunning()) return;
-
-        logger.logSystem("Stop callback triggered.");
         this->stopSimulation();
         this->dispatcher.clearConfig();
 
@@ -30,7 +28,6 @@ CommandManager::CommandManager(Logger &logger_)
 
     dispatcher.setPingCallback([this]()
                                {
-                                //    logger.logSystem("Ping callback triggered, sending pong");
                                     sf::Packet pongBasePacket;
                                     pongPacket pongPck;
                                     pongBasePacket << pongPck;
@@ -41,14 +38,13 @@ CommandManager::CommandManager(Logger &logger_)
         //Todo: when we will add a terminal condition to the simulation (such as Tmax= ...), the simulation wont be "running" but we should be able to restart it
         if(!isRunning()) return;
 
-        logger.logSystem("Restart callback triggered.");
         // Step 1: Stop current simulation
         this->stopSimulation();
 
         // Step 2: Get the latest launch configuration (already stored)
         auto configOpt = dispatcher.getPendingLaunchConfig();
         if (!configOpt) {
-            logger.logSystem("No previous configuration found. Restart aborted.");
+            logger.logCritical("No previous configuration found. Restart aborted.");
             return;
         }
 
@@ -59,20 +55,17 @@ CommandManager::CommandManager(Logger &logger_)
     dispatcher.setPauseCallback([this]()
                                 {
         if(!isRunning()) return;
-        logger.logSystem("Pause callback triggered.");
         this->clock->pause(); });
 
     dispatcher.setResumeCallback([this]()
                                  {
                 if(!isRunning()) return;
-
-        logger.logSystem("Resume callback triggered.");
         this->clock->resume(); });
 
     tcpClient.setConnectionChangedCallback([this](bool up)
                                            {
     if (!up) {
-        logger.logSystem("Connection lost: stopping simulation.");
+        logger.logCritical("Connection lost: stopping simulation.");
         this->stopSimulation();
     } else {
         this->dispatcher.clearConfig(); // Just in case
@@ -98,16 +91,13 @@ void CommandManager::start()
 
     tcpClient.start();
 
-    //This is done automatically once connection with server is established
-    // logger.logSystem("Waiting for launch config from GUI...");
-    // waitForLaunchConfig();
 }
 
 void CommandManager::waitForLaunchConfig()
 {
     if (waitingForConfig.test_and_set())
     {
-        logger.logSystem("Already waiting for configuration. Skipping duplicate wait.");
+        logger.logWarning("Already waiting for configuration. Skipping duplicate wait.");
         return;
     }
 
@@ -131,22 +121,30 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
 {
     logger.logSystem("Launching simulation...");
 
-    // Build simulation, TODO: add path loss model here?
+    // === STEP 1: Create MetricsAggregator FIRST (must outlive nodes and clock) ===
+    metricsAggregator = std::make_unique<MetricsAggregator>(logger);
+    logger.logSystem("Metrics Aggregator Created");
+
+    // === STEP 2: Build Physical Layer ===
     phyLayer = std::make_unique<PhyLayer>(config.distanceThreshold, logger);
     logger.logSystem("Physical Engine Created");
 
-    // Create seed with scenario
+    // === STEP 3: Create and deploy topology ===
     Seed seed(config.topologyLines, config.scenarioType, logger);
-
     phyLayer->takeOwnership(seed.transferOwnership()); // seed memory is released safely
-
     logger.logSystem("Topology Deployed");
+
+    // === STEP 4: Set MetricsAggregator on all nodes ===
+    phyLayer->setMetricsAggregatorForAllNodes(metricsAggregator.get());
+    logger.logSystem("Metrics configured for all nodes");
+
+    // === STEP 5: Create Clock and set MetricsAggregator ===
     clock = std::make_unique<Clock>(logger, std::chrono::milliseconds(common::tickIntervalForClock_ms));
+    clock->setMetricsAggregator(metricsAggregator.get());
     logger.logSystem("Scheduler Created");
 
-    //kickstarts blueprint-based scheduling:
+    // === STEP 6: Start simulation ===
     phyLayer->registerAllNodeFirstEvent(*clock);
-
     clock->start();
     running = true;
     logger.logSystem("Simulation started.");
@@ -154,13 +152,33 @@ void CommandManager::launchSimulation(const LaunchConfig &config)
 
 void CommandManager::stopSimulation()
 {
-
     running = false;
+
+    // === CRITICAL: Destruction order must be REVERSE of creation ===
+
+    // 1. Stop clock (no more metric sampling)
     if (clock)
     {
         clock->stop();
     }
-    phyLayer.reset(); // Frees all node memory
+
+    // 2. Log metrics summary BEFORE destroying nodes (while NodeMetrics are still valid)
+    if (metricsAggregator) {
+        metricsAggregator->logMetricsSummary();
+    }
+
+    // 3. Destroy PhyLayer FIRST (destroys all nodes, which hold metricsAggregator raw pointers)
+    phyLayer.reset();
+    logger.logSystem("Physical Engine destroyed (all nodes freed)");
+
+    // 4. Destroy Clock SECOND (holds metricsAggregator raw pointer)
+    clock.reset();
+    logger.logSystem("Scheduler destroyed");
+
+    // 5. Destroy MetricsAggregator LAST (safe to destroy now that no one references it)
+    metricsAggregator.reset();
+    logger.logSystem("Metrics Aggregator destroyed");
+
     logger.resetTick();
 }
 
