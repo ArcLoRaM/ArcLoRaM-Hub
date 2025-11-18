@@ -1,6 +1,7 @@
 #pragma once
 #include "../Node.hpp"
 #include "../../Setup/Common.hpp"
+#include "../../Setup/PacketBuffer.hpp"
 #include "../../Connectivity/TCP/Packets/Packets.hpp"
 #include "../ModeHandler.hpp"
 #include "../../Metrics/MetricsTypes.hpp"
@@ -125,8 +126,8 @@ protected:
 
     unsigned int RRC_UPLINK_localIDPacketCounter = 0; //the local Id of the packet we send. Uniquely identify packets in a link.
 
-    //Todo: Implement an architecture with buffers, below is a simplification that only considers packets unicity
-    uint8_t RRC_UPLINK_nbPayloadLeft;        // the number of payload left to send(initial + forward packet)(represents the data that will be sent, in the simulation, every payload is the same (0xFF...FF))
+    // Packet queue: unified FIFO queue for both originated and forwarded packets
+    packet_buffer::PacketQueue RRC_UPLINK_packetQueue;
     uint8_t RRC_UPLINK_initialnbPayload = 3; // initial number of payload
 
 //There are states for the slot strategy (so should be a separate class renamed depending on the strategy used)(such as SimonV1..) and state inherent to node mode (like size queue...)
@@ -142,10 +143,6 @@ protected:
     using PacketList = std::vector<PacketID>;
     using PacketMap = std::unordered_map<SenderID, PacketList>;
     PacketMap RRC_UPLINK_packetsMap;
-
-    // Forwarding queue: Track globalIds of received packets waiting to be forwarded
-    // This enables proper multi-hop latency tracking via recordPacketForwarded()
-    std::queue<GlobalPacketID> RRC_UPLINK_forwardingQueue;
 
     std::unique_ptr<C2_RRC_UplinkSlotManager> RRC_UPLINK_slotManager; // the slots where the node CAN transmit (the slots that are not used by other nodes)
 

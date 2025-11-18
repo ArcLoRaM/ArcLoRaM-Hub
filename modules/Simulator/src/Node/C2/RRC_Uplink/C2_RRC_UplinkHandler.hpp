@@ -34,7 +34,7 @@ public:
     void handleCommunication(C2_Node& node) override;
 
     private:
-    void buildAndTransmitDataPacket(C2_Node& node,std::vector<uint8_t> payload) ;
+    void buildAndTransmitDataPacket(C2_Node& node, std::vector<uint8_t> payload) ;
     void buildAndTransmitAckPacket(C2_Node& node) ;
     void handleDataPacketReception(C2_Node &node,const std::vector<uint8_t> &message, uint16_t senderId, uint32_t packetId);
     void handleAckPacketReception(C2_Node &node,uint16_t senderId, uint32_t packetId);

@@ -1,24 +1,30 @@
 [SYSTEM] Attempting to connect to server...
-[SYSTEM] Connected to GUI.
-[SYSTEM] Waiting for Config....
-[CRITICAL] Connection lost: stopping simulation.
-[SYSTEM] Physical Engine destroyed (all nodes freed)
-[SYSTEM] Scheduler destroyed
-[SYSTEM] Metrics Aggregator destroyed
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
 [SYSTEM] Attempting to connect to server...
 [ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
 [SYSTEM] Attempting to connect to server...
 [SYSTEM] Connected to GUI.
-[WARNING] Already waiting for configuration. Skipping duplicate wait.
+[SYSTEM] Waiting for Config....
 [DEBUG] Configuration received.
 [INFO] Scenario: 0 | Threshold: 1000.000000
 [DEBUG] Topology:
-NODE 6 C2 4159 530 nextHop=5 hopCount=5
-NODE 5 C2 3402 537 nextHop=4 hopCount=4
-NODE 4 C2 2608 520 nextHop=1 hopCount=3
-NODE 1 C2 1835 525 nextHop=3 hopCount=2
-NODE 2 C3 282 503
-NODE 3 C2 1019 521 nextHop=2 hopCount=1
+NODE 11 C2 2928 -1035 nextHop=5 hopCount=4
+NODE 10 C2 1973 1649 nextHop=8 hopCount=3
+NODE 9 C2 2434 785 nextHop=8 hopCount=3
+NODE 8 C2 1564 858 nextHop=3 hopCount=2
+NODE 7 C2 1872 -1556 nextHop=5 hopCount=4
+NODE 6 C2 1067 -1244 nextHop=2 hopCount=2
+NODE 5 C2 2203 -723 nextHop=4 hopCount=3
+NODE 4 C2 1534 -54 nextHop=3 hopCount=2
+NODE 3 C2 728 406 nextHop=1 hopCount=1
+NODE 14 C2 3160 371 nextHop=9 hopCount=4
+NODE 1 C3 2 8
+NODE 2 C2 737 -472 nextHop=1 hopCount=1
+NODE 15 C2 2849 1514 nextHop=10 hopCount=4
 
 [SYSTEM] Launching simulation...
 [SYSTEM] Metrics Aggregator Created
@@ -31,145 +37,63 @@ Patterns:
   RRC_UPLINK (C2): CanSleep 500ms -> CanCommunicate 1100ms -> CanSleep 500ms -> CanCommunicate 1100ms (3200ms cycle)
   RRC_UPLINK (C3): CanSleep 500ms -> CanListen 1100ms -> CanSleep 500ms -> CanTransmit 1100ms (3200ms cycle)
 
-[INFO] Topology instantiated with 6 nodes
+[INFO] Topology instantiated with 13 nodes
 [INFO] All reachable nodes calculated:
-[INFO] Node 3 can reach: 1 2 
-[INFO] Node 2 can reach: 3 
-[INFO] Node 1 can reach: 4 3 
-[INFO] Node 4 can reach: 5 1 
-[INFO] Node 5 can reach: 6 4 
-[INFO] Node 6 can reach: 5 
+[INFO] Node 15 can reach: 10 9 
+[INFO] Node 2 can reach: 6 4 3 1 
+[INFO] Node 1 can reach: 3 2 
+[INFO] Node 14 can reach: 9 
+[INFO] Node 3 can reach: 8 4 1 2 
+[INFO] Node 4 can reach: 8 5 3 2 
+[INFO] Node 5 can reach: 11 7 4 
+[INFO] Node 6 can reach: 7 2 
+[INFO] Node 7 can reach: 6 5 
+[INFO] Node 8 can reach: 10 9 4 3 
+[INFO] Node 9 can reach: 10 8 14 15 
+[INFO] Node 10 can reach: 9 8 15 
+[INFO] Node 11 can reach: 5 
 [SYSTEM] Topology Deployed
 [SYSTEM] Metrics configured for all nodes
 [SYSTEM] Scheduler Created
 [SYSTEM] Simulation started.
-[DEBUG] NodeMetrics: Node 3 transmitted packet 1 to receiver 2 at 500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 1 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 1 at 2400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 6 transmitted packet 2 to receiver 5 at 3700 ms
-[DEBUG] NodeMetrics: Node 1 transmitted packet 3 to receiver 3 at 3700 ms
-[DEBUG] NodeMetrics: Node 6 received ACK for packet 2 at 5600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 3 at 5600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 4 to receiver 4 at 10100 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 4 at 12000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 5 to receiver 1 at 16500 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 5 at 18400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 6 to receiver 2 at 19700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 6 | Latency: 16500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 6 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 6 at 21600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 6 transmitted packet 7 to receiver 5 at 22900 ms
-[DEBUG] NodeMetrics: Node 1 transmitted packet 8 to receiver 3 at 22900 ms
-[DEBUG] NodeMetrics: Node 6 received ACK for packet 7 at 24800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 8 at 24800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 9 to receiver 1 at 26100 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 9 at 28000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 10 to receiver 4 at 29300 ms
-[DEBUG] NodeMetrics: Node 3 transmitted packet 11 to receiver 2 at 29300 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 11 | Latency: 26100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 11 | Latency: 19700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 11 | Latency: 13300 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 11 | Latency: 6900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 11 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 10 at 31200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 11 at 31200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 12 to receiver 3 at 32500 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 12 at 34400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 13 to receiver 4 at 38900 ms
-[DEBUG] NodeMetrics: Node 3 transmitted packet 14 to receiver 2 at 38900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 14 | Latency: 13300 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 14 | Latency: 6900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 14 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 13 at 40800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 14 at 40800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 6 transmitted packet 15 to receiver 5 at 42100 ms
-[DEBUG] NodeMetrics: Node 1 transmitted packet 16 to receiver 3 at 42100 ms
-[DEBUG] NodeMetrics: Node 6 received ACK for packet 15 at 44000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 16 at 44000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 17 to receiver 1 at 45300 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 17 at 47200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 18 to receiver 4 at 48500 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 18 at 50400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 19 to receiver 1 at 54900 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 19 at 56800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 20 to receiver 4 at 58100 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 20 at 60000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 5 transmitted packet 21 to receiver 4 at 67700 ms
-[DEBUG] NodeMetrics: Node 3 transmitted packet 22 to receiver 2 at 67700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 22 | Latency: 26100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 22 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 5 received ACK for packet 21 at 69600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 22 at 69600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 23 to receiver 3 at 70900 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 23 at 72800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 24 to receiver 1 at 74100 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 24 at 76000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 25 to receiver 2 at 77300 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 25 | Latency: 54900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 25 | Latency: 48500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 25 | Latency: 32500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 25 | Latency: 6900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 25 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 25 at 79200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 26 to receiver 3 at 80500 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 26 at 82400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 27 to receiver 1 at 83700 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 27 at 85600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 28 to receiver 2 at 96500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 28 | Latency: 58100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 28 | Latency: 42100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 28 | Latency: 16500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 28 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 28 at 98400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 29 to receiver 3 at 99700 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 29 at 101600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 30 to receiver 1 at 102900 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 30 at 104800 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 31 to receiver 3 at 109300 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 31 at 111200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 32 to receiver 2 at 115700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 32 | Latency: 74100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 32 | Latency: 67700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 32 | Latency: 42100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 32 | Latency: 16500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 32 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 32 at 117600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 33 to receiver 1 at 122100 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 33 at 124000 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 34 to receiver 2 at 125300 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 34 | Latency: 67700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 34 | Latency: 42100 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 34 | Latency: 16500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 34 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 34 at 127200 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 1 transmitted packet 35 to receiver 3 at 128500 ms
-[DEBUG] NodeMetrics: Node 1 received ACK for packet 35 at 130400 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 4 transmitted packet 36 to receiver 1 at 131700 ms
-[DEBUG] NodeMetrics: Node 4 received ACK for packet 36 at 133600 ms | Current PDR: 100.000000%
-[DEBUG] NodeMetrics: Node 3 transmitted packet 37 to receiver 2 at 134900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 37 | Latency: 67700 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 37 | Latency: 32500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 1 | Packet ID: 37 | Latency: 6900 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 37 | Latency: 500 ms
-[DEBUG] NodeMetrics: Node 3 received ACK for packet 37 at 136800 ms | Current PDR: 100.000000%
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 4 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 16 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 49 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 64 | Latency: 500 ms
 [DEBUG] StopSimulation command received.
 [SYSTEM] === METRICS SUMMARY ===
-[SYSTEM] Total nodes tracked: 6
+[SYSTEM] Total nodes tracked: 13
+[SYSTEM] --- Node 11, Class 2 ---
+[SYSTEM]   Energy: 0.085694 mAh (7780 samples)
+[SYSTEM]   PDR: 16.666667% (1/6 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 10, Class 2 ---
+[SYSTEM]   Energy: 0.108306 mAh (7780 samples)
+[SYSTEM]   PDR: 33.333333% (2/6 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 9, Class 2 ---
+[SYSTEM]   Energy: 0.108306 mAh (7780 samples)
+[SYSTEM]   PDR: 33.333333% (2/6 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 8, Class 2 ---
+[SYSTEM]   Energy: 0.103667 mAh (7780 samples)
+[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 7, Class 2 ---
+[SYSTEM]   Energy: 0.085694 mAh (7780 samples)
+[SYSTEM]   PDR: 16.666667% (1/6 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
 [SYSTEM] --- Node 6, Class 2 ---
-[SYSTEM]   Energy: 0.102878 mAh (14366 samples)
-[SYSTEM]   PDR: 100.000000% (3/3 ACKed)
-[SYSTEM]   Latency: 3 deliveries | Mean: 51700.000000 ms | Median: 54900.000000 ms | P95: 74100.000000 ms | Min: 26100.000000 ms | Max: 74100.000000 ms
+[SYSTEM]   Energy: 0.085578 mAh (7780 samples)
+[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
 [SYSTEM] --- Node 5, Class 2 ---
-[SYSTEM]   Energy: 0.143400 mAh (14366 samples)
-[SYSTEM]   PDR: 100.000000% (6/6 ACKed)
-[SYSTEM]   Latency: 6 deliveries | Mean: 54900.000000 ms | Median: 62900.000000 ms | P95: 67700.000000 ms | Min: 19700.000000 ms | Max: 67700.000000 ms
+[SYSTEM]   Energy: 0.094739 mAh (7780 samples)
+[SYSTEM]   PDR: 100.000000% (5/5 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
 [SYSTEM] --- Node 4, Class 2 ---
-[SYSTEM]   Energy: 0.183922 mAh (14366 samples)
-[SYSTEM]   PDR: 100.000000% (9/9 ACKed)
-[SYSTEM]   Latency: 7 deliveries | Mean: 31128.571429 ms | Median: 32500.000000 ms | P95: 42100.000000 ms | Min: 13300.000000 ms | Max: 42100.000000 ms
-[SYSTEM] --- Node 1, Class 2 ---
-[SYSTEM]   Energy: 0.197844 mAh (14366 samples)
-[SYSTEM]   PDR: 100.000000% (9/9 ACKed)
-[SYSTEM]   Latency: 9 deliveries | Mean: 13300.000000 ms | Median: 16500.000000 ms | P95: 26100.000000 ms | Min: 6900.000000 ms | Max: 26100.000000 ms
-[SYSTEM] --- Node 2, Class 3 ---
-[SYSTEM]   Energy: 1.822083 mAh (14366 samples)
+[SYSTEM]   Energy: 0.108278 mAh (7780 samples)
+[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 3, Class 2 ---
+[SYSTEM]   Energy: 0.103578 mAh (7780 samples)

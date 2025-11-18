@@ -83,22 +83,31 @@ void C2_RRC_UplinkHandler::handleDataPacketReception(C2_Node &node,const std::ve
     if (std::find(packetList.begin(), packetList.end(), packetId) == packetList.end())
     {
         packetList.push_back(packetId);
-        // TODO: it's a simulation, in real implementation, we should save the message and add it to a buffer
-        node.RRC_UPLINK_nbPayloadLeft++;
 
-        // === METRICS: Track received packet for forwarding ===
+        // Create packet buffer for forwarding (FIFO queue implementation)
+        packet_buffer::PacketBuffer forwardPacket;
+        forwardPacket.origin = packet_buffer::PacketBuffer::PacketOrigin::Forwarded;
+        forwardPacket.arrivalTime = node.getCurrentTime();
+
+        // Extract and store payload
+        //TODO: implement payload extraction
+        // forwardPacket.payload = extractBytesVectorFromField(message, field_names::payload, common::rrc_uplink_data_fields);
+
+        // === METRICS: Look up global ID of received packet ===
         if (node.metricsAggregator) {
-            // Look up the globalId of the received packet
             GlobalPacketID receivedGlobalId = node.metricsAggregator->lookupGlobalPacketId(
                 senderId,
                 packetId
             );
 
             if (receivedGlobalId != 0) {
-                // Add to forwarding queue so we know to use recordPacketForwarded when transmitting
-                node.RRC_UPLINK_forwardingQueue.push(receivedGlobalId);
+                // Store global ID for metrics tracking
+                forwardPacket.globalPacketId = receivedGlobalId;
             }
         }
+
+        // Add to unified FIFO queue (maintains proper ordering with originated packets)
+        node.RRC_UPLINK_packetQueue.push(std::move(forwardPacket));
     }
 }
 
@@ -118,11 +127,21 @@ void C2_RRC_UplinkHandler::handleAckPacketReception(C2_Node &node,uint16_t sende
             if (globalId != 0) {  // 0 means not found
                 // Record ACK reception for PDR tracking
                 node.metrics->recordAckReception(globalId, node.getCurrentTime());
+
+                // Calculate and record queue delay (time from packet arrival to ACK)
+                const packet_buffer::PacketBuffer* pkt = node.RRC_UPLINK_packetQueue.peek();
+                if (pkt != nullptr) {
+                    int64_t queueDelay = node.getCurrentTime() - pkt->arrivalTime;
+                    // Queue delay metric could be recorded here if needed
+                }
             }
         }
 
         // we received the ACK for the last packet we sent
-        node.RRC_UPLINK_nbPayloadLeft--;        // todo:in real life, we remove the payload from the buffer
+        // Immediately remove packet from queue (proper buffer implementation)
+        if (!node.RRC_UPLINK_packetQueue.empty()) {
+            node.RRC_UPLINK_packetQueue.pop();  // Remove acknowledged packet
+        }
         node.RRC_UPLINK_localIDPacketCounter++; // increasing the counter to indicate we send a "new" packet
         node.RRC_UPLINK_retransmissionCounterHelper->setIsExpectingAck(false);
         node.receptionStateDisplay(senderId, ReceptionState::Received);
@@ -254,14 +273,14 @@ bool C2_RRC_UplinkHandler::canCommunicateFromSleeping(C2_Node &node) {
         if (node.RRC_UPLINK_fixedSlotCategory == node.RRC_UPLINK_currentDataSlotCategory)
         {
             // Refill slots if we've exhausted them but still have payloads to send
-            if (!node.RRC_UPLINK_slotManager->hasSlots() && node.RRC_UPLINK_nbPayloadLeft > 0)
+            if (!node.RRC_UPLINK_slotManager->hasSlots() && !node.RRC_UPLINK_packetQueue.empty())
             {
                 node.RRC_UPLINK_slotManager->initializeRandomSlots(common::maxNodeSlots, common::totalNumberOfSlotsPerModuloNode);
                 node.logEvent("RefillSlots");
             }
 
             // the node has the opportunity to transmit data
-            if (node.RRC_UPLINK_slotManager->canTransmitNow() && node.RRC_UPLINK_nbPayloadLeft > 0)
+            if (node.RRC_UPLINK_slotManager->canTransmitNow() && !node.RRC_UPLINK_packetQueue.empty())
             {
                 node.RRC_UPLINK_slotManager->consumeSlot();
                 // we allow the state transition as the node will be sending data
@@ -332,6 +351,19 @@ void C2_RRC_UplinkHandler::handleCommunication(C2_Node &node)
 
 void C2_RRC_UplinkHandler::buildAndTransmitDataPacket(C2_Node &node, std::vector<uint8_t> payload)
 {
+    // Peek at packet from FIFO queue (don't pop - packet removed only on ACK)
+    const packet_buffer::PacketBuffer* packetPtr = node.RRC_UPLINK_packetQueue.peek();
+    if (packetPtr == nullptr) {
+        node.logEvent("ERROR: buildAndTransmitDataPacket called with empty queue");
+        return;
+    }
+
+    // Make a copy for metadata (origin, globalPacketId)
+    packet_buffer::PacketBuffer packet = *packetPtr;
+
+    // Assign localPacketId for this transmission attempt (for ACK matching)
+    // Note: localIDPacketCounter is only incremented on ACK reception
+    packet.localPacketId = node.RRC_UPLINK_localIDPacketCounter;
 
     // create the data packet
     std::vector<uint8_t> dataPacket;
@@ -349,8 +381,8 @@ void C2_RRC_UplinkHandler::buildAndTransmitDataPacket(C2_Node &node, std::vector
     std::vector<uint8_t> receiverGlobalId = decimalToBytes(node.RRC_UPLINK_infoFromBeaconPhase->getNextNodeIdInPath(), common::field_sizes::global_id); // Receiver Global ID is 2 byte long in the simulation, 10 bits in real life
     std::vector<uint8_t> localIDPacket = decimalToBytes(node.RRC_UPLINK_localIDPacketCounter, common::rrc_uplink::localIDPacketBytesSize);              // we increase the counter if we receive the ACK
 
-    // Should be replaced by the parameter payload.
-    std::vector<uint8_t> payloadPacket = {0xFF, 0xFF, 0xFF, 0xFF}; // Payload Size is 4 byte long in the simulation, 40 Bytes max in real life
+    // Use payload parameter (payload creation is external to this function)
+    std::vector<uint8_t> payloadPacket = payload;
     std::vector<uint8_t> hashFunction = {0x00, 0x00, 0x00, 0x00};  // Hash Function is 4 byte long in the simulation AND in real life
 
     // Append all fields
@@ -382,18 +414,19 @@ void C2_RRC_UplinkHandler::buildAndTransmitDataPacket(C2_Node &node, std::vector
         );
 
         // Record in global aggregator for latency tracking
-        // Check if this is a forwarded packet or originated
-        if (!node.RRC_UPLINK_forwardingQueue.empty()) {
-            // This is a forwarded packet - pop the received globalId and link them
-            GlobalPacketID receivedGlobalId = node.RRC_UPLINK_forwardingQueue.front();
-            node.RRC_UPLINK_forwardingQueue.pop();
-
-            node.metricsAggregator->recordPacketForwarded(
-                node.getId(),
-                receivedGlobalId,
-                globalId,
-                node.getCurrentTime()
-            );
+        // Use packet origin to determine forwarded vs originated (FIFO queue ensures proper ordering)
+        if (packet.origin == packet_buffer::PacketBuffer::PacketOrigin::Forwarded) {
+            // This is a forwarded packet - use stored globalId from reception
+            if (packet.globalPacketId.has_value()) {
+                node.metricsAggregator->recordPacketForwarded(
+                    node.getId(),
+                    packet.globalPacketId.value(),  // Received global ID
+                    globalId,                       // New global ID for this hop
+                    node.getCurrentTime()
+                );
+            } else {
+                node.logEvent("WARNING: Forwarded packet missing globalPacketId");
+            }
         } else {
             // This is an originated packet
             node.metricsAggregator->recordPacketOriginated(
@@ -404,7 +437,7 @@ void C2_RRC_UplinkHandler::buildAndTransmitDataPacket(C2_Node &node, std::vector
         }
     }
     //Todo: add an else statement and a warning
-    
+
     // virtualization of the Transmit() from Physical Layer
     node.addMessageToTransmit(dataPacket, common::rrc_uplink::timeOnAirDataPacket_ms);
 }

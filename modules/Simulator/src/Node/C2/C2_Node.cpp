@@ -48,7 +48,16 @@ C2_Node::C2_Node(int id, Logger &logger, std::pair<int, int> coordinates, uint16
 
     // The node will use the allowed category of slots to transmit
     RRC_UPLINK_fixedSlotCategory = RRC_UPLINK_infoFromBeaconPhase->getHopCount() % 3;
-    RRC_UPLINK_nbPayloadLeft = RRC_UPLINK_initialnbPayload;
+
+    // Initialize packet queue with originated packets
+    for (uint8_t i = 0; i < RRC_UPLINK_initialnbPayload; i++) {
+        packet_buffer::PacketBuffer packet;
+        packet.origin = packet_buffer::PacketBuffer::PacketOrigin::Originated;
+        packet.globalPacketId = std::nullopt;  // Assigned at transmission time
+        packet.payload = {0xFF, 0xFF, 0xFF, 0xFF};
+        packet.arrivalTime = 0;  // Initial packets created at time 0
+        RRC_UPLINK_packetQueue.push(std::move(packet));
+    }
 };
 
 C2_Node::~C2_Node() = default;
