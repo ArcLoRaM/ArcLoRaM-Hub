@@ -26,8 +26,11 @@ public:
     LiveNetworkState& getProtocolState() { return protocolState; }
 
     tgui::CanvasSFML::Ptr getCanvas() { return uiController.getCanvas(); }
+
+    void findNode(const std::string& searchQuery);
 private:
     tgui::Gui& gui;
+    sf::View* networkView = nullptr;
     LiveNetworkState protocolState;
     SimulationConfiguration topologyState;
 

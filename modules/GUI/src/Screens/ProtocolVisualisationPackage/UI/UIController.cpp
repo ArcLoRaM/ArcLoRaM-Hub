@@ -137,7 +137,20 @@ return;
             std::cerr << "No scenario type changed callback set!" << std::endl;
             return;
         }
-                                      });                                     
+                                      });
+
+    findButton->onPress([this]()
+                       {
+        if (onFindNode) {
+            std::string query = searchBox->getText().toStdString();
+            if (!query.empty()) {
+                onFindNode(query);
+            }
+        }
+        else {
+            std::cerr << "No find node callback set!" << std::endl;
+        }
+                       });
 
     //Open the file Dialog
     confFileSelectionButton->onPress([this]()
@@ -185,6 +198,18 @@ void UIController::setProtocolPanelUI(sf::View &networkView)
     communicationModeText = UIFactory::createLabel("Communication Mode: ");
     communicationModeText->setPosition({"15%", "2%"});
     networkPanel->add(communicationModeText);
+
+    // Search/Find functionality
+    searchBox = tgui::EditBox::create();
+    searchBox->setPosition({"40%", "2%"});
+    searchBox->setSize({"15%", "4%"});
+    searchBox->setDefaultText("Node ID or x,y");
+    networkPanel->add(searchBox);
+
+    findButton = UIFactory::createButton("Find");
+    findButton->setPosition({"56%", "2%"});
+    findButton->setSize({"7%", "4%"});
+    networkPanel->add(findButton);
 
     auto buttonRouting = UIFactory::createButton("Routing");
     buttonRouting->setPosition({"90%", "2%"});

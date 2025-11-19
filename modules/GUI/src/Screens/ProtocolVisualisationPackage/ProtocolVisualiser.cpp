@@ -10,6 +10,7 @@ ProtocolVisualiser::ProtocolVisualiser(tgui::Gui &gui)
 
 void ProtocolVisualiser::setup(sf::View &view)
 {
+    networkView = &view;
     uiController.setupUI(view);
     bindUIEvents();
     clientConnectionMonitor.onStatusChanged = [this](bool connected) {
@@ -98,6 +99,10 @@ void ProtocolVisualiser::bindUIEvents()
         topologyState.resetState();
     };
 
+    uiController.onFindNode = [this](const std::string& searchQuery) {
+        findNode(searchQuery);
+    };
+
     uiController.onFileSelected = [this](const std::string& path) {
 
         //If a simulation is already running, make sure user wants to stop before launching a new one TODO
@@ -136,7 +141,60 @@ void ProtocolVisualiser::bindUIEvents()
                 uiController.enableStartButton(false);
                 uiController.setFileNameLabel("Invalid File: " + path);
 
-            }         
+            }
         }
     };
+}
+
+void ProtocolVisualiser::findNode(const std::string& searchQuery)
+{
+    if (!networkView) {
+        std::cerr << "Network view not initialized!" << std::endl;
+        return;
+    }
+
+    // Check for comma first - if present, parse as coordinates (x,y)
+    size_t commaPos = searchQuery.find(',');
+    if (commaPos != std::string::npos) {
+        try {
+            std::string xStr = searchQuery.substr(0, commaPos);
+            std::string yStr = searchQuery.substr(commaPos + 1);
+
+            // Trim whitespace
+            xStr.erase(0, xStr.find_first_not_of(" \t"));
+            xStr.erase(xStr.find_last_not_of(" \t") + 1);
+            yStr.erase(0, yStr.find_first_not_of(" \t"));
+            yStr.erase(yStr.find_last_not_of(" \t") + 1);
+
+            float x = std::stof(xStr);
+            float y = std::stof(yStr);
+
+            networkView->setCenter({ x, y });
+            uiController.getCanvas()->setView(*networkView);
+            std::cout << "Moved view to coordinates (" << x << ", " << y << ")" << std::endl;
+        } catch (const std::exception& e) {
+            uiController.errorMessageBox("Invalid coordinates format! Use: x,y (e.g., 100,200)");
+        }
+        return;
+    }
+
+    // No comma found - try to parse as node ID (integer)
+    try {
+        int nodeId = std::stoi(searchQuery);
+
+        // Get device position from DeviceManager
+        auto positionOpt = deviceManager.getDevicePosition(nodeId);
+        if (positionOpt.has_value()) {
+            networkView->setCenter(positionOpt.value());
+            uiController.getCanvas()->setView(*networkView);
+            std::cout << "Found node " << nodeId << " at position ("
+                     << positionOpt.value().x << ", " << positionOpt.value().y << ")" << std::endl;
+        } else {
+            uiController.errorMessageBox("Node " + std::to_string(nodeId) + " not found!");
+        }
+    } catch (const std::invalid_argument&) {
+        uiController.errorMessageBox("Invalid input! Enter a Node ID or coordinates (x,y)");
+    } catch (const std::out_of_range&) {
+        uiController.errorMessageBox("Node ID out of range!");
+    }
 }

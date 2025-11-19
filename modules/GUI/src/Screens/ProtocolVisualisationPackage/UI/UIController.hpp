@@ -29,6 +29,7 @@ public:
     std::function<void()> onResumeSimulation;
     std::function<void(const int scenarioId)> onScenarioTypeChanged;
     std::function<void(const std::string& filePath)> onFileSelected;
+    std::function<void(const std::string& searchQuery)> onFindNode;
 
 
     bool getRoutingDisplayEnabled() const { return routingDisplayEnabled; }
@@ -78,6 +79,8 @@ private:
     tgui::CanvasSFML::Ptr canvas;
     tgui::Label::Ptr communicationModeText;
     tgui::Label::Ptr timeText;
+    tgui::EditBox::Ptr searchBox;
+    tgui::Button::Ptr findButton;
 
 
     //LOG TAB

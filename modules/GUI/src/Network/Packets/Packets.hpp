@@ -6,7 +6,9 @@
 
 #include <string>
 #include <optional>
+#include <vector>
 #include <SFML/Network/Packet.hpp>
+#include "../../Screens/ProtocolVisualisationPackage/Metrics/MetricsTypes.hpp"
 
 
 /*
@@ -150,6 +152,41 @@ class stopSimulationPacket : public BasePacket {
 };
 
 
+//METRICS PACKETS
+
+class nodeMetricsPacket : public BasePacket {
+public:
+    int tickNb;
+    int nodeId;
+    int totalPacketsSent;
+    int totalAcksReceived;
+
+    nodeMetricsPacket(int tickNb = 0, int nodeId = 0, int sent = 0, int acked = 0);
+    friend sf::Packet& operator<<(sf::Packet& packet, const nodeMetricsPacket& nmp);
+    friend sf::Packet& operator>>(sf::Packet& packet, nodeMetricsPacket& nmp);
+};
+
+class latencyRecordsPacket : public BasePacket {
+public:
+    int tickNb;
+    int nodeId;
+    std::vector<LatencyRecord> records;
+
+    latencyRecordsPacket(int tickNb = 0, int nodeId = 0, std::vector<LatencyRecord> records = {});
+    friend sf::Packet& operator<<(sf::Packet& packet, const latencyRecordsPacket& lrp);
+    friend sf::Packet& operator>>(sf::Packet& packet, latencyRecordsPacket& lrp);
+};
+
+class energySamplesPacket : public BasePacket {
+public:
+    int tickNb;
+    int nodeId;
+    std::vector<std::pair<int, double>> samples;
+
+    energySamplesPacket(int tickNb = 0, int nodeId = 0, std::vector<std::pair<int, double>> samples = {});
+    friend sf::Packet& operator<<(sf::Packet& packet, const energySamplesPacket& esp);
+    friend sf::Packet& operator>>(sf::Packet& packet, energySamplesPacket& esp);
+};
 
 
 //CONTROL PACKETS
