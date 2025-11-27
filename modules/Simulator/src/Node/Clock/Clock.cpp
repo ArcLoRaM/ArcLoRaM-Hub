@@ -1,7 +1,20 @@
 #include "Clock.hpp"
 #include "../../Metrics/MetricsAggregator.hpp"
+#include "../../Metrics/MetricsExporter.hpp"
 #include "../../Metrics/MetricsConfig.hpp"
 #include <barrier>
+
+
+
+ Clock::Clock(Logger& logger, ms tickPeriod)
+  : logger(logger), tickPeriod(tickPeriod) {}
+
+
+    Clock::~Clock()
+    {
+        stop();
+    }
+
 void Clock::start(){
         
         /*
@@ -20,13 +33,19 @@ void Clock::start(){
     tNowMs   = 0;
     tLastMs  = -1;
     tickCount = 0;
+
+    // Initialize metrics exporter
+    if (!metricsExporter) {
+        metricsExporter = std::make_unique<MetricsExporter>();
+    }
+
  // spawn the clock thread; run() implements the virtual-time loop
     clockThread = std::jthread([this](std::stop_token st){ run(st); });
     }
 
 void Clock::run(std::stop_token st) {
     while (!st.stop_requested()) {
-                int64_t start = 0, end = 0;
+                uint64_t start = 0, end = 0;
 
         // 1) Pause gate + advance logical time under lock
         {
@@ -68,6 +87,12 @@ void Clock::run(std::stop_token st) {
         if (metricsAggregator &&
             tickCount % MetricsConfig::DEFAULT_SAMPLING_INTERVAL_TICKS == 0) {
             metricsAggregator->sampleAllNodes(end);
+        }
+
+        // === METRICS: Export to GUI ===
+        if (metricsAggregator && metricsExporter &&
+            tickCount % MetricsConfig::METRICS_EXPORT_INTERVAL_TICKS == 0) {
+            metricsExporter->exportAllMetrics(metricsAggregator, tickCount, logger);
         }
 
         {

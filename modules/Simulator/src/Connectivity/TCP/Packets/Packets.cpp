@@ -60,6 +60,21 @@ stopSimulationPacket::stopSimulationPacket(int nodeId) : nodeId(nodeId) {
     type = 10;
 }
 
+nodeMetricsPacket::nodeMetricsPacket(int tickNb, int nodeId, int sent, int acked)
+    : tickNb(tickNb), nodeId(nodeId), totalPacketsSent(sent), totalAcksReceived(acked) {
+    type = 12;
+}
+
+latencyRecordsPacket::latencyRecordsPacket(int tickNb, int nodeId, std::vector<LatencyRecord> records)
+    : tickNb(tickNb), nodeId(nodeId), records(std::move(records)) {
+    type = 13;
+}
+
+energySamplesPacket::energySamplesPacket(int tickNb, int nodeId, std::vector<std::pair<int, double>> samples)
+    : tickNb(tickNb), nodeId(nodeId), samples(std::move(samples)) {
+    type = 14;
+}
+
 // -------------------- Packet Serialization --------------------
 
 
@@ -182,6 +197,95 @@ sf::Packet& operator>>(sf::Packet& packet, stopSimulationPacket& sp) {
     return packet >> sp.nodeId;
 }
 
+// nodeMetricsPacket serialization
+sf::Packet& operator<<(sf::Packet& packet, const nodeMetricsPacket& nmp) {
+    return packet << nmp.type << nmp.tickNb << nmp.nodeId
+                  << nmp.totalPacketsSent << nmp.totalAcksReceived;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, nodeMetricsPacket& nmp) {
+    return packet >> nmp.tickNb >> nmp.nodeId
+                  >> nmp.totalPacketsSent >> nmp.totalAcksReceived;
+}
+
+// latencyRecordsPacket serialization
+sf::Packet& operator<<(sf::Packet& packet, const latencyRecordsPacket& lrp) {
+    // Serialize header
+    packet << lrp.type << lrp.tickNb << lrp.nodeId;
+
+    // Serialize vector size
+    packet << static_cast<int>(lrp.records.size());
+
+    // Serialize each LatencyRecord field-by-field
+    for (const auto& record : lrp.records) {
+        packet << record.packetId
+               << record.latency_ms
+               << record.originTimestamp
+               << record.deliveryTimestamp;
+    }
+
+    return packet;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, latencyRecordsPacket& lrp) {
+    // Deserialize header (no type)
+    packet >> lrp.tickNb >> lrp.nodeId;
+
+    // Deserialize vector size
+    int size;
+    packet >> size;
+
+    // Deserialize each LatencyRecord field-by-field
+    lrp.records.clear();
+    lrp.records.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        uint64_t packetId;
+        int64_t latency_ms, originTimestamp, deliveryTimestamp;
+        packet >> packetId >> latency_ms >> originTimestamp >> deliveryTimestamp;
+
+        lrp.records.push_back({packetId, latency_ms, originTimestamp, deliveryTimestamp});
+    }
+
+    return packet;
+}
+
+// energySamplesPacket serialization
+sf::Packet& operator<<(sf::Packet& packet, const energySamplesPacket& esp) {
+    // Serialize header
+    packet << esp.type << esp.tickNb << esp.nodeId;
+
+    // Serialize vector size
+    packet << static_cast<int>(esp.samples.size());
+
+    // Serialize each pair as primitives
+    for (const auto& [tick, energy] : esp.samples) {
+        packet << tick << energy;
+    }
+
+    return packet;
+}
+
+sf::Packet& operator>>(sf::Packet& packet, energySamplesPacket& esp) {
+    // Deserialize header (no type)
+    packet >> esp.tickNb >> esp.nodeId;
+
+    // Deserialize vector size
+    int size;
+    packet >> size;
+
+    // Deserialize each pair
+    esp.samples.clear();
+    esp.samples.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        int tick;
+        double energy;
+        packet >> tick >> energy;
+        esp.samples.emplace_back(tick, energy);
+    }
+
+    return packet;
+}
+
 
 //-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
 
@@ -237,7 +341,7 @@ sf::Packet& operator<<(sf::Packet& packet, const resumeCommandPacket& rcp) {
 }
 
 sf::Packet& operator>>(sf::Packet& packet, resumeCommandPacket& rcp) {
-    return packet; // Nothing to deserialize
+    return packet; // Nothing to deseri alize
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const pauseCommandPacket& rcp) {

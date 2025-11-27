@@ -170,3 +170,29 @@ LatencyStats NodeMetrics::computeLatencyStats(const std::vector<LatencyRecord>& 
 
     return stats;
 }
+
+// === Incremental Export Tracking ===
+
+std::vector<LatencyRecord> NodeMetrics::getNewLatencyRecords() {
+    std::vector<LatencyRecord> newRecords;
+    for (size_t i = lastExportedLatencyIndex; i < latencyRecords.size(); ++i) {
+        newRecords.push_back(latencyRecords[i]);
+    }
+    return newRecords;
+}
+
+std::vector<TimeSample<double>> NodeMetrics::getNewEnergySamples() {
+    std::vector<TimeSample<double>> newSamples;
+    for (size_t i = lastExportedEnergyIndex; i < energyTimeSeries.size(); ++i) {
+        newSamples.push_back(energyTimeSeries[i]);
+    }
+    return newSamples;
+}
+
+void NodeMetrics::markLatencyExported() {
+    lastExportedLatencyIndex = latencyRecords.size();
+}
+
+void NodeMetrics::markEnergyExported() {
+    lastExportedEnergyIndex = energyTimeSeries.size();
+}

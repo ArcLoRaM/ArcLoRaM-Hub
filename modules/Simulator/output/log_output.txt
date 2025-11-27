@@ -7,8 +7,428 @@
 [SYSTEM] Attempting to connect to server...
 [ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
 [SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
 [SYSTEM] Connected to GUI.
 [SYSTEM] Waiting for Config....
+[CRITICAL] Connection lost: stopping simulation.
+[SYSTEM] Physical Engine destroyed (all nodes freed)
+[SYSTEM] Scheduler destroyed
+[SYSTEM] Metrics Aggregator destroyed
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[WARNING] Already waiting for configuration. Skipping duplicate wait.
+[DEBUG] Configuration received.
+[INFO] Scenario: 0 | Threshold: 1000.000000
+[DEBUG] Topology:
+
+[SYSTEM] Launching simulation...
+[SYSTEM] Metrics Aggregator Created
+[SYSTEM] Physical Engine Created
+[INFO] SimonV1 blueprint configured:
+[INFO] Master Cycle: 86400000ms (24h)
+Mode Timeline:
+  [0-86400000ms] RRC_UPLINK
+Patterns:
+  RRC_UPLINK (C2): CanSleep 500ms -> CanCommunicate 1100ms -> CanSleep 500ms -> CanCommunicate 1100ms (3200ms cycle)
+  RRC_UPLINK (C3): CanSleep 500ms -> CanListen 1100ms -> CanSleep 500ms -> CanTransmit 1100ms (3200ms cycle)
+
+[INFO] Topology instantiated with 0 nodes
+[INFO] All reachable nodes calculated:
+[SYSTEM] Topology Deployed
+[SYSTEM] Metrics configured for all nodes
+[SYSTEM] Scheduler Created
+[SYSTEM] Simulation started.
+[CRITICAL] Connection lost: stopping simulation.
+[SYSTEM] === METRICS SUMMARY ===
+[SYSTEM] Total nodes tracked: 0
+[SYSTEM] === END METRICS SUMMARY ===
+[SYSTEM] Physical Engine destroyed (all nodes freed)
+[SYSTEM] Scheduler destroyed
+[SYSTEM] Metrics Aggregator destroyed
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[SYSTEM] Waiting for Config....
+[DEBUG] Configuration received.
+[INFO] Scenario: 0 | Threshold: 1000.000000
+[DEBUG] Topology:
+NODE 6 C2 4159 530 nextHop=5 hopCount=5
+NODE 5 C2 3402 537 nextHop=4 hopCount=4
+NODE 4 C2 2608 520 nextHop=1 hopCount=3
+NODE 1 C2 1835 525 nextHop=3 hopCount=2
+NODE 2 C3 282 503
+NODE 3 C2 1019 521 nextHop=2 hopCount=1
+
+[SYSTEM] Launching simulation...
+[SYSTEM] Metrics Aggregator Created
+[SYSTEM] Physical Engine Created
+[INFO] SimonV1 blueprint configured:
+[INFO] Master Cycle: 86400000ms (24h)
+Mode Timeline:
+  [0-86400000ms] RRC_UPLINK
+Patterns:
+  RRC_UPLINK (C2): CanSleep 500ms -> CanCommunicate 1100ms -> CanSleep 500ms -> CanCommunicate 1100ms (3200ms cycle)
+  RRC_UPLINK (C3): CanSleep 500ms -> CanListen 1100ms -> CanSleep 500ms -> CanTransmit 1100ms (3200ms cycle)
+
+[INFO] Topology instantiated with 6 nodes
+[INFO] All reachable nodes calculated:
+[INFO] Node 3 can reach: 1 2 
+[INFO] Node 2 can reach: 3 
+[INFO] Node 1 can reach: 4 3 
+[INFO] Node 4 can reach: 5 1 
+[INFO] Node 5 can reach: 6 4 
+[INFO] Node 6 can reach: 5 
+[SYSTEM] Topology Deployed
+[SYSTEM] Metrics configured for all nodes
+[SYSTEM] Scheduler Created
+[SYSTEM] Simulation started.
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 2 | Latency: 500 ms
+[CRITICAL] Connection lost: stopping simulation.
+[SYSTEM] === METRICS SUMMARY ===
+[SYSTEM] Total nodes tracked: 6
+[SYSTEM] --- Node 6, Class 2 ---
+[SYSTEM]   Energy: 0.004817 mAh (0 samples)
+[SYSTEM]   PDR: 0.000000% (0/1 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 5, Class 2 ---
+[SYSTEM]   Energy: 0.013861 mAh (0 samples)
+[SYSTEM]   PDR: 100.000000% (1/1 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 4, Class 2 ---
+[SYSTEM]   Energy: 0.009222 mAh (0 samples)
+[SYSTEM]   PDR: 0.000000% (0/0 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 1, Class 2 ---
+[SYSTEM]   Energy: 0.000000 mAh (0 samples)
+[SYSTEM]   PDR: 0.000000% (0/0 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 2, Class 3 ---
+[SYSTEM]   Energy: 0.045944 mAh (0 samples)
+[SYSTEM]   PDR: 0.000000% (0/0 ACKed)
+[SYSTEM]   Latency: No deliveries recorded
+[SYSTEM] --- Node 3, Class 2 ---
+[SYSTEM]   Energy: 0.013833 mAh (0 samples)
+[SYSTEM]   PDR: 100.000000% (1/1 ACKed)
+[SYSTEM]   Latency: 1 deliveries | Mean: 500.000000 ms | Median: 500.000000 ms | P95: 500.000000 ms | Min: 500.000000 ms | Max: 500.000000 ms
+[SYSTEM] === END METRICS SUMMARY ===
+[SYSTEM] Physical Engine destroyed (all nodes freed)
+[SYSTEM] Scheduler destroyed
+[SYSTEM] Metrics Aggregator destroyed
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[SYSTEM] Waiting for Config....
+[CRITICAL] Connection lost: stopping simulation.
+[SYSTEM] Physical Engine destroyed (all nodes freed)
+[SYSTEM] Scheduler destroyed
+[SYSTEM] Metrics Aggregator destroyed
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[WARNING] Already waiting for configuration. Skipping duplicate wait.
+[CRITICAL] Connection lost: stopping simulation.
+[SYSTEM] Physical Engine destroyed (all nodes freed)
+[SYSTEM] Scheduler destroyed
+[SYSTEM] Metrics Aggregator destroyed
+[SYSTEM] Attempting to connect to server...
+[ERROR] ****** Error connecting to server. Retrying in 5 seconds... ******
+[SYSTEM] Attempting to connect to server...
+[SYSTEM] Connected to GUI.
+[WARNING] Already waiting for configuration. Skipping duplicate wait.
 [DEBUG] Configuration received.
 [INFO] Scenario: 0 | Threshold: 1000.000000
 [DEBUG] Topology:
@@ -56,44 +476,91 @@ Patterns:
 [SYSTEM] Metrics configured for all nodes
 [SYSTEM] Scheduler Created
 [SYSTEM] Simulation started.
-[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 4 | Latency: 500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 16 | Latency: 500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 49 | Latency: 500 ms
-[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 64 | Latency: 500 ms
-[DEBUG] StopSimulation command received.
-[SYSTEM] === METRICS SUMMARY ===
-[SYSTEM] Total nodes tracked: 13
-[SYSTEM] --- Node 11, Class 2 ---
-[SYSTEM]   Energy: 0.085694 mAh (7780 samples)
-[SYSTEM]   PDR: 16.666667% (1/6 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 10, Class 2 ---
-[SYSTEM]   Energy: 0.108306 mAh (7780 samples)
-[SYSTEM]   PDR: 33.333333% (2/6 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 9, Class 2 ---
-[SYSTEM]   Energy: 0.108306 mAh (7780 samples)
-[SYSTEM]   PDR: 33.333333% (2/6 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 8, Class 2 ---
-[SYSTEM]   Energy: 0.103667 mAh (7780 samples)
-[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 7, Class 2 ---
-[SYSTEM]   Energy: 0.085694 mAh (7780 samples)
-[SYSTEM]   PDR: 16.666667% (1/6 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 6, Class 2 ---
-[SYSTEM]   Energy: 0.085578 mAh (7780 samples)
-[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 5, Class 2 ---
-[SYSTEM]   Energy: 0.094739 mAh (7780 samples)
-[SYSTEM]   PDR: 100.000000% (5/5 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 4, Class 2 ---
-[SYSTEM]   Energy: 0.108278 mAh (7780 samples)
-[SYSTEM]   PDR: 40.000000% (2/5 ACKed)
-[SYSTEM]   Latency: No deliveries recorded
-[SYSTEM] --- Node 3, Class 2 ---
-[SYSTEM]   Energy: 0.103578 mAh (7780 samples)
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 1 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 7 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 40 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 49 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 89 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 101 | Latency: 141300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 101 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 107 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 119 | Latency: 150900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 119 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 131 | Latency: 160500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 131 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 151 | Latency: 141300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 151 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 6 | Packet ID: 167 | Latency: 170100 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 2 | Packet ID: 167 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 171 | Latency: 256500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 171 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 174 | Latency: 256500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 174 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 180 | Latency: 266100 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 180 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 181 | Latency: 339700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 181 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 181 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 184 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 184 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 186 | Latency: 368500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 186 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 186 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 9 | Packet ID: 190 | Latency: 349300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 190 | Latency: 246900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 190 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 195 | Latency: 368500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 195 | Latency: 256500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 195 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 197 | Latency: 416500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 197 | Latency: 256500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 197 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 9 | Packet ID: 199 | Latency: 349300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 199 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 199 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 201 | Latency: 416500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 201 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 201 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 11 | Packet ID: 202 | Latency: 374900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 202 | Latency: 349300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 202 | Latency: 246900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 202 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 203 | Latency: 358900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 203 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 203 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 9 | Packet ID: 204 | Latency: 368500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 204 | Latency: 227700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 204 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 15 | Packet ID: 205 | Latency: 518900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 205 | Latency: 378100 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 205 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 205 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 7 | Packet ID: 206 | Latency: 403700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 206 | Latency: 397300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 206 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 206 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 14 | Packet ID: 207 | Latency: 547700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 9 | Packet ID: 207 | Latency: 397300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 207 | Latency: 237300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 207 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 11 | Packet ID: 208 | Latency: 432500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 208 | Latency: 426100 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 208 | Latency: 198900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 208 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 11 | Packet ID: 209 | Latency: 374900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 209 | Latency: 368500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 209 | Latency: 189300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 209 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 15 | Packet ID: 210 | Latency: 557300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 210 | Latency: 416500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 210 | Latency: 179700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 210 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 7 | Packet ID: 211 | Latency: 384500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 5 | Packet ID: 211 | Latency: 378100 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 4 | Packet ID: 211 | Latency: 179700 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 211 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 15 | Packet ID: 212 | Latency: 576500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 10 | Packet ID: 212 | Latency: 406900 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 8 | Packet ID: 212 | Latency: 189300 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 3 | Packet ID: 212 | Latency: 500 ms
+[DEBUG] MetricsAggregator: Recorded delivery for Node 14 | Packet ID: 213 | Latency: 586100 ms

@@ -73,6 +73,18 @@ public:
         return latencyRecords;
     }
 
+    // === Incremental Export Tracking ===
+
+    // Get NEW latency records since last export
+    std::vector<LatencyRecord> getNewLatencyRecords();
+
+    // Get NEW energy samples since last export
+    std::vector<TimeSample<double>> getNewEnergySamples();
+
+    // Mark current data as exported (updates indices)
+    void markLatencyExported();
+    void markEnergyExported();
+
 private:
     // Node identification
     uint16_t nodeId;
@@ -102,6 +114,10 @@ private:
 
     // === Latency State ===
     std::vector<LatencyRecord> latencyRecords;
+
+    // === Export Tracking State ===
+    size_t lastExportedLatencyIndex = 0;
+    size_t lastExportedEnergyIndex = 0;
 
     // Helper functions for statistics
     LatencyStats computeLatencyStats(const std::vector<LatencyRecord>& records) const;

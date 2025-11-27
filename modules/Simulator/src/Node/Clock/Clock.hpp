@@ -8,6 +8,7 @@
 #include <map>
 #include <atomic>
 #include <mutex>
+#include <memory>
 #include "../../Connectivity/Logger/Logger.hpp"
 #include <string>
 #include "../../Connectivity/TCP/Packets/Packets.hpp"
@@ -17,6 +18,7 @@
 #include <stop_token>     // C++20
 
 class MetricsAggregator; // Forward declaration
+class MetricsExporter;   // Forward declaration
 
 using CallbackType = std::function<void()>;
 
@@ -28,11 +30,10 @@ public:
     using ms = std::chrono::milliseconds;
 
 
-explicit Clock(Logger& logger, ms tickPeriod = ms{1})
-  : logger(logger), tickPeriod(tickPeriod) {}
+ Clock(Logger& logger, ms tickPeriod = ms{1});
 
 
-    ~Clock() { stop(); }
+    ~Clock();
 
     // Lifecycle
     void start() ;
@@ -56,8 +57,7 @@ explicit Clock(Logger& logger, ms tickPeriod = ms{1})
 
     // Metrics integration
     void setMetricsAggregator(MetricsAggregator* aggregator) { metricsAggregator = aggregator; }
-
-  std::multimap<int64_t, std::shared_ptr<Node>> getCommunicationStepsSnapshot() const; 
+    std::multimap<int64_t, std::shared_ptr<Node>> getCommunicationStepsSnapshot() const; 
 
 
 
@@ -80,6 +80,7 @@ private:
 
     // Metrics
     MetricsAggregator* metricsAggregator = nullptr;
+    std::unique_ptr<MetricsExporter> metricsExporter;
 
     //Schedules
     //use distinct multimap for every kind of events (battery depletion etc..)
@@ -93,11 +94,10 @@ private:
     //we can add more multimaps for other events, like  special events (sudden node failure etc..)
     
     ms tickPeriod{1};
-    int64_t tNowMs{0};                   // logical time
-    int64_t tLastMs{0};
-    unsigned int tickCount{0};
-
-    // const int64_t tickDurationMs = common::tickIntervalForClock_ms;                                                            
+    uint64_t tNowMs{0};                   // logical time
+    uint64_t tLastMs{0};
+    
+    uint64_t tickCount{0};
 
 
 

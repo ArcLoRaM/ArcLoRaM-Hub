@@ -15,10 +15,15 @@ namespace MetricsConfig {
     };
 
     // Time-series sampling interval (in ticks)
-    // Default: sample every 1 tick
-    constexpr unsigned int DEFAULT_SAMPLING_INTERVAL_TICKS = 1;
+    //Should not be set too low to avoid excessive data and overflooding the TCP channel
+    //For now, only used for energy time-series sampling
+    constexpr unsigned int DEFAULT_SAMPLING_INTERVAL_TICKS = 100;
+
+    // Metrics export interval (in ticks)
+    // How often to send metrics to GUI via TCP
+    constexpr int METRICS_EXPORT_INTERVAL_TICKS = 300;
 
     // Battery voltage (for energy calculations if needed)
     constexpr double BATTERY_VOLTAGE_V = 3.3;
 
-}  // namespace MetricsConfig
+}  
