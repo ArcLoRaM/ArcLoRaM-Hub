@@ -24,5 +24,10 @@ private:
     void handleStopSimulationPacket(sf::Packet &packet);
     void handlePongPacket(sf::Packet &packet);
 
+    // Metrics packet handlers
+    void handleNodeMetricsPacket(sf::Packet &packet);
+    void handleLatencyRecordsPacket(sf::Packet &packet);
+    void handleEnergySamplesPacket(sf::Packet &packet);
+
     ProtocolVisualiser& visualiser;
 };

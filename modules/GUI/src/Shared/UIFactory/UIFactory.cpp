@@ -79,7 +79,16 @@ tgui::ComboBox::Ptr UIFactory::createEnumComboBox(const tgui::Layout2d& size) {
     return comboBox;
 }
 
-void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string& section) {
+tgui::Panel::Ptr UIFactory::createPanel(const tgui::Layout2d &size)
+{
+    auto panel = tgui::Panel::create();
+    panel->setSize(size);
+    if (s_theme) panel->setRenderer(s_theme->getRenderer("Panel"));
+    return panel;
+}
+
+void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string &section)
+{
     if (s_theme && s_theme->getRenderer(section))
         widget->setRenderer(s_theme->getRenderer(section));
 }

@@ -21,6 +21,11 @@ ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<
     visualiser.setup(networkView);
     tcpServer.start(5000);
 
+    //todo: undertand why it's laggy when you click back, probably not well handled memory leak...
+    visualiser.setBackButtonCallback([actions]() {
+        actions[0].second();
+        TcpServer::instance().stop();
+    });
 
 }
 
@@ -69,17 +74,7 @@ void ProtocolVisualisationScreen::setupUI(std::vector<std::pair<std::string, Scr
     gui.add(picture);
 
 
-    //todo: undertand why it's laggy when you click back, probably not well handled memory leak...
-    //todo: don't do a button, not very aesthetic...  
-    auto button = UIFactory::createButton("Back", [this, actions]() {
-            actions[0].second();
-            TcpServer::instance().stop();
 
-            
-        });
-        button->setSize({"7%", "4%"});
-        button->setPosition({"1%", "1%"});
-        gui.add(button);
     
 }
 

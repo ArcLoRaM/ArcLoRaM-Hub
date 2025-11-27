@@ -34,7 +34,12 @@ void PacketHandler::handlePacket(sf::Packet &packet)
     case 10: handleStopSimulationPacket(packet); break;
     case 11: handleEndTransmissionPacket(packet); break;
 
-    //server - client 
+    //Metrics packets
+    case 12: handleNodeMetricsPacket(packet); break;
+    case 13: handleLatencyRecordsPacket(packet); break;
+    case 14: handleEnergySamplesPacket(packet); break;
+
+    //server - client
     case 104: handlePongPacket(packet);break;
     
     default:
@@ -164,7 +169,7 @@ void PacketHandler::handlePositionPacket(sf::Packet& packet) {
     }
 
     sf::Vector2f position(static_cast<float>(pp.coordinates.first), static_cast<float>(pp.coordinates.second));
-        auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position,pp.hopCount, pp.batteryLevel);
+        auto device = std::make_unique<Device>(pp.nodeId, deviceClass, position);
         visualiser.getDeviceManager().addDevice(std::move(device));
     
 
@@ -288,7 +293,7 @@ void PacketHandler::handleStopSimulationPacket(sf::Packet& packet) {
     // stopSimulationPacket sp;
     // packet >> sp;
 
-    
+
     // std::lock_guard<std::mutex> lock(state.logMutex);
     // state.logMessages.push_back("Simulation stopped by node: " + std::to_string(sp.nodeId));
 
@@ -300,4 +305,42 @@ void PacketHandler::handleStopSimulationPacket(sf::Packet& packet) {
     //     std::cerr << "Error writing CSV: " << e.what() << '\n';
     // }
 
+}
+
+// ============================================================================
+// Metrics Packet Handlers
+// ============================================================================
+
+void PacketHandler::handleNodeMetricsPacket(sf::Packet& packet) {
+    nodeMetricsPacket nmp;
+    packet >> nmp;
+
+    visualiser.getMetricsManager().updateNodePDR(
+        nmp.nodeId,
+        nmp.tickNb,
+        nmp.totalPacketsSent,
+        nmp.totalAcksReceived
+    );
+}
+
+void PacketHandler::handleLatencyRecordsPacket(sf::Packet& packet) {
+    latencyRecordsPacket lrp;
+    packet >> lrp;
+
+    visualiser.getMetricsManager().addLatencyRecords(
+        lrp.nodeId,
+        lrp.tickNb,
+        lrp.records
+    );
+}
+
+void PacketHandler::handleEnergySamplesPacket(sf::Packet& packet) {
+    energySamplesPacket esp;
+    packet >> esp;
+
+    visualiser.getMetricsManager().addEnergySamples(
+        esp.nodeId,
+        esp.tickNb,
+        esp.samples
+    );
 }

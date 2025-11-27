@@ -8,6 +8,13 @@
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
+
+
+/*
+This class only represents the visual part of a Device (icon, info window, position, state)
+*/
+
+
 enum class DeviceState {
     Sleep,
     Listen,
@@ -22,61 +29,6 @@ enum class DeviceClass {
 };
 
 
-#pragma once
-
-struct DeviceMetrics {
-public:
-    //something to have in mind: the energy expenditure for one slot listening can actually be very small if we trust our synchronization enough to consider there is no one transmitting 
-    
-    // Energy slot counters
-    void incrementListeningData()         { ++slotListeningData; }
-    void incrementTransmittingData()      { --slotListeningData; ++slotTransmittingData; }
-    void incrementListeningAck()          { ++slotListeningAck; }
-    void incrementTransmittingAck()       { --slotListeningAck; ++slotTransmittingAck; }
-
-    // Transmission stats
-    void incrementRetransmission()        { ++nbRetransmissions; }
-    void incrementPacketSent()            { ++nbPacketsSent; }
-
-    void reset() {
-        slotListeningData = 0;
-        slotTransmittingData = 0;
-        slotListeningAck = 0;
-        slotTransmittingAck = 0;
-        
-        nbRetransmissions = 0;
-        nbPacketsSent = 0;
-    }
-
-    // Accessors for CSV export
-    int getListeningDataSlots()     const { return slotListeningData; }
-    int getTransmittingDataSlots()  const { return slotTransmittingData; }
-    int getListeningAckSlots()      const { return slotListeningAck; }
-    int getTransmittingAckSlots()   const { return slotTransmittingAck; }
-
-    int getRetransmissions()        const { return nbRetransmissions; }
-    int getPacketsSent()            const { return nbPacketsSent; }
-
-    // Derived metric (if needed)
-    double getPacketDeliveryRatio() const {
-        return nbPacketsSent > 0
-            ? static_cast<double>(nbPacketsSent - nbRetransmissions) / nbPacketsSent
-            : 0.0;
-    }
-
-
-
-private:
-    // Energy expenditure slots
-    int slotListeningData = 0;
-    int slotTransmittingData = 0;
-    int slotListeningAck = 0;
-    int slotTransmittingAck = 0;
-
-    // Packet transmission metrics
-    int nbRetransmissions = 0;
-    int nbPacketsSent = 0;
-};
 
 class Device {
 private:
@@ -103,9 +55,7 @@ private:
     //Do a proper enum for the device Info if it grows larger: Todo.
     int nodeId = 0;
     DeviceClass classNode ;
-    double batteryLevel = 0;
     DeviceState state = DeviceState::Sleep;
-    int hopCount = 0;
     std::string getTextureKey(DeviceClass cls, DeviceState state);
 
 
@@ -114,7 +64,7 @@ private:
 
 public:
 
-    Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel = 0);
+    Device(int nodeId, DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel = 0);
 
     void updateCoordinatesString();
 
@@ -136,9 +86,7 @@ public:
     int getNodeId() const {
         return nodeId;
     }
-    int getHopCount() const {
-        return hopCount;
-    }
+ 
 
     void changePosition(const sf::Vector2f& newCenteredPos) {
         centeredPosition = newCenteredPos;
@@ -153,10 +101,6 @@ public:
         return isHovered;
     }
     DeviceClass getClass() const { return classNode; }
-
-
-    DeviceMetrics metrics;
-
 };
 
 

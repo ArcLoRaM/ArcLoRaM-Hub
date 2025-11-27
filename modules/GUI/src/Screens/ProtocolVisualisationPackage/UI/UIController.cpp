@@ -10,19 +10,17 @@ UIController::UIController(tgui::Gui &gui) : gui(gui)
 
 void UIController::setupUI(sf::View &networkView)
 {
-    tabContainer = UIFactory::createTabContainer({"92%", "92%"});
+    tabContainer = UIFactory::createTabContainer({"100%", "100%"});
     tabContainer->setTabsHeight(50);
-    tabContainer->setPosition({"4%", "6%"});
+    tabContainer->setPosition({"0%", "0%"});
 
     clientPanel = tabContainer->addTab("Client");
     networkPanel = tabContainer->addTab("Network");
     logsPanel = tabContainer->addTab("Log");
-    metricsPanel = tabContainer->addTab("Metrics");
 
     setClientPanelUI();
     setProtocolPanelUI(networkView);
     setLogsPanelUI();
-    setMetricsPanelUI();
 
     // must be called after setting the panels
     bindCallbacks();
@@ -79,6 +77,8 @@ void UIController::bindCallbacks()
 
     startSimulationButton->onPress([this]()
                                    {
+
+        
         if (onStartSimulation) onStartSimulation();
         else {
             std::cerr << "No start simulation callback set!" << std::endl;
@@ -177,6 +177,7 @@ return;
             std::string fileName = selectedPath.getFilename().toStdString();
             if (onFileSelected) onFileSelected(paths[0].asString().toStdString());
             else std::cerr << "No file selected callback set!" << std::endl;
+            simulationCommandPanel->setVisible(true);
         });
 
     });
@@ -293,9 +294,7 @@ void UIController::setLogsPanelUI()
 
 }
 
-void UIController::setMetricsPanelUI()
-{
-}
+
 
 void UIController::hideAllSimulationControlButtons()
 {
@@ -374,44 +373,50 @@ void UIController::showSimulationReadyToStartUI()
 
 void UIController::setClientPanelUI()
 {
+     backButton = UIFactory::createButton("Back");
+    clientPanel->add(backButton);
+    backButton->setPosition({"2%", "3%"});
+    backButton->setSize({"8%", "4%"});
 
-    auto clientLabel = UIFactory::createLabel("Client");
-    clientLabel->setPosition({"2%", "2%"});
-    clientLabel->setSize({"20%", "6%"});
-    clientPanel->add(clientLabel);
-
-    serverStatusConnected = UIFactory::createLabel("Simulator Connected");
-    serverStatusConnected->setPosition({"2%", "10%"});
+    serverStatusConnected = UIFactory::createLabel("Simulator Connected!");
+    serverStatusConnected->setPosition({"12%", "3%"});
     serverStatusConnected->setVisible(false);
     clientPanel->add(serverStatusConnected);
 
     serverStatusDisconnected = UIFactory::createLabel("Simulator disconnected...");
-    serverStatusDisconnected->setPosition({"2%", "10%"});
+    serverStatusDisconnected->setPosition({"12%", "3%"});
     clientPanel->add(serverStatusDisconnected);
 
 
-    confFileSelectionGroup = tgui::Group::create();
+    confFileSelectionGroup = UIFactory::createPanel({"70%", "30%"});
+    confFileSelectionGroup->setPosition({"2%", "10%"});
     clientPanel->add(confFileSelectionGroup);
+    confFileSelectionGroup->setVisible(false);
+
+    auto configurationLabel = UIFactory::createLabel("Configuration Selection");;
+    configurationLabel->setPosition({"2%", "2%"});
+    configurationLabel->setSize({"30%", "12%"});
+    confFileSelectionGroup->add(configurationLabel);
 
     auto confFileLabel = UIFactory::createLabel("Configuration File:");
     confFileSelectionGroup->add(confFileLabel);
-    confFileLabel->setPosition({"2%", "20%"});
-    confFileLabel->setSize({"20%", "6%"});
-    
+    confFileLabel->setPosition({"2%", "23%"});
+    confFileLabel->setSize({"20%", "12%"});
+
 
     confFileSelectionButton = UIFactory::createButton("Select File");
     confFileSelectionGroup->add(confFileSelectionButton);
-    confFileSelectionButton->setPosition({"25%", "20%"});
-    confFileSelectionButton->setSize({"20%", "6%"});
+    confFileSelectionButton->setPosition({"25%", "33%"});
+    confFileSelectionButton->setSize({"20%", "12%"});
 
     fileNameLabel = UIFactory::createLabel("No configuration file selected");
-    fileNameLabel->setPosition({"25%", "15%"});
-    fileNameLabel->setSize({"50%", "6%"});
+    fileNameLabel->setPosition({"25%", "18%"});
+    fileNameLabel->setSize({"70%", "12%"});
     confFileSelectionGroup->add(fileNameLabel);
 
-    scenarioTypeComboBox = UIFactory::createEnumComboBox({"20%", "6%"});
+    scenarioTypeComboBox = UIFactory::createEnumComboBox({"20%", "12%"});
     confFileSelectionGroup->add(scenarioTypeComboBox);
-    scenarioTypeComboBox->setPosition({"2%", "30%"});
+    scenarioTypeComboBox->setPosition({"2%", "53%"});
         // Add each enum value by name
     for (auto mode : magic_enum::enum_values<ScenarioType>())
     {
@@ -420,21 +425,45 @@ void UIController::setClientPanelUI()
     }
     scenarioTypeComboBox->setSelectedItemByIndex(0); // Select the first item by default
 
+    auto maxSimTimeLabel = UIFactory::createLabel("Max Simulation Time (ms):");
+    confFileSelectionGroup->add(maxSimTimeLabel);
+    maxSimTimeLabel->setPosition({"2%", "68%"});
+    maxSimTimeLabel->setSize({"30%", "12%"});
+
+    maxSimulationTimeInput = tgui::EditBox::create();
+    confFileSelectionGroup->add(maxSimulationTimeInput);
+    maxSimulationTimeInput->setPosition({"2%", "78%"});
+    maxSimulationTimeInput->setSize({"20%", "12%"});
+    maxSimulationTimeInput->setDefaultText("0 (unlimited)");
+
+
+
+    simulationCommandPanel = UIFactory::createPanel({"70%", "40%"});
+    simulationCommandPanel->setPosition({"2%", "50%"});
+    clientPanel->add(simulationCommandPanel);
+    simulationCommandPanel->setVisible(false);
+
+
+    auto commandLabel = UIFactory::createLabel("Simulation Commands");
+    commandLabel->setPosition({"2%", "2%"});
+    commandLabel->setSize({"30%", "12%"});
+    simulationCommandPanel->add(commandLabel);
+
     startSimulationButton = UIFactory::createButton("Start Simulation");
-    confFileSelectionGroup->add(startSimulationButton);
-    startSimulationButton->setPosition({"2%", "40%"});
-    startSimulationButton->setSize({"20%", "6%"});
+    simulationCommandPanel->add(startSimulationButton);
+    startSimulationButton->setPosition({"2%", "20%"});
+    startSimulationButton->setSize({"20%", "12%"});
     startSimulationButton->setEnabled(false); // Initially disabled until a file is selected
 
     stopSimulationButton = UIFactory::createButton("Stop Simulation");
-    confFileSelectionGroup->add(stopSimulationButton);
-    stopSimulationButton->setPosition({"2%", "50%"});
-    stopSimulationButton->setSize({"20%", "6%"});
+    simulationCommandPanel->add(stopSimulationButton);
+    stopSimulationButton->setPosition({"2%", "35%"});
+    stopSimulationButton->setSize({"20%", "12%"});
 
     restartSimulationButton = UIFactory::createButton("Restart Simulation");
-    confFileSelectionGroup->add(restartSimulationButton);
-    restartSimulationButton->setPosition({"2%", "60%"});
-    restartSimulationButton->setSize({"20%", "6%"});
+    simulationCommandPanel->add(restartSimulationButton);
+    restartSimulationButton->setPosition({"2%", "50%"});
+    restartSimulationButton->setSize({"20%", "12%"});
 
-    confFileSelectionGroup->setVisible(false);
+
   }

@@ -229,7 +229,7 @@ bool TopologyConfigIO::validateConfigFile(std::istream& in, std::string* outText
             }
 
             if (nodes) {
-                auto device = std::make_unique<Device>(id, *parsedClass, sf::Vector2f{float(x), float(y)}, 100.f);
+                auto device = std::make_unique<Device>(id, *parsedClass, sf::Vector2f{float(x), float(y)});
                 (*nodes)[id] = std::move(device);
                 outState->nodeCounter = std::max(outState->nodeCounter, id);
             }

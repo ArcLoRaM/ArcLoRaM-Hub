@@ -24,7 +24,7 @@ public:
     // tgui::EditBox::Ptr createEditBox(const std::string& defaultText = "");
     // tgui::CheckBox::Ptr createCheckBox(const std::string& label, bool defaultState = false);
     // tgui::Slider::Ptr createSlider(float min, float max, float value);
-    // tgui::Panel::Ptr createPanel(const tgui::Layout2d& size);
+    static tgui::Panel::Ptr createPanel(const tgui::Layout2d& size);
 
     static void applyRenderer(tgui::Widget::Ptr widget, const std::string& section);
 

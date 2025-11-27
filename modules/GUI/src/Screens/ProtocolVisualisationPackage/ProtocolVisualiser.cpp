@@ -22,6 +22,7 @@ void ProtocolVisualiser::setup(sf::View &view)
             deviceManager.clear();
             routingManager.clear();
             animationManager.clear();
+            metricsManager.clearAllMetrics();
             protocolState.resetState();
             topologyState.resetState();
         }
@@ -79,6 +80,7 @@ void ProtocolVisualiser::bindUIEvents()
         animationManager.clear();
         deviceManager.clear();
         routingManager.clear();
+        metricsManager.clearAllMetrics();
 
         //Clear the simulation state
         protocolState.resetState();
@@ -87,12 +89,13 @@ void ProtocolVisualiser::bindUIEvents()
 
     uiController.onStopSimulation = [this]() {
         if(simulationController.isRunning())
-        
+
             simulationController.stopSimulation();
                 // Clear existing protocol visual elements
         animationManager.clear();
         deviceManager.clear();
         routingManager.clear();
+        metricsManager.clearAllMetrics();
 
         //Clear simulation state and configuration
         protocolState.resetState();

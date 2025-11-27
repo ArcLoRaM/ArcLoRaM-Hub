@@ -6,11 +6,10 @@
 
 
 
-Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition,int hopCount, double batteryLevel)
-    : nodeId(nodeId), classNode(classNode), centeredPosition(centeredPosition),hopCount(hopCount), batteryLevel(batteryLevel) {
+Device::Device(int nodeId,DeviceClass classNode, sf::Vector2f centeredPosition, double batteryLevel)
+    : nodeId(nodeId), classNode(classNode), centeredPosition(centeredPosition) {
 
     shape = sf::CircleShape(config::radiusIcon);
-
     iconTexture= &ResourceManager::getInstance().getTexture(getTextureKey(classNode, state));
     shape.setTexture(iconTexture);
         shape.setPosition(sf::Vector2f(

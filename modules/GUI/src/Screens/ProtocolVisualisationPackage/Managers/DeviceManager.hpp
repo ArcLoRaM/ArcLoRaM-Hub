@@ -16,12 +16,7 @@ public:
     std::optional<sf::Vector2f> getDevicePosition(int nodeId) const;
 
     
-    void incrementRetransmission(int nodeId);
-    void incrementPacketSent(int nodeId);
-    void incrementListeningData(int nodeId);
-    void incrementTransmittingData(int nodeId);
-    void incrementListeningAck(int nodeId);
-    void incrementTransmittingAck(int nodeId);
+
     std::mutex& getDevicesMutex() const { return devicesMutex; }
     bool containsDevice(int id) const;
     std::optional<std::pair<sf::Vector2f, sf::Vector2f>> getDevicesPosition(int id1, int id2) const;

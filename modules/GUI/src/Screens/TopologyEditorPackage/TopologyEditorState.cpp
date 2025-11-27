@@ -36,7 +36,7 @@ void TopologyEditorState::addNode( DeviceClass cls, sf::Vector2f pos)
         std::cerr << "********Node with this ID already exists.********\n";
     }
 
-    nodes[nodeCounter] = std::make_unique<Device>(nodeCounter, cls, pos, battery);
+    nodes[nodeCounter] = std::make_unique<Device>(nodeCounter, cls, pos);
 
 }
 
