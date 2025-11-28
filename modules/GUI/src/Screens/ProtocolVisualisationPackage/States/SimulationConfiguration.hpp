@@ -12,7 +12,7 @@
 
 
 //Scenario types should be in ascending order
-//ex; sce1=1, sce2=2, etc or will cause mismatch in scenario selection
+//ex; sce1=0, sce2=1, etc or will cause mismatch in scenario selection
 enum class ScenarioType {
     SimonV1=0
 };
@@ -45,6 +45,8 @@ public:
     void resetState()
     {
         distanceThreshold = 0.0; // Default distance threshold
+        maxSimulationTimeMs = 0; // Default max simulation time
+        scenarioType = ScenarioType::SimonV1;
         topologyLines.clear();
     };
 
@@ -55,11 +57,18 @@ public:
         return scenarioType;
     }
 
+    void setMaxSimulationTimeMs(uint64_t timeMs) {
+        maxSimulationTimeMs = timeMs;
+    }
+    uint64_t getMaxSimulationTimeMs() const {
+        return maxSimulationTimeMs;
+    }
     
     
 private:
         double distanceThreshold; // Default distance threshold
     std::string topologyLines;
     ScenarioType scenarioType = ScenarioType::SimonV1;
+    uint64_t maxSimulationTimeMs = 0; // in ms, if set to 0, no limit
 };
 

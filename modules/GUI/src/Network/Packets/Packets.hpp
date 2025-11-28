@@ -195,11 +195,12 @@ class launchConfigCommandPacket : public BasePacket {
 
 public:
 
-    launchConfigCommandPacket(double threshold,std::string topologyString,int scenarioType);
-    
+    launchConfigCommandPacket(double threshold,std::string topologyString,int scenarioType, uint64_t maxSimulationTime = 0);
+
     std::string topologyString;
     double distanceThreshold;
     int scenarioType;
+    uint64_t maxSimulationTimeMs{0};  // Max simulation time (0 = unlimited)
     friend sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& cmd);
     friend sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& cmd);
 };

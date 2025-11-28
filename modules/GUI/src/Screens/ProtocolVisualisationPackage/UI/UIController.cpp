@@ -31,8 +31,9 @@ void UIController::setupUI(sf::View &networkView)
 
 void UIController::updateUI(LiveNetworkState &state)
 {
-    communicationModeText->setText("Communication Mode: " + state.communicationMode);
-    timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
+    //TODO:
+    // communicationModeText->setText("Communication Mode: " + state.communicationMode);
+    // timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
 }
 
 void UIController::setServerStatus(bool connected)
@@ -60,6 +61,10 @@ void UIController::enableStartButton(bool enabled)
     startSimulationButton->setEnabled(enabled);
 }
 
+uint64_t UIController::getMaxSimulationTimeMs() const
+{
+    return unlimitedSimulationCheckbox->isChecked() ? 0 : std::stoull(maxSimulationTimeInput->getText().toStdString());
+}
 
 void UIController::errorMessageBox(const std::string &message)
 {
@@ -77,8 +82,42 @@ void UIController::bindCallbacks()
 
     startSimulationButton->onPress([this]()
                                    {
+        // Check if unlimited simulation is enabled
+        if (!unlimitedSimulationCheckbox->isChecked()) {
+            // Validate max simulation time input only if not unlimited
+            std::string timeText = maxSimulationTimeInput->getText().toStdString();
 
-        
+            try {
+                // Try to parse as a number
+                size_t pos;
+                int timeValue = std::stoi(timeText, &pos);
+
+                // Check if entire string was parsed and value is positive
+                if (pos != timeText.length() || timeValue <= 0) {
+                    auto errorBox = UIFactory::createMessageBox("Invalid Input",
+                        "Max Simulation Time must be a positive number.");
+                    errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                        if(button == "OK" ){
+                            msgBox->getParent()->remove(msgBox->shared_from_this());
+                        }
+                    });
+                    gui.add(errorBox);
+                    return;
+                }
+            } catch (const std::exception&) {
+                // Parsing failed
+                auto errorBox = UIFactory::createMessageBox("Invalid Input",
+                    "Max Simulation Time must be a valid positive number.");
+                errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                    if(button == "OK" ){
+                        msgBox->getParent()->remove(msgBox->shared_from_this());
+                    }
+                });
+                gui.add(errorBox);
+                return;
+            }
+        }
+
         if (onStartSimulation) onStartSimulation();
         else {
             std::cerr << "No start simulation callback set!" << std::endl;
@@ -110,7 +149,7 @@ void UIController::bindCallbacks()
         showSimulationRestartedUI();
     });
 
-    pauseSimulationButton->onPress([this]()
+    pauseBitmapButton->onPress([this]()
                                          {
     if (onPauseSimulation) onPauseSimulation();
     else {
@@ -120,7 +159,7 @@ return;
     showSimulationPausedUI();
                                          });
 
-    resumeSimulationButton->onPress([this]()
+    resumeBitmapButton->onPress([this]()
                                           {
     if (onResumeSimulation) onResumeSimulation();
     else {
@@ -138,6 +177,13 @@ return;
             return;
         }
                                       });
+
+    unlimitedSimulationCheckbox->onChange([this]()
+                                          {
+        bool isUnlimited = unlimitedSimulationCheckbox->isChecked();
+        maxSimulationTimeLabel->setVisible(!isUnlimited);
+        maxSimulationTimeInput->setVisible(!isUnlimited);
+                                          });
 
     findButton->onPress([this]()
                        {
@@ -185,59 +231,43 @@ return;
 
 void UIController::setProtocolPanelUI(sf::View &networkView)
 {
-    canvas = tgui::CanvasSFML::create();
-    canvas->setPosition({"0%", "10%"});
-    canvas->setSize({"100%", "90%"});
-    canvas->setView(networkView);
-    canvas->clear(tgui::Color(30, 30, 30));
-    networkPanel->add(canvas);
+    auto simulationCommandTopPanel = UIFactory::createPanel({"35%", "8.5%"});
+    simulationCommandTopPanel->setPosition({"0.75%", "0.75%"});
+    networkPanel->add(simulationCommandTopPanel);
 
-    timeText = UIFactory::createLabel("Time: 0s");
-    timeText->setPosition({"2%", "2%"});
-    networkPanel->add(timeText);
+    auto simTopulationCommandLabel = UIFactory::createLabel("Simulation Controls:");
+    simTopulationCommandLabel->setPosition({"2%", "2%"});
+    simulationCommandTopPanel->add(simTopulationCommandLabel);
 
-    communicationModeText = UIFactory::createLabel("Communication Mode: ");
-    communicationModeText->setPosition({"15%", "2%"});
-    networkPanel->add(communicationModeText);
+    pauseBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::PauseButton), "", {"40", "40"});
+    pauseBitmapButton->setPosition({"70%", "2%"});
+    pauseBitmapButton->setImageScaling(1.0f);  
+    pauseBitmapButton->setEnabled(false);
+    pauseBitmapButton->setVisible(false);
+    simulationCommandTopPanel->add(pauseBitmapButton);
 
-    // Search/Find functionality
-    searchBox = tgui::EditBox::create();
-    searchBox->setPosition({"40%", "2%"});
-    searchBox->setSize({"15%", "4%"});
-    searchBox->setDefaultText("Node ID or x,y");
-    networkPanel->add(searchBox);
-
-    findButton = UIFactory::createButton("Find");
-    findButton->setPosition({"56%", "2%"});
-    findButton->setSize({"7%", "4%"});
-    networkPanel->add(findButton);
-
-    auto buttonRouting = UIFactory::createButton("Routing");
-    buttonRouting->setPosition({"90%", "2%"});
-    buttonRouting->setSize({"7%", "4%"});
-    buttonRouting->onPress([this]()
-                           { routingDisplayEnabled = !routingDisplayEnabled; });
-    networkPanel->add(buttonRouting);
-
-    pauseSimulationButton = UIFactory::createButton("Pause");
-    pauseSimulationButton->setPosition({"70%", "2%"});
-    pauseSimulationButton->setSize({"7%", "4%"});
-    pauseSimulationButton->setEnabled(false); 
-    pauseSimulationButton->setVisible(false);
-    networkPanel->add(pauseSimulationButton);
-
-    resumeSimulationButton = UIFactory::createButton("Resume");
-    resumeSimulationButton->setPosition({"70%", "2%"});
-    resumeSimulationButton->setSize({"7%", "4%"});
-    resumeSimulationButton->setEnabled(false); 
-    resumeSimulationButton->setVisible(false);
-    networkPanel->add(resumeSimulationButton);
+    resumeBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::PlayButton), "", {"40", "40"});
+    resumeBitmapButton->setPosition({"70%", "2%"});
+    resumeBitmapButton->setVisible(false);
+    resumeBitmapButton->setImageScaling(1.0f);  
+    resumeBitmapButton->setEnabled(false);
+    simulationCommandTopPanel->add(resumeBitmapButton);
 
 
-    auto buttonSave = UIFactory::createButton("Save");
-    buttonSave->setPosition({"80%", "2%"});
-    buttonSave->setSize({"7%", "4%"});
-    buttonSave->onPress([this]()
+
+    simulationTimeProgressBar = UIFactory::createProgressBar({"18%", "6%"});
+    simulationTimeProgressBar->setPosition({"77%", "2%"});
+    simulationTimeProgressBar->setValue(0); // Initial value
+    simulationTimeProgressBar->setText("Simulation Time");
+    networkPanel->add(simulationTimeProgressBar);
+
+    networkPanel->add(pauseBitmapButton);
+
+
+    exportSimulationButton = UIFactory::createButton("Save");
+    exportSimulationButton->setPosition({"80%", "2%"});
+    exportSimulationButton->setSize({"7%", "4%"});
+    exportSimulationButton->onPress([this]()
                         {
                             // MAKE A LAMBDA TO EXPORT THE METRICS
                             // EXACT IMPLEMENTATION NOT HERE
@@ -254,7 +284,41 @@ void UIController::setProtocolPanelUI(sf::View &networkView)
                             //     std::cerr << "Error writing CSV: " << e.what() << '\n';
                             // };
                         });
-    networkPanel->add(buttonSave);
+    networkPanel->add(exportSimulationButton);
+
+
+    auto splitContainer = tgui::SplitContainer::create({"100%", "90%"});
+    splitContainer->setPosition({"0%", "10%"});
+    splitContainer->setOrientation(tgui::Orientation::Horizontal);
+    splitContainer->setMinValidSplitterOffset("20%"); // Left widget can't be smaller than 20%
+    splitContainer->setMaxValidSplitterOffset("50%"); // Right widget can't be smaller than 50% of the container
+    splitContainer->setSplitterOffset("30%"); // Splitter is initially located at the center of the container
+   networkPanel->add(splitContainer);
+   
+   nodeBrowserPanel = UIFactory::createPanel({"100%", "100%"});
+   nodeBrowserPanel->setPosition({"0%", "0%"});
+    splitContainer->add(nodeBrowserPanel);
+
+    // Search/Find functionality
+    searchBox = tgui::EditBox::create();
+    searchBox->setPosition({"40%", "2%"});
+    searchBox->setSize({"15%", "4%"});
+    searchBox->setDefaultText("Node ID or x,y");
+    nodeBrowserPanel->add(searchBox);
+
+    findButton = UIFactory::createButton("Find");
+    findButton->setPosition({"56%", "2%"});
+    findButton->setSize({"7%", "4%"});
+    nodeBrowserPanel->add(findButton);
+
+
+    
+    canvas = tgui::CanvasSFML::create();
+    canvas->setPosition({"0%", "10%"});
+    canvas->setSize({"100%", "90%"});
+    canvas->setView(networkView);
+    canvas->clear(tgui::Color(30, 30, 30));
+    splitContainer->add(canvas);
 }
 
 void UIController::setLogsPanelUI()
@@ -307,34 +371,36 @@ void UIController::hideAllSimulationControlButtons()
 
             tgui::String fileNameLabelString= "No File Selected";
             fileNameLabel->setText(fileNameLabelString);
-            pauseSimulationButton->setVisible(false);
-            resumeSimulationButton->setVisible(false);
+            pauseBitmapButton->setVisible(false);
+            resumeBitmapButton->setVisible(false);
 }
 
 void UIController::showSimulationStartedUI()
 {
     startSimulationButton->setVisible(false);
     confFileSelectionButton->setEnabled(false);
-    pauseSimulationButton->setEnabled(true);
-    pauseSimulationButton->setVisible(true);
+    pauseBitmapButton->setEnabled(true);
+    pauseBitmapButton->setVisible(true);
     stopSimulationButton->setVisible(true);
     restartSimulationButton->setVisible(true);
     scenarioTypeComboBox->setEnabled(false);
+    unlimitedSimulationCheckbox->setEnabled(false);
+    maxSimulationTimeInput->setEnabled(false);
 }
 
 void UIController::showSimulationRunningUI()
-{    pauseSimulationButton->setEnabled(true);
-    resumeSimulationButton->setEnabled(false);
-    pauseSimulationButton->setVisible(true);
-    resumeSimulationButton->setVisible(false);
+{    pauseBitmapButton->setEnabled(true);
+    resumeBitmapButton->setEnabled(false);
+    pauseBitmapButton->setVisible(true);
+    resumeBitmapButton->setVisible(false);
 }
 
 void UIController::showSimulationPausedUI()
 {
-        pauseSimulationButton->setEnabled(false);
-    resumeSimulationButton->setEnabled(true);
-    pauseSimulationButton->setVisible(false);
-    resumeSimulationButton->setVisible(true);
+        pauseBitmapButton->setEnabled(false);
+    resumeBitmapButton->setEnabled(true);
+    pauseBitmapButton->setVisible(false);
+    resumeBitmapButton->setVisible(true);
 }
 
 void UIController::showSimulationStoppedUI()
@@ -344,17 +410,19 @@ void UIController::showSimulationStoppedUI()
     scenarioTypeComboBox->setEnabled(true);
     startSimulationButton->setVisible(true);
     startSimulationButton->setEnabled(false);
-    pauseSimulationButton->setVisible(false);
-    resumeSimulationButton->setVisible(false);
+    pauseBitmapButton->setVisible(false);
+    resumeBitmapButton->setVisible(false);
     confFileSelectionButton->setEnabled(true);
+    unlimitedSimulationCheckbox->setEnabled(true);
+    maxSimulationTimeInput->setEnabled(true);
     setFileNameLabel("No File Selected");
 }
 
 void UIController::showSimulationRestartedUI()
 {
     startSimulationButton->setVisible(false);
-    pauseSimulationButton->setVisible(true);
-    resumeSimulationButton->setVisible(false);
+    pauseBitmapButton->setVisible(true);
+    resumeBitmapButton->setVisible(false);
     stopSimulationButton->setVisible(true);
 }
 
@@ -388,7 +456,7 @@ void UIController::setClientPanelUI()
     clientPanel->add(serverStatusDisconnected);
 
 
-    confFileSelectionGroup = UIFactory::createPanel({"70%", "30%"});
+    confFileSelectionGroup = UIFactory::createPanel({"70%", "45%"});
     confFileSelectionGroup->setPosition({"2%", "10%"});
     clientPanel->add(confFileSelectionGroup);
     confFileSelectionGroup->setVisible(false);
@@ -416,7 +484,7 @@ void UIController::setClientPanelUI()
 
     scenarioTypeComboBox = UIFactory::createEnumComboBox({"20%", "12%"});
     confFileSelectionGroup->add(scenarioTypeComboBox);
-    scenarioTypeComboBox->setPosition({"2%", "53%"});
+    scenarioTypeComboBox->setPosition({"2%", "50%"});
         // Add each enum value by name
     for (auto mode : magic_enum::enum_values<ScenarioType>())
     {
@@ -425,16 +493,21 @@ void UIController::setClientPanelUI()
     }
     scenarioTypeComboBox->setSelectedItemByIndex(0); // Select the first item by default
 
-    auto maxSimTimeLabel = UIFactory::createLabel("Max Simulation Time (ms):");
-    confFileSelectionGroup->add(maxSimTimeLabel);
-    maxSimTimeLabel->setPosition({"2%", "68%"});
-    maxSimTimeLabel->setSize({"30%", "12%"});
+    unlimitedSimulationCheckbox = UIFactory::createCheckBox("Unlimited Simulation Time", false);
+    confFileSelectionGroup->add(unlimitedSimulationCheckbox);
+    unlimitedSimulationCheckbox->setPosition({"2%", "70%"});
+    unlimitedSimulationCheckbox->setSize({"3%", "8%"});
 
-    maxSimulationTimeInput = tgui::EditBox::create();
+    maxSimulationTimeLabel = UIFactory::createLabel(" / Max Simulation Time (ms):");
+    confFileSelectionGroup->add(maxSimulationTimeLabel);
+    maxSimulationTimeLabel->setPosition({"50%", "70%"});
+    maxSimulationTimeLabel->setSize({"30%", "12%"});
+
+    maxSimulationTimeInput = UIFactory::createTypeableInput("3600000", {"20%", "12%"});
     confFileSelectionGroup->add(maxSimulationTimeInput);
-    maxSimulationTimeInput->setPosition({"2%", "78%"});
-    maxSimulationTimeInput->setSize({"20%", "12%"});
-    maxSimulationTimeInput->setDefaultText("0 (unlimited)");
+    maxSimulationTimeInput->setPosition({"75%", "70%"});
+    maxSimulationTimeInput->setDefaultText("3600000");
+    maxSimulationTimeInput->setText("3600000");
 
 
 

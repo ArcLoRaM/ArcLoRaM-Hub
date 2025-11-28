@@ -16,10 +16,11 @@ public:
     void errorMessageBox(const std::string& message);
 
 
-    //Client Tab
+    //--------------------CLIENT TAB--------------------
     void setServerStatus(bool connected);
     void setFileNameLabel(const std::string& name);
     void enableStartButton(bool enabled);
+    uint64_t getMaxSimulationTimeMs() const;
 
     std::function<void()> onStartSimulation;
     std::function<void()> onStopSimulation;
@@ -28,21 +29,21 @@ public:
     std::function<void(const std::string& filePath)> onFileSelected;
     std::function<void(const std::string& searchQuery)> onFindNode;
 
+    void setBackButtonCallback(const std::function<void()>& callback) {
+        backButton->onPress(callback);
+    }
 
-
-    // Network Tab
+    //--------------------Network TAB--------------------
     std::function<void()> onPauseSimulation;
     std::function<void()> onResumeSimulation;
     bool getRoutingDisplayEnabled() const { return routingDisplayEnabled; }
     tgui::CanvasSFML::Ptr getCanvas()  { return canvas; }
 
 
-    //external callbacks for log tab
+    //-------------------LOG TAB--------------------
 
 
-    void setBackButtonCallback(const std::function<void()>& callback) {
-        backButton->onPress(callback);
-    }
+
 
 
 private:
@@ -71,7 +72,7 @@ private:
     tgui::Gui& gui;
     tgui::TabContainer::Ptr tabContainer;
 
-    //CLIENT TAB
+    //--------------------CLIENT TAB--------------------
     tgui::Panel::Ptr clientPanel;
     //Todo: keep only one?
     tgui::Label::Ptr serverStatusConnected;
@@ -81,6 +82,8 @@ private:
     tgui::Panel::Ptr confFileSelectionGroup;
     tgui::Label::Ptr fileNameLabel;
     tgui::ComboBox::Ptr scenarioTypeComboBox;
+    tgui::CheckBox::Ptr unlimitedSimulationCheckbox;
+    tgui::Label::Ptr maxSimulationTimeLabel;
     tgui::EditBox::Ptr maxSimulationTimeInput;
 
     tgui::Panel::Ptr simulationCommandPanel;
@@ -89,19 +92,37 @@ private:
     tgui::Button::Ptr stopSimulationButton;
     tgui::Button::Ptr restartSimulationButton;
 
-    //Network TAB
+    //--------------------Network TAB--------------------
     tgui::Panel::Ptr networkPanel;
-    tgui::Button::Ptr pauseSimulationButton;
-    tgui::Button::Ptr resumeSimulationButton;
-    tgui::CanvasSFML::Ptr canvas;
-    tgui::Label::Ptr communicationModeText;
-    tgui::Label::Ptr timeText;
-    tgui::EditBox::Ptr searchBox;
-    tgui::Button::Ptr findButton;
+
     bool routingDisplayEnabled = false; // Flag to control routing display
 
 
-    //LOG TAB
+    // TOP Layer
+    tgui::Panel::Ptr topLayerPanel;
+    tgui::BitmapButton::Ptr pauseBitmapButton;
+    tgui::BitmapButton::Ptr resumeBitmapButton;
+    tgui::BitmapButton::Ptr normalSpeedBitmapButton;
+    tgui::BitmapButton::Ptr mediumSpeedBitmapButton;
+    tgui::BitmapButton::Ptr fastSpeedBitmapButton;
+    tgui::BitmapButton::Ptr fastForwardToNextEventButton;
+    tgui::Button::Ptr exportSimulationButton;
+    tgui::ProgressBar::Ptr simulationTimeProgressBar;
+    tgui::RichTextLabel::Ptr tickInfoLabel;
+    tgui::RichTextLabel::Ptr currentSimulationTimeLabel;
+
+    //nodeBrowserPanel
+    tgui::Panel::Ptr nodeBrowserPanel;
+    tgui::EditBox::Ptr searchBox;
+    tgui::Button::Ptr findButton;
+
+
+
+    //Canvas
+    tgui::CanvasSFML::Ptr canvas;
+
+
+    //--------------------LOG TAB--------------------
     tgui::Panel::Ptr logsPanel;
 
 

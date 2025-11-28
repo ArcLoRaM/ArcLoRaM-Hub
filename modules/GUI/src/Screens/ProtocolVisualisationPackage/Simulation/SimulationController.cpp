@@ -10,7 +10,7 @@ void SimulationController::startSimulation(const SimulationConfiguration &config
 
     // Construct launchConfigCommandPacket with required arguments
     // for now, we don't let the user decide on the distance threshold. 
-    launchConfigCommandPacket confPacket(1000.0 /*config.getDistanceThreshold()*/, config.getTopologyLines(),static_cast<int>(config.getScenarioType()));
+    launchConfigCommandPacket confPacket(1000.0 /*config.getDistanceThreshold()*/, config.getTopologyLines(),static_cast<int>(config.getScenarioType()),config.getMaxSimulationTimeMs());
     basePacket << confPacket;
     TcpServer::instance().transmitPacket(basePacket);
     running.store(true);

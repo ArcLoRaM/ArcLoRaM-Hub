@@ -290,8 +290,8 @@ sf::Packet& operator>>(sf::Packet& packet, energySamplesPacket& esp) {
 //-------------------- CONTROL PACKETS ---------------------------------------------------------------------------------------------------
 
 //------ Constructors --------------------
-launchConfigCommandPacket::launchConfigCommandPacket(double threshold,  std::string topologyString,int scenarioType)
-    : distanceThreshold(threshold), topologyString(std::move(topologyString)), scenarioType(scenarioType) {
+launchConfigCommandPacket::launchConfigCommandPacket(double threshold,  std::string topologyString,int scenarioType, uint64_t maxSimulationTime)
+    : distanceThreshold(threshold), topologyString(std::move(topologyString)), scenarioType(scenarioType), maxSimulationTimeMs(maxSimulationTime) {
     type = 100;
 }
 
@@ -322,10 +322,10 @@ pauseCommandPacket::pauseCommandPacket() {
 //-------------------- Packet Serialization --------------------
 
 sf::Packet& operator<<(sf::Packet& packet, const launchConfigCommandPacket& lccp) {
-    return packet << lccp.type << lccp.distanceThreshold << lccp.topologyString << lccp.scenarioType;
+    return packet << lccp.type << lccp.distanceThreshold << lccp.topologyString << lccp.scenarioType << lccp.maxSimulationTimeMs;
 }
 sf::Packet& operator>>(sf::Packet& packet, launchConfigCommandPacket& lccp) {
-    return packet >> lccp.distanceThreshold >> lccp.topologyString >> lccp.scenarioType;
+    return packet >> lccp.distanceThreshold >> lccp.topologyString >> lccp.scenarioType >> lccp.maxSimulationTimeMs;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, const stopCommandPacket& scp) {

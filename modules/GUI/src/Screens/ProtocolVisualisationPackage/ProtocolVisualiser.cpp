@@ -57,6 +57,7 @@ void ProtocolVisualiser::draw(sf::RenderWindow &window, sf::View &view)
 void ProtocolVisualiser::bindUIEvents()
 {
     uiController.onStartSimulation = [this]() {
+        topologyState.setMaxSimulationTimeMs(uiController.getMaxSimulationTimeMs());
         simulationController.startSimulation(topologyState);
     };
 
@@ -70,9 +71,11 @@ void ProtocolVisualiser::bindUIEvents()
         simulationController.resumeSimulation();
     };
 
+    //Easier way: simply get the value when starting the simulation, similarly to what you did for the maxTime... TODO
     uiController.onScenarioTypeChanged = [this](const int scenarioId) {
         topologyState.setScenarioType(static_cast<ScenarioType>(scenarioId));
     };
+
     uiController.onRestartSimulation = [this]() {
         simulationController.restartSimulation();
 

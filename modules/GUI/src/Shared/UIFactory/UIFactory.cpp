@@ -41,12 +41,25 @@ tgui::TabContainer::Ptr UIFactory::createTabContainer(const tgui::Layout2d &size
     return tabContainer;
 }
 
+tgui::CheckBox::Ptr UIFactory::createCheckBox(const std::string &label, bool defaultState)
+{
+    auto checkBox = tgui::CheckBox::create();
+    checkBox->setText(label);
+    checkBox->setChecked(defaultState);
+    if (s_theme) checkBox->setRenderer(s_theme->getRenderer("CheckBox"));
+    return checkBox;
+}
+
 tgui::BitmapButton::Ptr UIFactory::createBitmapButton(const tgui::Texture &texture, const std::string &text,const tgui::Layout2d& size)
 {
     auto button = tgui::BitmapButton::create(text);
+
     button->setSize(size);
     button->setImage(texture);
-    if (s_theme) button->setRenderer(s_theme->getRenderer("BitmapButton"));
+
+    button->getRenderer()->setBackgroundColor(tgui::Color::Transparent);
+    button->getRenderer()->setBorderColor(tgui::Color::Transparent);
+
     return button;
 }
 
@@ -85,6 +98,14 @@ tgui::Panel::Ptr UIFactory::createPanel(const tgui::Layout2d &size)
     panel->setSize(size);
     if (s_theme) panel->setRenderer(s_theme->getRenderer("Panel"));
     return panel;
+}
+
+tgui::ProgressBar::Ptr UIFactory::createProgressBar(const tgui::Layout2d &size)
+{
+    auto progressBar = tgui::ProgressBar::create();
+    progressBar->setSize(size);
+    if (s_theme) progressBar->setRenderer(s_theme->getRenderer("ProgressBar"));
+    return progressBar;
 }
 
 void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string &section)

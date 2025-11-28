@@ -18,14 +18,10 @@ public:
     static tgui::ToggleButton::Ptr createToggleButton(const std::string& text);
     static tgui::MessageBox::Ptr createMessageBox(const std::string& title, const std::string& message, const std::vector<std::string>& buttons = {"OK"});
     static tgui::TabContainer::Ptr createTabContainer(const tgui::Layout2d& size = {"100%", "100%"});
-
+    static tgui::CheckBox::Ptr createCheckBox(const std::string& label, bool defaultState = false);
     static tgui::BitmapButton::Ptr createBitmapButton(const tgui::Texture& texture, const std::string& text = "", const tgui::Layout2d& size = {"20%", "6%"});
-    // tgui::Label::Ptr createLabel(const std::string& text);
-    // tgui::EditBox::Ptr createEditBox(const std::string& defaultText = "");
-    // tgui::CheckBox::Ptr createCheckBox(const std::string& label, bool defaultState = false);
-    // tgui::Slider::Ptr createSlider(float min, float max, float value);
     static tgui::Panel::Ptr createPanel(const tgui::Layout2d& size);
-
+    static tgui::ProgressBar::Ptr createProgressBar(const tgui::Layout2d& size = {"80%", "6%"});
     static void applyRenderer(tgui::Widget::Ptr widget, const std::string& section);
 
     static tgui::ChildWindow::Ptr createEditWithLabelPopup(
