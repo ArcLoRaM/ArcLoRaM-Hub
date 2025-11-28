@@ -6,7 +6,7 @@ PacketDrop::PacketDrop( const sf::Vector2f startPosition, float duration)
 
     // Load a texture for the packet icon
 
-    m_texture= &ResourceManager::getInstance().getTexture("Packet_Letter");
+    m_texture= &ResourceManager::getInstance().getTexture(SfmlTextureKey::Packet_Letter);
     m_sprite = std::make_optional<sf::Sprite>(*m_texture);
     m_sprite->setScale(sf::Vector2f(0.3f, 0.3f)); // Scale to 50% of its original size
 

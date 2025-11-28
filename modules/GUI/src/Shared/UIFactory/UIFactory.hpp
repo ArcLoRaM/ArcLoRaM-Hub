@@ -15,6 +15,7 @@ public:
     static tgui::RadioButtonGroup::Ptr createRadioGroup();
     static tgui::ComboBox::Ptr createEnumComboBox(const tgui::Layout2d& size = {"30%", "5%"});
     static tgui::Label::Ptr createLabel(const std::string& text);
+    static tgui::RichTextLabel::Ptr createRichTextLabel(const std::string& text = "", const tgui::Layout2d& size = {"50%", "10%"});
     static tgui::ToggleButton::Ptr createToggleButton(const std::string& text);
     static tgui::MessageBox::Ptr createMessageBox(const std::string& title, const std::string& message, const std::vector<std::string>& buttons = {"OK"});
     static tgui::TabContainer::Ptr createTabContainer(const tgui::Layout2d& size = {"100%", "100%"});
@@ -22,6 +23,7 @@ public:
     static tgui::BitmapButton::Ptr createBitmapButton(const tgui::Texture& texture, const std::string& text = "", const tgui::Layout2d& size = {"20%", "6%"});
     static tgui::Panel::Ptr createPanel(const tgui::Layout2d& size);
     static tgui::ProgressBar::Ptr createProgressBar(const tgui::Layout2d& size = {"80%", "6%"});
+    static tgui::Panel::Ptr createContextMenuPanel(const tgui::Vector2f& position);
     static void applyRenderer(tgui::Widget::Ptr widget, const std::string& section);
 
     static tgui::ChildWindow::Ptr createEditWithLabelPopup(

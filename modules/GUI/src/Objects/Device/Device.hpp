@@ -5,6 +5,7 @@
 #include <optional>
 #include "../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Config.hpp"
+#include "../../Shared/RessourceManager/RessourceManager.hpp"
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 
@@ -56,7 +57,7 @@ private:
     int nodeId = 0;
     DeviceClass classNode ;
     DeviceState state = DeviceState::Sleep;
-    std::string getTextureKey(DeviceClass cls, DeviceState state);
+    SfmlTextureKey getTextureKey(DeviceClass cls, DeviceState state);
 
 
 

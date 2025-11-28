@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <mutex>
+#include <atomic>
 
 
 /*
@@ -14,7 +15,7 @@ Holds live information about the ongoing simulation.
 struct LiveNetworkState {
     std::string communicationMode = "None";
     //Todo: do we need to protec the states with mutexes? all of them?
-    int tickNumber = 0;
+    std::atomic<uint64_t> tickNumber{0};
     float distanceThreshold = 0.f;
     int energyExp = 0;
     //the logs will overflow because you erased: 
@@ -25,12 +26,9 @@ struct LiveNetworkState {
     mutable std::mutex logMutex; // Mutex for thread-safe access to log messages
 
 
-    int totalDataPacketsSent = 0; // Total packets sent
-    int retransmissions = 0;
-
     void resetState(){
         this->communicationMode="None";
-        this->tickNumber=0;
+        this->tickNumber = 0;
         this->distanceThreshold=0.f;
         this->energyExp=0;
     };

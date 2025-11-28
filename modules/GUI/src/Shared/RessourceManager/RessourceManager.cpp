@@ -13,10 +13,36 @@ void ResourceManager::loadFont(const std::string& key, const std::string& path) 
     fonts.emplace(key, std::move(font));
 }
 
-void ResourceManager::loadTexture(const std::string& key, const std::string& path) {
+// Helper function to map SFML texture enum to file path
+std::string ResourceManager::getSfmlTexturePath(SfmlTextureKey key) {
+    switch (key) {
+        // Device icons
+        case SfmlTextureKey::C3_Sleep: return "assets/Icons/C3_Sleep.png";
+        case SfmlTextureKey::C3_Listen: return "assets/Icons/C3_Listen.png";
+        case SfmlTextureKey::C3_Transmit: return "assets/Icons/C3_Transmit.png";
+        case SfmlTextureKey::C3_Communicate: return "assets/Icons/C3_Communicate.png";
+        case SfmlTextureKey::C2_Sleep: return "assets/Icons/C2_Sleep.png";
+        case SfmlTextureKey::C2_Listen: return "assets/Icons/C2_Listen.png";
+        case SfmlTextureKey::C2_Transmit: return "assets/Icons/C2_Transmit.png";
+        case SfmlTextureKey::C2_Communicate: return "assets/Icons/C2_Communicate.png";
+        // Reception icons
+        case SfmlTextureKey::Reception_Interference: return "assets/Reception/interference.png";
+        case SfmlTextureKey::Reception_NotListening: return "assets/Reception/notListening.png";
+        case SfmlTextureKey::Reception_AllGood: return "assets/Reception/allGood.png";
+        // Packet animation
+        case SfmlTextureKey::Packet_Letter: return "assets/PacketDrop/letter.png";
+        // UI elements
+        case SfmlTextureKey::Rooting_Button: return "assets/Icons/routing.png";
+        default:
+            throw std::runtime_error("Unknown SfmlTextureKey");
+    }
+}
+
+void ResourceManager::loadTexture(SfmlTextureKey key) {
+    std::string path = getSfmlTexturePath(key);
     sf::Texture texture;
     if (!texture.loadFromFile(path))
-        throw std::runtime_error("Failed to load texture: " + path);
+        throw std::runtime_error("Failed to load SFML texture: " + path);
 
     textures.emplace(key, std::move(texture));
 }
@@ -24,27 +50,31 @@ void ResourceManager::loadTexture(const std::string& key, const std::string& pat
 void ResourceManager::loadAll() {
     //Todo. arial still needed?
     loadFont("Arial", "assets/arial.ttf");
-    loadTexture("C3_Sleep", "assets/Icons/C3_Sleep.png");
-    loadTexture("C2_Sleep", "assets/Icons/C2_Sleep.png");
-    loadTexture("C3_Transmit", "assets/Icons/C3_Transmit.png");
-    loadTexture("C2_Transmit", "assets/Icons/C2_Transmit.png");
-    loadTexture("C3_Listen", "assets/Icons/C3_Listen.png");
-    loadTexture("C2_Listen", "assets/Icons/C2_Listen.png");
-    loadTexture("C3_Communicate", "assets/Icons/C3_Communicate.png");
-    loadTexture("C2_Communicate", "assets/Icons/C2_Communicate.png");
 
+    // Load SFML textures for canvas rendering (Device icons)
+    loadTexture(SfmlTextureKey::C3_Sleep);
+    loadTexture(SfmlTextureKey::C3_Listen);
+    loadTexture(SfmlTextureKey::C3_Transmit);
+    loadTexture(SfmlTextureKey::C3_Communicate);
+    loadTexture(SfmlTextureKey::C2_Sleep);
+    loadTexture(SfmlTextureKey::C2_Listen);
+    loadTexture(SfmlTextureKey::C2_Transmit);
+    loadTexture(SfmlTextureKey::C2_Communicate);
 
-    loadTexture("Reception_Interference", "assets/Reception/interference.png");
-    loadTexture("Reception_NotListening", "assets/Reception/notListening.png");
-    loadTexture("Reception_AllGood", "assets/Reception/allGood.png");
-    loadTexture("Packet_Letter", "assets/PacketDrop/letter.png");
-    loadTexture("Rooting_Button", "assets/Icons/routing.png");
+    // Reception icons
+    loadTexture(SfmlTextureKey::Reception_Interference);
+    loadTexture(SfmlTextureKey::Reception_NotListening);
+    loadTexture(SfmlTextureKey::Reception_AllGood);
+
+    // Packet animation
+    loadTexture(SfmlTextureKey::Packet_Letter);
+
+    // UI elements
+    loadTexture(SfmlTextureKey::Rooting_Button);
 
     // Note: TGUI textures are NOT loaded here because they require the TGUI backend
     // to be initialized first (i.e., tgui::Gui must be created before loading TGUI textures).
     // TGUI textures are loaded lazily on first access via getTguiTexture().
-
-    // ... add all other assets here centrally, for the canvas, not for the canvas.
 }
 
 
@@ -59,10 +89,11 @@ sf::Font& ResourceManager::getFont(const std::string& key) {
 }
 
 
-sf::Texture& ResourceManager::getTexture(const std::string& key) {
+sf::Texture& ResourceManager::getTexture(SfmlTextureKey key) {
     auto it = textures.find(key);
     if (it == textures.end()) {
-        throw std::runtime_error("Texture with key '" + key + "' was not loaded");
+        throw std::runtime_error("ResourceManager error: SFML texture was not loaded. "
+                                 "Ensure it is loaded in ResourceManager::loadAll().");
     }
     return it->second;
 }

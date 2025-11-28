@@ -6,9 +6,14 @@
 #include <TGUI/TGUI.hpp> // TGUI header
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include "../States/LiveNetworkState.hpp"
+#include <optional>
+
+
+class InputManager;
+
 class UIController {
 public:
-    UIController(tgui::Gui& gui);
+    UIController(tgui::Gui& gui, InputManager& inputManager);
 
     void setupUI(sf::View& networkView);
 
@@ -20,7 +25,7 @@ public:
     void setServerStatus(bool connected);
     void setFileNameLabel(const std::string& name);
     void enableStartButton(bool enabled);
-    uint64_t getMaxSimulationTimeMs() const;
+    uint64_t getMaxSimulationTimeMs() ;
 
     std::function<void()> onStartSimulation;
     std::function<void()> onStopSimulation;
@@ -36,7 +41,18 @@ public:
     //--------------------Network TAB--------------------
     std::function<void()> onPauseSimulation;
     std::function<void()> onResumeSimulation;
+
+    // Visual element toggles
     bool getRoutingDisplayEnabled() const { return routingDisplayEnabled; }
+    bool getDeviceIconsEnabled() const { return deviceIconsEnabled; }
+    bool getPacketAnimationsEnabled() const { return packetAnimationsEnabled; }
+    bool getReceptionIconsEnabled() const { return receptionIconsEnabled; }
+
+    void toggleRoutingDisplay() { routingDisplayEnabled = !routingDisplayEnabled; }
+    void toggleDeviceIcons() { deviceIconsEnabled = !deviceIconsEnabled; }
+    void togglePacketAnimations() { packetAnimationsEnabled = !packetAnimationsEnabled; }
+    void toggleReceptionIcons() { receptionIconsEnabled = !receptionIconsEnabled; }
+
     tgui::CanvasSFML::Ptr getCanvas()  { return canvas; }
 
 
@@ -67,9 +83,13 @@ private:
 
     //Logs
     void setLogsPanelUI();
-   
-   
+
+    //Context Menu
+    void createContextMenu(const sf::Vector2f& position);
+    void closeContextMenu();
+
     tgui::Gui& gui;
+    InputManager& inputManager;
     tgui::TabContainer::Ptr tabContainer;
 
     //--------------------CLIENT TAB--------------------
@@ -91,11 +111,16 @@ private:
      tgui::Button::Ptr startSimulationButton;
     tgui::Button::Ptr stopSimulationButton;
     tgui::Button::Ptr restartSimulationButton;
+    std::optional<uint64_t> maxSimulationTimeMs;
 
     //--------------------Network TAB--------------------
     tgui::Panel::Ptr networkPanel;
 
-    bool routingDisplayEnabled = false; // Flag to control routing display
+    // Visual element toggle flags
+    bool routingDisplayEnabled = true;
+    bool deviceIconsEnabled = true;
+    bool packetAnimationsEnabled = true;
+    bool receptionIconsEnabled = true;
 
 
     // TOP Layer
@@ -116,7 +141,8 @@ private:
     tgui::EditBox::Ptr searchBox;
     tgui::Button::Ptr findButton;
 
-
+    //Context Menu
+    tgui::Panel::Ptr contextMenuPanel;
 
     //Canvas
     tgui::CanvasSFML::Ptr canvas;

@@ -1,10 +1,11 @@
 #include "UIController.hpp"
 #include "../../../Shared/UIFactory/UIFactory.hpp"
 #include "../../../Shared/RessourceManager/RessourceManager.hpp"
+#include "../../../Shared/InputManager/InputManager.hpp"
 #include "../../Shared/Libraries/magic_enum.hpp"
 #include "../States/SimulationConfiguration.hpp"
 
-UIController::UIController(tgui::Gui &gui) : gui(gui)
+UIController::UIController(tgui::Gui &gui, InputManager &inputManager) : gui(gui), inputManager(inputManager)
 {
 }
 
@@ -31,9 +32,77 @@ void UIController::setupUI(sf::View &networkView)
 
 void UIController::updateUI(LiveNetworkState &state)
 {
-    //TODO:
-    // communicationModeText->setText("Communication Mode: " + state.communicationMode);
-    // timeText->setText("Time: " + std::to_string(state.tickNumber /* Config::TICK_DURATION*/) + "s");
+
+    // Read tick number (atomic read is automatic)
+    uint64_t currentTick = state.tickNumber;
+
+    // Update tick info label with formatted text
+    std::string tickText = "Tick: <b><color=#4a9eff>" + std::to_string(currentTick) + "</color></b>";
+    tickInfoLabel->setText(tickText);
+
+    // Calculate time breakdown (1 tick = 10ms)
+    uint64_t totalMs = static_cast<uint64_t>(currentTick) * 10;
+    if (getMaxSimulationTimeMs() > 0) {
+        simulationTimeProgressBar->setValue(static_cast<unsigned int>(totalMs * 100 / getMaxSimulationTimeMs()));
+    }
+
+
+    uint64_t days = totalMs / 86400000;
+    totalMs %= 86400000;
+
+    uint64_t hours = totalMs / 3600000;
+    totalMs %= 3600000;
+
+    uint64_t minutes = totalMs / 60000;
+    totalMs %= 60000;
+
+    uint64_t seconds = totalMs / 1000;
+    uint64_t milliseconds = totalMs % 1000;
+    // Update simulation time label with formatted text
+    std::string timeText =
+        "<b>Day:</b> <color=#4a9eff>" + std::to_string(days) + "</color>  " +
+        "<b>Hour:</b> <color=#4a9eff>" + std::to_string(hours) + "</color>  " +
+        "<b>Min:</b> <color=#4a9eff>" + std::to_string(minutes) + "</color>  " +
+        "<b>Sec:</b> <color=#4a9eff>" + std::to_string(seconds) + "</color>  " +
+        "<b>ms:</b> <color=#4a9eff>" + std::to_string(milliseconds) + "</color>";
+
+    currentSimulationTimeLabel->setText(timeText);
+
+    // Handle right-click on canvas for context menu
+    if (inputManager.isRightMouseJustPressed()) {
+        sf::Vector2f mousePos = inputManager.getMouseUIScreenPosition();
+
+        // Check if click is within canvas bounds
+        if (canvas) {
+            tgui::Vector2f canvasPos = canvas->getAbsolutePosition();
+            tgui::Vector2f canvasSize = canvas->getSize();
+
+            bool isInCanvas = mousePos.x >= canvasPos.x &&
+                             mousePos.x <= canvasPos.x + canvasSize.x &&
+                             mousePos.y >= canvasPos.y &&
+                             mousePos.y <= canvasPos.y + canvasSize.y;
+
+            if (isInCanvas) {
+                createContextMenu(mousePos);
+            }
+        }
+    }
+
+    // Handle click outside context menu to close it
+    if (contextMenuPanel && inputManager.isLeftMouseJustPressed()) {
+        sf::Vector2f mousePos = inputManager.getMouseUIScreenPosition();
+        tgui::Vector2f menuPos = contextMenuPanel->getAbsolutePosition();
+        tgui::Vector2f menuSize = contextMenuPanel->getSize();
+
+        bool isOutsideMenu = mousePos.x < menuPos.x ||
+                            mousePos.x > menuPos.x + menuSize.x ||
+                            mousePos.y < menuPos.y ||
+                            mousePos.y > menuPos.y + menuSize.y;
+
+        if (isOutsideMenu) {
+            closeContextMenu();
+        }
+    }
 }
 
 void UIController::setServerStatus(bool connected)
@@ -61,9 +130,15 @@ void UIController::enableStartButton(bool enabled)
     startSimulationButton->setEnabled(enabled);
 }
 
-uint64_t UIController::getMaxSimulationTimeMs() const
+uint64_t UIController::getMaxSimulationTimeMs() 
 {
-    return unlimitedSimulationCheckbox->isChecked() ? 0 : std::stoull(maxSimulationTimeInput->getText().toStdString());
+    if (maxSimulationTimeMs.has_value()) {
+        return maxSimulationTimeMs.value();
+    }
+    else {
+        maxSimulationTimeMs = unlimitedSimulationCheckbox->isChecked() ? 0 : std::stoull(maxSimulationTimeInput->getText().toStdString());
+        return maxSimulationTimeMs.value();
+    }
 }
 
 void UIController::errorMessageBox(const std::string &message)
@@ -82,6 +157,7 @@ void UIController::bindCallbacks()
 
     startSimulationButton->onPress([this]()
                                    {
+        maxSimulationTimeMs.reset();
         // Check if unlimited simulation is enabled
         if (!unlimitedSimulationCheckbox->isChecked()) {
             // Validate max simulation time input only if not unlimited
@@ -231,7 +307,8 @@ return;
 
 void UIController::setProtocolPanelUI(sf::View &networkView)
 {
-    auto simulationCommandTopPanel = UIFactory::createPanel({"35%", "8.5%"});
+    //Simulation Command Top Panel: (Pause, Resume, Speed Control)
+    auto simulationCommandTopPanel = UIFactory::createPanel({"17%", "8.5%"});
     simulationCommandTopPanel->setPosition({"0.75%", "0.75%"});
     networkPanel->add(simulationCommandTopPanel);
 
@@ -240,33 +317,66 @@ void UIController::setProtocolPanelUI(sf::View &networkView)
     simulationCommandTopPanel->add(simTopulationCommandLabel);
 
     pauseBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::PauseButton), "", {"40", "40"});
-    pauseBitmapButton->setPosition({"70%", "2%"});
+    pauseBitmapButton->setPosition({"10", "30%"});
     pauseBitmapButton->setImageScaling(1.0f);  
     pauseBitmapButton->setEnabled(false);
     pauseBitmapButton->setVisible(false);
     simulationCommandTopPanel->add(pauseBitmapButton);
 
     resumeBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::PlayButton), "", {"40", "40"});
-    resumeBitmapButton->setPosition({"70%", "2%"});
+    resumeBitmapButton->setPosition({"10", "30%"});
     resumeBitmapButton->setVisible(false);
     resumeBitmapButton->setImageScaling(1.0f);  
     resumeBitmapButton->setEnabled(false);
     simulationCommandTopPanel->add(resumeBitmapButton);
 
+    normalSpeedBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::NormalSpeedButton), "", {"40", "40"});
+    normalSpeedBitmapButton->setPosition({"60", "30%"});
+    normalSpeedBitmapButton->setImageScaling(1.0f);
+    simulationCommandTopPanel->add(normalSpeedBitmapButton);
+
+    mediumSpeedBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::MediumSpeedButton), "", {"40", "40"});
+    mediumSpeedBitmapButton->setPosition({"110", "30%"});
+    mediumSpeedBitmapButton->setImageScaling(1.0f);
+    simulationCommandTopPanel->add(mediumSpeedBitmapButton);
+
+    fastSpeedBitmapButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::FastSpeedButton), "", {"40", "40"});
+    fastSpeedBitmapButton->setPosition({"160", "30%"});
+    fastSpeedBitmapButton->setImageScaling(1.0f);
+    simulationCommandTopPanel->add(fastSpeedBitmapButton);
+
+    fastForwardToNextEventButton = UIFactory::createBitmapButton(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::FastForwardToNextEventButton), "", {"40", "40"});
+    fastForwardToNextEventButton->setPosition({"210", "30%"});
+    fastForwardToNextEventButton->setImageScaling(1.0f);
+    simulationCommandTopPanel->add(fastForwardToNextEventButton);
 
 
-    simulationTimeProgressBar = UIFactory::createProgressBar({"18%", "6%"});
-    simulationTimeProgressBar->setPosition({"77%", "2%"});
+    //Time Visualisation Panel
+    auto timeVisualisationPanel = UIFactory::createPanel({"50%", "8.5%"});
+    timeVisualisationPanel->setPosition({"20%", "0.75%"});
+    networkPanel->add(timeVisualisationPanel);
+
+    tickInfoLabel = UIFactory::createRichTextLabel("Tick: <color=gray>N/A</color>", {"15%", "35%"});
+    tickInfoLabel->setPosition({"2%", "10%"});
+    timeVisualisationPanel->add(tickInfoLabel);
+
+    currentSimulationTimeLabel = UIFactory::createRichTextLabel("<b>Day:</b> 0  <b>Hour:</b> 0  <b>Min:</b> 0  <b>Sec:</b> 0  <b>ms:</b> 0", {"70%", "35%"});
+    currentSimulationTimeLabel->setPosition({"20%", "60%"});
+    timeVisualisationPanel->add(currentSimulationTimeLabel);
+
+    simulationTimeProgressBar = UIFactory::createProgressBar({"60%", "35%"});
+    simulationTimeProgressBar->setPosition({"40%", "2%"});
+    simulationTimeProgressBar->setMinimum(0);
+    simulationTimeProgressBar->setMaximum(100); // 1,000,000 ms = 1000 seconds = 16.67 minutes
     simulationTimeProgressBar->setValue(0); // Initial value
     simulationTimeProgressBar->setText("Simulation Time");
-    networkPanel->add(simulationTimeProgressBar);
-
-    networkPanel->add(pauseBitmapButton);
+    timeVisualisationPanel->add(simulationTimeProgressBar);
 
 
-    exportSimulationButton = UIFactory::createButton("Save");
+    //EXPORT
+    exportSimulationButton = UIFactory::createButton("EXPORT SIMULATION");
     exportSimulationButton->setPosition({"80%", "2%"});
-    exportSimulationButton->setSize({"7%", "4%"});
+    exportSimulationButton->setSize({"12%", "4%"});
     exportSimulationButton->onPress([this]()
                         {
                             // MAKE A LAMBDA TO EXPORT THE METRICS
@@ -500,19 +610,19 @@ void UIController::setClientPanelUI()
 
     maxSimulationTimeLabel = UIFactory::createLabel(" / Max Simulation Time (ms):");
     confFileSelectionGroup->add(maxSimulationTimeLabel);
-    maxSimulationTimeLabel->setPosition({"50%", "70%"});
+    maxSimulationTimeLabel->setPosition({"28%", "71%"});
     maxSimulationTimeLabel->setSize({"30%", "12%"});
 
     maxSimulationTimeInput = UIFactory::createTypeableInput("3600000", {"20%", "12%"});
     confFileSelectionGroup->add(maxSimulationTimeInput);
-    maxSimulationTimeInput->setPosition({"75%", "70%"});
+    maxSimulationTimeInput->setPosition({"53%", "70%"});
     maxSimulationTimeInput->setDefaultText("3600000");
     maxSimulationTimeInput->setText("3600000");
 
 
 
     simulationCommandPanel = UIFactory::createPanel({"70%", "40%"});
-    simulationCommandPanel->setPosition({"2%", "50%"});
+    simulationCommandPanel->setPosition({"2%", "55%"});
     clientPanel->add(simulationCommandPanel);
     simulationCommandPanel->setVisible(false);
 
@@ -537,6 +647,43 @@ void UIController::setClientPanelUI()
     simulationCommandPanel->add(restartSimulationButton);
     restartSimulationButton->setPosition({"2%", "50%"});
     restartSimulationButton->setSize({"20%", "12%"});
+}
 
+void UIController::createContextMenu(const sf::Vector2f& position)
+{
+    // Close existing menu if any
+    closeContextMenu();
 
-  }
+    // Create context menu panel
+    contextMenuPanel = UIFactory::createContextMenuPanel(position);
+
+    // Create checkboxes for visual toggles
+    auto deviceIconsCheckbox = UIFactory::createCheckBox("Device", deviceIconsEnabled);
+    deviceIconsCheckbox->setPosition({10, 10});
+    deviceIconsCheckbox->setSize({25, 25});
+    deviceIconsCheckbox->onChange([this]() { toggleDeviceIcons(); });
+    contextMenuPanel->add(deviceIconsCheckbox);
+
+    auto routingCheckbox = UIFactory::createCheckBox("Routing", routingDisplayEnabled);
+    routingCheckbox->setPosition({10, 45});
+    routingCheckbox->setSize({25, 25});
+    routingCheckbox->onChange([this]() { toggleRoutingDisplay(); });
+    contextMenuPanel->add(routingCheckbox);
+
+    auto animationsCheckbox = UIFactory::createCheckBox("Animation", packetAnimationsEnabled);
+    animationsCheckbox->setPosition({10, 80});
+    animationsCheckbox->setSize({25, 25});
+    animationsCheckbox->onChange([this]() { togglePacketAnimations(); });
+    contextMenuPanel->add(animationsCheckbox);
+
+    // Add to GUI
+    gui.add(contextMenuPanel);
+}
+
+void UIController::closeContextMenu()
+{
+    if (contextMenuPanel) {
+        gui.remove(contextMenuPanel);
+        contextMenuPanel = nullptr;
+    }
+}

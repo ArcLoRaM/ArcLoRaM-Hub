@@ -8,8 +8,8 @@
 
 
 
-ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui)
-    : Screen(gui),visualiser(gui),
+ProtocolVisualisationScreen::ProtocolVisualisationScreen( std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui, InputManager& inputManager)
+    : Screen(gui),visualiser(gui, inputManager),
       networkView(sf::FloatRect({0, 0}, {(float)config::windowWidth, (float)config::windowHeight})),packetHandler(visualiser)
 {
     auto& tcpServer = TcpServer::instance();

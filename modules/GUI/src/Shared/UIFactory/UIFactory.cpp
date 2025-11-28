@@ -108,6 +108,21 @@ tgui::ProgressBar::Ptr UIFactory::createProgressBar(const tgui::Layout2d &size)
     return progressBar;
 }
 
+tgui::Panel::Ptr UIFactory::createContextMenuPanel(const tgui::Vector2f& position)
+{
+    auto panel = tgui::Panel::create();
+    panel->setPosition(position);
+    panel->setSize({200, 120}); // Fixed size for 3 checkboxes
+
+    // Style as context menu
+    auto renderer = panel->getRenderer();
+    renderer->setBackgroundColor(tgui::Color(45, 45, 48)); // Dark background
+    renderer->setBorderColor(tgui::Color(100, 100, 100)); // Gray border
+    renderer->setBorders(1);
+
+    return panel;
+}
+
 void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string &section)
 {
     if (s_theme && s_theme->getRenderer(section))
@@ -153,4 +168,11 @@ tgui::Label::Ptr UIFactory::createLabel(const std::string& text) {
     auto label = tgui::Label::create(text);
     if (s_theme) label->setRenderer(s_theme->getRenderer("Label"));
     return label;
+}
+
+tgui::RichTextLabel::Ptr UIFactory::createRichTextLabel(const std::string& text, const tgui::Layout2d& size) {
+    auto richLabel = tgui::RichTextLabel::create(text);
+    richLabel->setSize(size);
+    if (s_theme) richLabel->setRenderer(s_theme->getRenderer("Label"));
+    return richLabel;
 }

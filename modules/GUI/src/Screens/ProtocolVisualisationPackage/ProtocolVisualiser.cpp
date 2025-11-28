@@ -1,8 +1,8 @@
 #include "ProtocolVisualiser.hpp"
 #include "../../Shared/TopologyConfigIO/TopologyConfigIO.hpp"
 
-ProtocolVisualiser::ProtocolVisualiser(tgui::Gui &gui)
-: gui(gui), uiController(gui)
+ProtocolVisualiser::ProtocolVisualiser(tgui::Gui &gui, InputManager &inputManager)
+: gui(gui), uiController(gui, inputManager)
 {
     routingManager.setDeviceManager(&deviceManager);
 
@@ -45,10 +45,9 @@ void ProtocolVisualiser::draw(sf::RenderWindow &window, sf::View &view)
 
 
     // Draw scene elements
-    deviceManager.draw(canvas);
+    if(uiController.getDeviceIconsEnabled()) deviceManager.draw(canvas);
     if(uiController.getRoutingDisplayEnabled()) routingManager.drawRootings(canvas);
-
-    animationManager.draw(canvas);
+    if(uiController.getPacketAnimationsEnabled()) animationManager.draw(canvas);
 
 
     canvas->display();

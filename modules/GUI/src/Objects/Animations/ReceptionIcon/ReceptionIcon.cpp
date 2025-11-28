@@ -9,9 +9,9 @@ ReceptionIcon::ReceptionIcon(const sf::Vector2f& senderPos, const sf::Vector2f& 
     iconPosition=getPointOnLine(senderPos,receiverPos);
 
     //load the texture
-    interferenceTexture = &ResourceManager::getInstance().getTexture("Reception_Interference");
-    notListeningTexture = &ResourceManager::getInstance().getTexture("Reception_NotListening");
-    receivedTexture = &ResourceManager::getInstance().getTexture("Reception_AllGood");
+    interferenceTexture = &ResourceManager::getInstance().getTexture(SfmlTextureKey::Reception_Interference);
+    notListeningTexture = &ResourceManager::getInstance().getTexture(SfmlTextureKey::Reception_NotListening);
+    receivedTexture = &ResourceManager::getInstance().getTexture(SfmlTextureKey::Reception_AllGood);
    
     if(state==ReceptionState::Interference){
         icon.emplace(*interferenceTexture);

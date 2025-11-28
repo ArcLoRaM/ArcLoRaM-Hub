@@ -46,7 +46,7 @@ auto homePageActions = std::make_shared<std::vector<std::pair<std::string, Scree
         std::vector<std::pair<std::string, ScreenAction>> actions = {
                     { "Back", backToHome }
                 };
-                changeScreen(std::make_unique<ProtocolVisualisationScreen>( actions, gui));
+                changeScreen(std::make_unique<ProtocolVisualisationScreen>( actions, gui, inputManager));
     }}
 };
     // Set the initial screen to the home page
@@ -64,7 +64,6 @@ gui.onViewChange([this] {
 
 void Application::run()
 {
-    InputManager inputManager;
     sf::Clock mainClock;
 
     while (window.isOpen())

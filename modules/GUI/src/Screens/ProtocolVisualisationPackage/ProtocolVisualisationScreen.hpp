@@ -14,7 +14,7 @@ class ProtocolVisualisationScreen : public Screen {
     Deal with high level input (back to main menu, zoom in/out, pan etc..).
     */
 public:
-    explicit ProtocolVisualisationScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui);
+    explicit ProtocolVisualisationScreen(std::vector<std::pair<std::string, ScreenAction>> actions,tgui::Gui& gui, InputManager& inputManager);
     void handleEvent(InputManager& input) override;
     void update(InputManager &input) override;
     void draw(sf::RenderWindow& window) override;

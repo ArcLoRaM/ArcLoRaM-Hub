@@ -107,12 +107,30 @@ void Device::update(const InputManager& input,const tgui::Gui& gui,const tgui::C
 void Device::setState(DeviceState newState) {
     state = newState;
 
-    std::string key = getTextureKey(classNode, state);
+    SfmlTextureKey key = getTextureKey(classNode, state);
     iconTexture = &ResourceManager::getInstance().getTexture(key);
     shape.setTexture(iconTexture);
 }
 
+// Maps DeviceClass + DeviceState combination to SfmlTextureKey
+SfmlTextureKey Device::getTextureKey(DeviceClass cls, DeviceState state) {
+    // Combine class and state to get the appropriate texture key
+    if (cls == DeviceClass::C3) {
+        switch (state) {
+            case DeviceState::Sleep: return SfmlTextureKey::C3_Sleep;
+            case DeviceState::Listen: return SfmlTextureKey::C3_Listen;
+            case DeviceState::Transmit: return SfmlTextureKey::C3_Transmit;
+            case DeviceState::Communicate: return SfmlTextureKey::C3_Communicate;
+        }
+    } else if (cls == DeviceClass::C2) {
+        switch (state) {
+            case DeviceState::Sleep: return SfmlTextureKey::C2_Sleep;
+            case DeviceState::Listen: return SfmlTextureKey::C2_Listen;
+            case DeviceState::Transmit: return SfmlTextureKey::C2_Transmit;
+            case DeviceState::Communicate: return SfmlTextureKey::C2_Communicate;
+        }
+    }
 
-std::string Device::getTextureKey(DeviceClass cls, DeviceState state) {
-    return std::string(magic_enum::enum_name(cls)) + "_" + std::string(magic_enum::enum_name(state));
+    // Default fallback (should not be reached if all cases are covered)
+    throw std::runtime_error("Unsupported DeviceClass + DeviceState combination");
 }

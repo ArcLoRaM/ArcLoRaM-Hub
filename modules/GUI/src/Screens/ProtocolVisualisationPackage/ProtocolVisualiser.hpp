@@ -15,7 +15,7 @@
 
 class ProtocolVisualiser {
 public:
-    ProtocolVisualiser(tgui::Gui& gui);
+    ProtocolVisualiser(tgui::Gui& gui, InputManager& inputManager);
 
     void setup(sf::View& view);
     void update(InputManager& inputManager);
