@@ -140,9 +140,14 @@ private:
     tgui::Panel::Ptr nodeBrowserPanel;
     tgui::EditBox::Ptr searchBox;
     tgui::Button::Ptr findButton;
+    tgui::RichTextLabel::Ptr TdmaModeLabel;
+    tgui::CheckBox::Ptr gatewayIconCheckbox;
+    tgui::CheckBox::Ptr relayIconCheckbox;
+    tgui::CheckBox::Ptr endNodeIconCheckbox;
 
     //Context Menu
     tgui::Panel::Ptr contextMenuPanel;
+
 
     //Canvas
     tgui::CanvasSFML::Ptr canvas;

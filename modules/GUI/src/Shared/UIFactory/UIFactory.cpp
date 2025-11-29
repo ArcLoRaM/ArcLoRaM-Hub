@@ -123,6 +123,15 @@ tgui::Panel::Ptr UIFactory::createContextMenuPanel(const tgui::Vector2f& positio
     return panel;
 }
 
+tgui::SeparatorLine::Ptr UIFactory::createSeparator(const tgui::Layout2d &size)
+{
+
+    auto separator = tgui::SeparatorLine::create(size);
+    separator->setSize(size);
+    if (s_theme) separator->setRenderer(s_theme->getRenderer("SeparatorLine"));
+    return separator;
+}
+
 void UIFactory::applyRenderer(tgui::Widget::Ptr widget, const std::string &section)
 {
     if (s_theme && s_theme->getRenderer(section))

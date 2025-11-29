@@ -52,6 +52,38 @@ void ProtocolVisualisationScreen::handleEvent(InputManager& input)
     else if (wheelDelta < 0.f) {
         networkView.zoom(1.1f);
     }
+
+    // Mouse drag panning
+    auto canvas = visualiser.getCanvas();
+
+    // Get mouse position in canvas world coordinates (4-step conversion pattern)
+    sf::Vector2i pixelPos = input.getMouseScreenPosition();
+    sf::Vector2f guiPos = gui.mapPixelToCoords(pixelPos);
+    sf::Vector2f canvasLocal = guiPos - sf::Vector2f(canvas->getAbsolutePosition());
+    sf::Vector2f mouseWorldPos = canvas->mapPixelToCoords(canvasLocal);
+
+    // Check if mouse is within canvas bounds
+    tgui::Vector2f canvasPos = canvas->getAbsolutePosition();
+    tgui::Vector2f canvasSize = canvas->getSize();
+    bool isMouseOverCanvas = (guiPos.x >= canvasPos.x && guiPos.x <= canvasPos.x + canvasSize.x &&
+                              guiPos.y >= canvasPos.y && guiPos.y <= canvasPos.y + canvasSize.y);
+
+    // Handle drag lifecycle
+    if (input.isMouseButtonPressed(sf::Mouse::Button::Left) && isMouseOverCanvas) {
+        if (!isDragging) {
+            // Start dragging
+            isDragging = true;
+            lastMouseWorldPos = mouseWorldPos;
+        } else {
+            // Update view while dragging
+            sf::Vector2f delta = lastMouseWorldPos - mouseWorldPos;
+            networkView.move(delta);
+            lastMouseWorldPos = mouseWorldPos;
+        }
+    } else {
+        // End dragging
+        isDragging = false;
+    }
 }
 
 void ProtocolVisualisationScreen::update( InputManager& input)

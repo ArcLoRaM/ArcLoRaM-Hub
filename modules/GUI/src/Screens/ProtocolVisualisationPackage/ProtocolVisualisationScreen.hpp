@@ -25,6 +25,11 @@ private:
     ProtocolVisualiser visualiser;
     sf::View networkView;
     PacketHandler packetHandler;
+
+    // Mouse drag panning state
+    bool isDragging = false;
+    sf::Vector2f lastMouseWorldPos;
+
     void onResize() override;
 };
 

@@ -119,6 +119,12 @@ std::string ResourceManager::getTguiTexturePath(TguiTextureKey key) {
             return "assets/UI/fastSpeed.png";
         case TguiTextureKey::FastForwardToNextEventButton:
             return "assets/UI/fastForwardToNextEvent.png";
+        case TguiTextureKey::GatewayIcon:
+            return "assets/Icons/C3_Transmit.png";
+        case TguiTextureKey::RelayIcon:
+            return "assets/Icons/C2_Listen.png";
+        case TguiTextureKey::EndNodeIcon:
+            return "assets/Icons/C1_Sleep.png";
         default:
             throw std::runtime_error("Unknown TguiTextureKey");
     }

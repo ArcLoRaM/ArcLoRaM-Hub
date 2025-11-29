@@ -42,7 +42,10 @@ enum class TguiTextureKey {
     NormalSpeedButton,
     MediumSpeedButton,
     FastSpeedButton,
-    FastForwardToNextEventButton
+    FastForwardToNextEventButton,
+    GatewayIcon,
+    RelayIcon,
+    EndNodeIcon
 };
 
 // Hash function for TguiTextureKey to use as unordered_map key

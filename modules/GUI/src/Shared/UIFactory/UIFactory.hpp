@@ -24,6 +24,7 @@ public:
     static tgui::Panel::Ptr createPanel(const tgui::Layout2d& size);
     static tgui::ProgressBar::Ptr createProgressBar(const tgui::Layout2d& size = {"80%", "6%"});
     static tgui::Panel::Ptr createContextMenuPanel(const tgui::Vector2f& position);
+    static tgui::SeparatorLine::Ptr createSeparator(const tgui::Layout2d& size = {"100%", 2});
     static void applyRenderer(tgui::Widget::Ptr widget, const std::string& section);
 
     static tgui::ChildWindow::Ptr createEditWithLabelPopup(

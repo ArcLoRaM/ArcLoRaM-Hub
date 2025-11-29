@@ -403,23 +403,82 @@ void UIController::setProtocolPanelUI(sf::View &networkView)
     splitContainer->setMinValidSplitterOffset("20%"); // Left widget can't be smaller than 20%
     splitContainer->setMaxValidSplitterOffset("50%"); // Right widget can't be smaller than 50% of the container
     splitContainer->setSplitterOffset("30%"); // Splitter is initially located at the center of the container
-   networkPanel->add(splitContainer);
+    networkPanel->add(splitContainer);
    
-   nodeBrowserPanel = UIFactory::createPanel({"100%", "100%"});
-   nodeBrowserPanel->setPosition({"0%", "0%"});
+    nodeBrowserPanel = UIFactory::createPanel({"100%", "100%"});
+    nodeBrowserPanel->setPosition({"0%", "0%"});
     splitContainer->add(nodeBrowserPanel);
+
+    TdmaModeLabel = UIFactory::createRichTextLabel("<b>Mode</b>: N/A", {"60%", "5%"});
+    TdmaModeLabel->setPosition({"2%", "2%"});
+    nodeBrowserPanel->add(TdmaModeLabel);
+
+    auto firstHorizontalSeparator = UIFactory::createSeparator({"96%", "2"});
+    firstHorizontalSeparator->setPosition({"2%", "6%"});
+    nodeBrowserPanel->add(firstHorizontalSeparator);
 
     // Search/Find functionality
     searchBox = tgui::EditBox::create();
-    searchBox->setPosition({"40%", "2%"});
-    searchBox->setSize({"15%", "4%"});
+    searchBox->setPosition({"2%", "8%"});
+    searchBox->setSize({"60%", "4%"});
     searchBox->setDefaultText("Node ID or x,y");
     nodeBrowserPanel->add(searchBox);
 
     findButton = UIFactory::createButton("Find");
-    findButton->setPosition({"56%", "2%"});
-    findButton->setSize({"7%", "4%"});
+    findButton->setPosition({"65%", "8%"});
+    findButton->setSize({"28%", "4%"});
     nodeBrowserPanel->add(findButton);
+
+    auto secondSeparator = UIFactory::createSeparator({"96%", "2"});
+    secondSeparator->setPosition({"2%", "13%"});
+    nodeBrowserPanel->add(secondSeparator);
+
+    auto nodeTypeHorizontalLayout = tgui::HorizontalLayout::create();
+    nodeTypeHorizontalLayout->setPosition({"0%", "15%"});
+    nodeTypeHorizontalLayout->setSize({"100%", "8%"});
+    nodeBrowserPanel->add(nodeTypeHorizontalLayout);
+
+    auto groupGateway =tgui::Group::create();
+    auto gatewayImg = tgui::Picture::create(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::GatewayIcon));
+    gatewayImg->setPosition({"5%", "2%"});
+    gatewayImg->setSize({"80%", "70%"});
+    groupGateway->add(gatewayImg);
+
+    gatewayIconCheckbox = UIFactory::createCheckBox("");
+    gatewayIconCheckbox->setPosition({"45%", "70%"});
+    gatewayIconCheckbox->setChecked(true);
+    gatewayIconCheckbox->setSize({"12%", "30%"});
+    groupGateway->add(gatewayIconCheckbox);
+
+    nodeTypeHorizontalLayout->add(groupGateway);
+
+    nodeTypeHorizontalLayout->addSpace(0.2);
+    
+    auto groupRelay =tgui::Group::create();
+    auto relayImg = tgui::Picture::create(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::RelayIcon));
+    relayImg->setPosition({"5%", "2%"});
+    relayImg->setSize({"80%", "70%"});
+    groupRelay->add(relayImg);
+    relayIconCheckbox = UIFactory::createCheckBox("");
+    relayIconCheckbox->setPosition({"45%", "70%"});
+    relayIconCheckbox->setChecked(true);
+    relayIconCheckbox->setSize({"12%", "30%"});
+    groupRelay->add(relayIconCheckbox);
+    nodeTypeHorizontalLayout->add(groupRelay);
+
+    nodeTypeHorizontalLayout->addSpace(0.2);
+
+    auto groupEndNode =tgui::Group::create();
+    auto endNodeImg = tgui::Picture::create(ResourceManager::getInstance().getTguiTexture(TguiTextureKey::EndNodeIcon));
+    endNodeImg->setPosition({"5%", "2%"});
+    endNodeImg->setSize({"80%", "70%"});
+    groupEndNode->add(endNodeImg);
+    endNodeIconCheckbox = UIFactory::createCheckBox("");
+    endNodeIconCheckbox->setPosition({"45%", "70%"});
+    endNodeIconCheckbox->setChecked(true);
+    endNodeIconCheckbox->setSize({"12%", "30%"});
+    groupEndNode->add(endNodeIconCheckbox);
+    nodeTypeHorizontalLayout->add(groupEndNode);
 
 
     
