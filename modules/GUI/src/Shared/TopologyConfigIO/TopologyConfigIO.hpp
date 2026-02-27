@@ -18,10 +18,11 @@ public:
                       const std::unordered_map<int, std::unique_ptr<Device>>& nodes,
                       const std::unordered_map<int, std::unordered_set<int>>& routings
                       );
-    // Placeholder for future extension
+    // Used in the topology editor
    static bool read(const std::string& path, TopologyEditorState& state);
-    static std::optional<std::string> readToString(const std::string& path);
 
+
+    //used in the protocol visualiser.
 static bool readTopologyConfig(const std::string& path, SimulationConfiguration& state);
 
 private:

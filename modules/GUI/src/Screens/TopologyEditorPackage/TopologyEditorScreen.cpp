@@ -32,20 +32,28 @@ TopologyEditorScreen::TopologyEditorScreen(std::vector<std::pair<std::string, Sc
     openFileDialog->onFileSelect([this,&gui](const std::vector<tgui::Filesystem::Path>& paths){
        
         if (!paths.empty()) {
-            if(TopologyConfigIO::read(paths[0].asString().toStdString(), editorState)){
-                auto currentMode = editorState.getTopologyMode();
-                std::string label = std::string(magic_enum::enum_name(currentMode));                   
+            std::string filePath = paths[0].asString().toStdString();
+            std::cerr << "Attempting to load topology from: " << filePath << "\n";
+            
+            if(TopologyConfigIO::read(filePath, editorState)){
+            auto currentMode = editorState.getTopologyMode();
+            std::string label = std::string(magic_enum::enum_name(currentMode));
+            std::cout << "Successfully loaded topology. Mode: " << label << "\n";
             }
             else{
-                auto errorBox = UIFactory::createMessageBox("Error", "Failed to load topology configuration.");
-                errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
-                    if(button == "OK" ){
-                        msgBox->getParent()->remove(msgBox->shared_from_this()); 
-                    } 
-                });
-                gui.add(errorBox);
+            std::cerr << "Failed to load topology configuration from: " << filePath << "\n";
+            auto errorBox = UIFactory::createMessageBox("Error", "Failed to load topology configuration.");
+            errorBox->onButtonPress([msgBox = errorBox.get()](const tgui::String &button){
+                if(button == "OK" ){
+                msgBox->getParent()->remove(msgBox->shared_from_this()); 
+                } 
+            });
+            gui.add(errorBox);
             }
 
+        }
+        else {
+            std::cerr << "No file selected in file dialog.\n";
         }
     });
     openFileDialog->setTitle("Open Topology Configuration");

@@ -70,7 +70,7 @@ void UIController::updateUI(LiveNetworkState &state)
 
     // Handle right-click on canvas for context menu
     if (inputManager.isRightMouseJustPressed()) {
-        sf::Vector2f mousePos = inputManager.getMouseUIScreenPosition();
+        sf::Vector2f mousePos = gui.mapPixelToCoords(inputManager.getMouseScreenPosition());
 
         // Check if click is within canvas bounds
         if (canvas) {
@@ -90,7 +90,7 @@ void UIController::updateUI(LiveNetworkState &state)
 
     // Handle click outside context menu to close it
     if (contextMenuPanel && inputManager.isLeftMouseJustPressed()) {
-        sf::Vector2f mousePos = inputManager.getMouseUIScreenPosition();
+        sf::Vector2f mousePos = gui.mapPixelToCoords(inputManager.getMouseScreenPosition());
         tgui::Vector2f menuPos = contextMenuPanel->getAbsolutePosition();
         tgui::Vector2f menuSize = contextMenuPanel->getSize();
 

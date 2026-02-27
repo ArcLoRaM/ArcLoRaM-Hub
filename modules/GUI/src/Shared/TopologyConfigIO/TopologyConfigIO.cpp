@@ -140,6 +140,7 @@ bool TopologyConfigIO::read(const std::string &path, TopologyEditorState &state)
     return validateConfigFile(inFile, nullptr, &state);
 }
 
+
 bool TopologyConfigIO::readTopologyConfig(const std::string& path, SimulationConfiguration& state) {
     std::ifstream inFile(path);
     if (!inFile) {
@@ -181,9 +182,8 @@ bool TopologyConfigIO::readTopologyConfig(const std::string& path, SimulationCon
 
 bool TopologyConfigIO::validateConfigFile(std::istream& in, std::string* outText, TopologyEditorState* outState) {
     std::string line;
-    TopologyMode mode;
     std::unordered_map<int, int> nextHopMap;
-    bool foundMode = false;
+
 
     std::unordered_map<int, std::unique_ptr<Device>>* nodes = nullptr;
     std::unordered_map<int, std::unordered_set<int>>* routings = nullptr;
@@ -248,7 +248,7 @@ bool TopologyConfigIO::validateConfigFile(std::istream& in, std::string* outText
         }
     }
 
-    if (foundMode && mode == TopologyMode::RRC_Uplink && routings) {
+    if ( routings) {
         for (const auto& [from, to] : nextHopMap) {
             if (!nodes->count(from) || !nodes->count(to)) {
                 std::cerr << "Invalid nextHop reference: " << from << " -> " << to << "\n";
@@ -260,21 +260,7 @@ bool TopologyConfigIO::validateConfigFile(std::istream& in, std::string* outText
 
     if (outText) *outText = buffer.str();
 
-    return foundMode;
+    return true;
 }
 
-std::optional<std::string> TopologyConfigIO::readToString(const std::string& path) {
-    std::ifstream inFile(path);
-    if (!inFile) {
-        std::cerr << "Failed to open config file: " << path << "\n";
-        return std::nullopt;
-    }
 
-    std::string contents;
-    if (!validateConfigFile(inFile, &contents, nullptr)) {
-        std::cerr << "Compliance check failed for file: " << path << "\n";
-        return std::nullopt;
-    }
-
-    return contents;
-}
